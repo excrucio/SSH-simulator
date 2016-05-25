@@ -5,8 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SSH_simulator"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="588.259" Width="1257.322">
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="359*" />
+            <ColumnDefinition Width="430*" />
+        </Grid.ColumnDefinitions>
     </Grid>
 </Window>
