@@ -5,16 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SSH_simulator"
         mc:Ignorable="d"
-        Title="MainWindow" Height="1099.957" Width="1685.24">
+        Title="MainWindow" Height="1000" Width="1865.5">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="359*" />
-            <ColumnDefinition Width="430*" />
+            <ColumnDefinition Width="752" />
+            <ColumnDefinition Width="840" />
         </Grid.ColumnDefinitions>
-        <TextBox x:Name="textBox_client" HorizontalAlignment="Left" Height="300" Margin="10,423,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="700" />
-        <TextBox x:Name="textBox_server" Grid.Column="1" HorizontalAlignment="Left" Height="300" Margin="10,423,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="700" />
-        <TextBox x:Name="textBox_client_decoded" HorizontalAlignment="Left" Height="300" Margin="10,760,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="700" />
-        <TextBox x:Name="textBox_server_decoded" Grid.Column="1" HorizontalAlignment="Left" Height="300" Margin="10,760,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="700" />
+        <TextBox x:Name="textBox_client" HorizontalAlignment="Left" Height="300" Margin="10,339,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="733" />
+        <TextBox x:Name="textBox_server" HorizontalAlignment="Left" Height="300" Margin="4,339,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="733" Grid.Column="1" />
+        <TextBox x:Name="textBox_client_decoded" HorizontalAlignment="Left" Height="300" Margin="10,644,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="733" />
+        <TextBox x:Name="textBox_server_decoded" HorizontalAlignment="Left" Height="300" Margin="4,644,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="733" Grid.Column="1" />
         <TabControl x:Name="tabControl_client" HorizontalAlignment="Left" Height="324" Margin="10,10,0,0" VerticalAlignment="Top" Width="733">
             <TabItem Header="TabItem">
                 <Grid Background="#FFE5E5E5" />
@@ -23,7 +23,7 @@
                 <Grid Background="#FFE5E5E5" />
             </TabItem>
         </TabControl>
-        <TabControl x:Name="tabControl_server" Grid.Column="1" HorizontalAlignment="Left" Height="324" Margin="10,10,0,0" VerticalAlignment="Top" Width="733">
+        <TabControl x:Name="tabControl_server" HorizontalAlignment="Left" Height="324" Margin="4,10,0,0" VerticalAlignment="Top" Width="733" Grid.Column="1">
             <TabItem Header="TabItem">
                 <Grid Background="#FFE5E5E5" />
             </TabItem>
@@ -31,5 +31,7 @@
                 <Grid Background="#FFE5E5E5" />
             </TabItem>
         </TabControl>
+        <Button x:Name="button_next" Content="Button" Grid.Column="1" HorizontalAlignment="Left" Height="42" Margin="771,10,-80,0" VerticalAlignment="Top" Width="150" />
+        <Button x:Name="button_reset" Content="Button" Grid.Column="1" HorizontalAlignment="Left" Height="42" Margin="945,10,-254,0" VerticalAlignment="Top" Width="150" />
     </Grid>
 </Window>
