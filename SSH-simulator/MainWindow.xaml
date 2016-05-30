@@ -5,33 +5,133 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SSH_simulator"
         mc:Ignorable="d"
-        Title="MainWindow" Height="1000" Width="1865.5">
+        Title="MainWindow" Height="860.5" Width="1346.5">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="752" />
-            <ColumnDefinition Width="840" />
+            <ColumnDefinition Width="1594" />
         </Grid.ColumnDefinitions>
-        <TextBox x:Name="textBox_client" HorizontalAlignment="Left" Height="300" Margin="10,339,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="733" />
-        <TextBox x:Name="textBox_server" HorizontalAlignment="Left" Height="300" Margin="4,339,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="733" Grid.Column="1" />
-        <TextBox x:Name="textBox_client_decoded" HorizontalAlignment="Left" Height="300" Margin="10,644,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="733" />
-        <TextBox x:Name="textBox_server_decoded" HorizontalAlignment="Left" Height="300" Margin="4,644,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="733" Grid.Column="1" />
-        <TabControl x:Name="tabControl_client" HorizontalAlignment="Left" Height="324" Margin="10,10,0,0" VerticalAlignment="Top" Width="733">
-            <TabItem Header="TabItem">
-                <Grid Background="#FFE5E5E5" />
+        <TextBox x:Name="textBox_client" HorizontalAlignment="Left" Height="191" Margin="7,35,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="433" />
+        <TextBox x:Name="textBox_client_decoded" HorizontalAlignment="Left" Height="191" Margin="445,35,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="464" />
+        <TextBox x:Name="textBox_server" HorizontalAlignment="Left" Height="200" Margin="7,262,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="433" />
+        <TextBox x:Name="textBox_server_decoded" HorizontalAlignment="Left" Height="200" Margin="445,262,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="464" />
+        <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="323" Margin="7,507,0,0" VerticalAlignment="Top" Width="1269">
+            <TabItem Header="Algoritmi">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <GridSplitter x:Name="gridSplitter" HorizontalAlignment="Left" Height="321" Margin="643,-1,0,-29" VerticalAlignment="Top" Width="5" />
+                    <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="282,3,0,0" TextWrapping="Wrap" Text="SSH-2.0-klijent_v1.0" VerticalAlignment="Top" Width="248" />
+                    <TextBox x:Name="textBox1" HorizontalAlignment="Left" Height="23" Margin="936,2,0,0" TextWrapping="Wrap" Text="SSH-2.0-server_v1.0" VerticalAlignment="Top" Width="248" />
+                    <Label x:Name="label7" Content="Identifikacijski niz" HorizontalAlignment="Left" Margin="174,0,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label6" Content="Identifikacijski niz" HorizontalAlignment="Left" Margin="828,-1,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label8" Content="Diffie-Hellman" HorizontalAlignment="Left" Margin="10,32,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label9" Content="Digitalni potpis" HorizontalAlignment="Left" Margin="151,32,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label10" Content="Enkripcija" HorizontalAlignment="Left" Margin="334,32,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label11" Content="MAC" HorizontalAlignment="Left" Margin="519,32,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label8_Copy" Content="Diffie-Hellman" HorizontalAlignment="Left" Margin="695,32,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label9_Copy" Content="Digitalni potpis" HorizontalAlignment="Left" Margin="840,32,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label10_Copy" Content="Enkripcija" HorizontalAlignment="Left" Margin="1013,32,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label11_Copy" Content="MAC" HorizontalAlignment="Left" Margin="1148,32,0,0" VerticalAlignment="Top" />
+                </Grid>
             </TabItem>
-            <TabItem Header="TabItem">
-                <Grid Background="#FFE5E5E5" />
+            <TabItem Header="Diffie-Hellman">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Label x:Name="label12" Content="Modul, p" HorizontalAlignment="Left" Margin="19,10,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label13" Content="Generator, g" HorizontalAlignment="Left" Margin="19,36,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label14" Content="Eksponent, x" HorizontalAlignment="Left" Margin="19,62,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label15" Content="e = g^x mod p" HorizontalAlignment="Left" Margin="19,93,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label16" Content="Tajni ključ K = f^x mod p" HorizontalAlignment="Left" Margin="19,124,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label17" Content="Hash razmjene, H" HorizontalAlignment="Left" Margin="33,183,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label18" Content="Javni ključ servera" HorizontalAlignment="Left" Margin="33,226,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label19" Content="Digitalni potpis servera" HorizontalAlignment="Left" Margin="33,257,0,0" VerticalAlignment="Top" />
+                    <GridSplitter x:Name="gridSplitter_Copy" HorizontalAlignment="Left" Height="281" Margin="625,0,0,0" VerticalAlignment="Top" Width="6" />
+                    <Label x:Name="label20" Content="Modul, p" HorizontalAlignment="Left" Margin="662,10,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label21" Content="Generator, g" HorizontalAlignment="Left" Margin="662,41,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label22" Content="Eksponent, y" HorizontalAlignment="Left" Margin="671,70,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label23" Content="f = g^y mod p" HorizontalAlignment="Left" Margin="671,101,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label24" Content="Tajni ključ K = e^y mod p" HorizontalAlignment="Left" Margin="662,132,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label26" Content="Digitalni potpis od H" HorizontalAlignment="Left" Margin="671,196,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label25" Content="Hash razmjene, H" HorizontalAlignment="Left" Margin="671,165,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label28" Content="DSA ključ" HorizontalAlignment="Left" Margin="678,248,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label27" Content="RSA ključ" HorizontalAlignment="Left" Margin="671,222,0,0" VerticalAlignment="Top" />
+                    <TextBox x:Name="textBox_RSA" HorizontalAlignment="Left" Height="23" Margin="763,228,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+                    <TextBox x:Name="textBox_DSA" HorizontalAlignment="Left" Height="23" Margin="773,257,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+                    <Button x:Name="button_RSA" Content="odaberi" HorizontalAlignment="Left" Margin="920,228,0,0" VerticalAlignment="Top" Width="75" />
+                    <Button x:Name="button_DSA" Content="odaberi" HorizontalAlignment="Left" Margin="920,257,0,0" VerticalAlignment="Top" Width="75" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Generiranje ključeva" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="125" Margin="-2,-2,-66,0">
+                <Grid Background="#FFE5E5E5">
+                    <GridSplitter x:Name="gridSplitter_Copy1" HorizontalAlignment="Left" Height="281" Margin="635,0,0,0" VerticalAlignment="Top" Width="6" />
+                    <Label x:Name="label30" Content="Sažetak H" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label29" Content="Tajni ključ K" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label31" Content="vektor klijent - server" HorizontalAlignment="Left" Margin="25,82,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label32" Content="vektor server - klijent" HorizontalAlignment="Left" Margin="36,113,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label33" Content="ključ enkripcije klijent - server" HorizontalAlignment="Left" Margin="36,164,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label34" Content="ključ enkripcije server - klijent" HorizontalAlignment="Left" Margin="36,206,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label35" Content="MAC ključ klijent - server" HorizontalAlignment="Left" Margin="36,237,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label36" Content="MAC ključ server - klijent" HorizontalAlignment="Left" Margin="36,268,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label30_Copy" Content="Sažetak H" HorizontalAlignment="Left" Margin="652,31,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label29_Copy" Content="Tajni ključ K" HorizontalAlignment="Left" Margin="652,5,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label31_Copy" Content="vektor klijent - server" HorizontalAlignment="Left" Margin="667,77,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label32_Copy" Content="vektor server - klijent" HorizontalAlignment="Left" Margin="678,108,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label33_Copy" Content="ključ enkripcije klijent - server" HorizontalAlignment="Left" Margin="678,159,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label34_Copy" Content="ključ enkripcije server - klijent" HorizontalAlignment="Left" Margin="678,201,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label35_Copy" Content="MAC ključ klijent - server" HorizontalAlignment="Left" Margin="678,232,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label36_Copy" Content="MAC ključ server - klijent" HorizontalAlignment="Left" Margin="678,263,0,0" VerticalAlignment="Top" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Autentifikacija" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="94" Margin="-2,-2,-35,0">
+                <Grid Background="#FFE5E5E5">
+                    <GridSplitter x:Name="gridSplitter_Copy2" HorizontalAlignment="Left" Height="281" Margin="641,0,0,0" VerticalAlignment="Top" Width="6" />
+                    <Label x:Name="label37" Content="login" HorizontalAlignment="Left" Margin="25,22,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label38" Content="lozinka" HorizontalAlignment="Left" Margin="10,48,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label39" Content="Baza koirisnika" HorizontalAlignment="Left" Margin="683,22,0,0" VerticalAlignment="Top" />
+                    <TextBox x:Name="textBox_baza_korisnika" HorizontalAlignment="Left" Height="23" Margin="848,22,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+                    <Button x:Name="button_baza_korisnika" Content="odaberi" HorizontalAlignment="Left" Margin="997,33,0,0" VerticalAlignment="Top" Width="75" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Protokol" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="65" Margin="-2,-2,-6,0">
+                <Grid Background="#FFE5E5E5">
+                    <Label x:Name="label41" Content="udaljeni identifikator kanala" HorizontalAlignment="Left" Margin="321,10,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label42" Content="veličina prozora" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label40" Content="lokalni identifikator kanala" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label41_Copy" Content="udaljeni identifikator kanala" HorizontalAlignment="Left" Margin="778,46,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label40_Copy" Content="lokalni identifikator kanala" HorizontalAlignment="Left" Margin="778,15,0,0" VerticalAlignment="Top" />
+                    <TextBox x:Name="textBox_naredba" HorizontalAlignment="Left" Height="23" Margin="457,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="298" />
+                    <Label x:Name="label43" Content="Naredba za izvršavanje" HorizontalAlignment="Left" Margin="321,36,0,0" VerticalAlignment="Top" />
+                    <TextBox x:Name="textBox2" HorizontalAlignment="Left" Height="184" Margin="10,97,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="745" />
+                    <Label x:Name="label44" Content="Rezultat naredbe" HorizontalAlignment="Left" Margin="10,71,0,0" VerticalAlignment="Top" />
+                    <TextBox x:Name="textBox_server_udaljeni_kanal" HorizontalAlignment="Left" Height="23" Margin="951,46,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+                    <TextBox x:Name="textBox_klijent_udaljeni_kanal" HorizontalAlignment="Left" Height="23" Margin="509,15,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+                    <TextBox x:Name="textBox_klijent_lokalni_kanal" HorizontalAlignment="Left" Height="23" Margin="159,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="138" />
+                    <TextBox x:Name="textBox_velicina_prozora" HorizontalAlignment="Left" Height="23" Margin="159,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="138" />
+                    <TextBox x:Name="textBox_server_lokalni_kanal" HorizontalAlignment="Left" Height="23" Margin="951,15,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+                    <GridSplitter x:Name="gridSplitter_Copy3" HorizontalAlignment="Left" Height="288" Margin="768,0,0,0" VerticalAlignment="Top" Width="6" RenderTransformOrigin="0.5,0.5">
+                        <GridSplitter.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="-1" />
+                                <SkewTransform />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </GridSplitter.RenderTransform>
+                    </GridSplitter>
+                </Grid>
             </TabItem>
         </TabControl>
-        <TabControl x:Name="tabControl_server" HorizontalAlignment="Left" Height="324" Margin="4,10,0,0" VerticalAlignment="Top" Width="733" Grid.Column="1">
-            <TabItem Header="TabItem">
-                <Grid Background="#FFE5E5E5" />
-            </TabItem>
-            <TabItem Header="TabItem">
-                <Grid Background="#FFE5E5E5" />
-            </TabItem>
-        </TabControl>
-        <Button x:Name="button_next" Content="Button" Grid.Column="1" HorizontalAlignment="Left" Height="42" Margin="771,10,-80,0" VerticalAlignment="Top" Width="150" />
-        <Button x:Name="button_reset" Content="Button" Grid.Column="1" HorizontalAlignment="Left" Height="42" Margin="945,10,-254,0" VerticalAlignment="Top" Width="150" />
+        <Button x:Name="button_next" Content="Idući korak" HorizontalAlignment="Left" Height="44" Margin="918,10,0,0" VerticalAlignment="Top" Width="140" />
+        <Button x:Name="button_reset" Content="Reset" HorizontalAlignment="Left" Height="44" Margin="1063,10,0,0" VerticalAlignment="Top" Width="140" />
+        <Label x:Name="label" Content="Klijent" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" />
+        <Label x:Name="label1" Content="Klijent dekodirano" HorizontalAlignment="Left" Margin="445,10,0,0" VerticalAlignment="Top" />
+        <Label x:Name="label2" Content="Server" HorizontalAlignment="Left" Margin="10,236,0,0" VerticalAlignment="Top" />
+        <Label x:Name="label3" Content="Server dekodirano" HorizontalAlignment="Left" Margin="445,236,0,0" VerticalAlignment="Top" />
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="327" Margin="445,493,0,0" VerticalAlignment="Top" Width="0" />
+        <Label x:Name="label4" Content="Klijent" HorizontalAlignment="Left" VerticalAlignment="Top" Height="41" Width="72" FontWeight="ExtraBlack" FontSize="16" BorderThickness="1" RenderTransformOrigin="3.583,3.024" Margin="248,470,0,0" />
+        <Label x:Name="label5" Content="Server" HorizontalAlignment="Left" Margin="918,471,0,0" VerticalAlignment="Top" Height="41" Width="61" FontSize="16" FontWeight="ExtraBlack" />
     </Grid>
 </Window>
