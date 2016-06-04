@@ -12,3 +12,5 @@ D:\Projekti\GIT\SSH-simulator\SSH-simulator\obj\Debug\SSH_simulator.Properties.R
 D:\Projekti\GIT\SSH-simulator\SSH-simulator\obj\Debug\SSH-simulator.csproj.GenerateResource.Cache
 D:\Projekti\GIT\SSH-simulator\SSH-simulator\obj\Debug\SSH-simulator.exe
 D:\Projekti\GIT\SSH-simulator\SSH-simulator\obj\Debug\SSH-simulator.pdb
+D:\Projekti\GIT\SSH-simulator\SSH-simulator\bin\Debug\Renci.SshNet.dll
+D:\Projekti\GIT\SSH-simulator\SSH-simulator\bin\Debug\Renci.SshNet.xml
