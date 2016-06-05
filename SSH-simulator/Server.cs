@@ -40,11 +40,12 @@ namespace SSH_simulator
             catch (Exception e)
             {
                 mainWindow.boolRetResult = false;
-                mainWindow.retResult = "Could send to client!";
+                mainWindow.retResult = "Nije moguće kontaktirati klijenta!";
                 return false;
             }
 
             mainWindow.boolRetResult = true;
+            mainWindow.textBox_info.AppendText("Server poslao identifikacijski paket\n\n");
             return true;
         }
 
@@ -89,11 +90,125 @@ namespace SSH_simulator
 
             string output = SSHHelper.ispis(paket);
 
-            mainWindow.textBox_server.Text += "\n\n\n" + output;
+            mainWindow.textBox_server.AppendText("\n\n\n" + output);
 
             string outputDecoded = SSHHelper.ispis(paket.Skip(5).ToArray());
 
-            mainWindow.textBox_server_decoded.Text += "\n\n\nVrsta paketa: " + packetType + " (" + tip + ")\n" + outputDecoded;
+            mainWindow.textBox_server_decoded.AppendText("\n\n\nVrsta paketa: " + packetType + " (" + tip + ")\n" + outputDecoded);
+        }
+
+        public void SendKEXINIT()
+        {
+            try
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+
+                List<byte> lista = new List<byte>();
+
+                Random rnd = new Random();
+
+                List<byte> payload = new List<byte>();
+
+                // identifikator paketa
+                var ident = BitConverter.GetBytes((int)identifiers.SSH_MSG_KEXINIT);
+                payload.Add(ident[0]);
+
+                // cookie
+                byte[] random = new byte[16];
+                rnd.NextBytes(random);
+
+                payload.AddRange(random);
+
+                // popis algoritama odvojeni s po 3 "prazna" bajta
+                //dh, dh server, potpis, potpis server, enkripcija, enkripcija server, mac, mac server, kompresija, kompresija server
+
+                if ((bool)mainWindow.checkBox_server_ec_dh.IsChecked)
+                {
+                    DH_ALGORITHMS.Insert(0, "ec-dh");
+                }
+
+                if ((bool)mainWindow.checkBox_server_ssh_rsa.IsChecked)
+                {
+                    SIGNATURE_ALGORITHMS.Insert(0, "ssh-rsa");
+                }
+
+                if ((bool)mainWindow.checkBox_server_blowfish_ctr.IsChecked)
+                {
+                    ENCRYPTION_ALGORITHMS.Insert(0, "blowfish-ctr");
+                }
+
+                if ((bool)mainWindow.checkBox_server_aes256_cbc.IsChecked)
+                {
+                    ENCRYPTION_ALGORITHMS.Insert(0, "aes256-cbc");
+                }
+
+                if ((bool)mainWindow.checkBox_server_hmac_sha2.IsChecked)
+                {
+                    MAC_ALGORITHMS.Insert(0, "hmac-sha2");
+                }
+
+                if ((bool)mainWindow.checkBox_server_gost28147.IsChecked)
+                {
+                    MAC_ALGORITHMS.Insert(0, "gost28147");
+                }
+
+                byte[] dh = Encoding.ASCII.GetBytes(string.Join(",", DH_ALGORITHMS));
+                byte[] sig = Encoding.ASCII.GetBytes(string.Join(",", SIGNATURE_ALGORITHMS));
+                byte[] cry = Encoding.ASCII.GetBytes(string.Join(",", ENCRYPTION_ALGORITHMS));
+                byte[] mac = Encoding.ASCII.GetBytes(string.Join(",", MAC_ALGORITHMS));
+                byte[] compress = Encoding.ASCII.GetBytes("none");
+
+                byte[] delimiter = new byte[3];
+                delimiter[0] = 0x0;
+                delimiter[1] = 0x0;
+                delimiter[2] = 0x0;
+
+                lista.AddRange(payload);
+
+                lista.AddRange(delimiter);
+                lista.AddRange(dh);
+                lista.AddRange(delimiter);
+                lista.AddRange(dh);
+
+                lista.AddRange(delimiter);
+                lista.AddRange(sig);
+                lista.AddRange(delimiter);
+                lista.AddRange(sig);
+
+                lista.AddRange(delimiter);
+                lista.AddRange(cry);
+                lista.AddRange(delimiter);
+                lista.AddRange(cry);
+
+                lista.AddRange(delimiter);
+                lista.AddRange(mac);
+                lista.AddRange(delimiter);
+                lista.AddRange(mac);
+
+                lista.AddRange(delimiter);
+                lista.AddRange(compress);
+
+                lista.AddRange(delimiter);
+                lista.AddRange(compress);
+
+                // sve to spojiti i to je korisni dio paketa
+
+                byte[] all = lista.ToArray();
+
+                // stvori paket
+                byte[] paket = SSHHelper.CreatePacket(all);
+
+                stream.Write(paket, 0, paket.Length);
+            }
+            catch
+            {
+                mainWindow.retResult = "Paket nije moguće poslati!";
+                mainWindow.boolRetResult = false;
+            }
+
+            mainWindow.boolRetResult = true;
+
+            mainWindow.textBox_info.AppendText("Server poslao KEXINIT paket\n\n");
         }
     }
 }
