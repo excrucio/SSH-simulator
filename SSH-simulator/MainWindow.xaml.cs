@@ -50,15 +50,43 @@ namespace SSH_simulator
             retResult = "";
             boolRetResult = false;
 
+            //1
             steps.Add(() => client.SendIdentifierToServer());
             steps.Add(() => server.ReadClientId());
+
+            //2
             steps.Add(() => server.SendIdentifierToClient());
             steps.Add(() => client.ReadServerId());
 
+            //3
             steps.Add(() => client.SendKEXINIT());
             steps.Add(() => server.ReadKEXINIT());
+
+            //4
             steps.Add(() => server.SendKEXINIT());
             steps.Add(() => client.ReadKEXINIT());
+
+            //5
+            steps.Add(() => client.SetAlgorithms());
+            steps.Add(() => server.SetAlgorithms());
+
+            //6
+            steps.Add(() => ShowAlgorithms());
+            steps.Add(() => {/* ništa*/ });
+        }
+
+        private void ShowAlgorithms()
+        {
+            var algs = client.GetAlgorithmsToUse();
+
+            MessageBox.Show("Razmjena ključeva:\t" + algs.DH_algorithm
+                            + "\nDigitalni potpis:\t" + algs.SIGNATURE_algorithm
+                            + "\nEnkripcija:\t\t" + algs.ENCRYPTION_algorithm
+                            + "\nMAC:\t\t" + algs.MAC_algorithm
+                            + "\nKompresija:\tnone"
+                            , "Dogovoreni algortimi");
+
+            tab_dh.Focus();
         }
 
         private void button_next_Click(object sender, RoutedEventArgs e)
@@ -80,7 +108,8 @@ namespace SSH_simulator
 
                 if (boolRetResult == false)
                 {
-                    ShowError(retResult);
+                    ShowDialogMsg(retResult);
+                    button_next.IsEnabled = false;
                 }
             }
 
@@ -92,9 +121,9 @@ namespace SSH_simulator
             textBox_server_decoded.ScrollToEnd();
         }
 
-        private void ShowError(string retResult)
+        private void ShowDialogMsg(string retResult)
         {
-            //TODO da pokaže error nekakav
+            MessageBox.Show(retResult);
         }
 
         private void button_reset_Click(object sender, RoutedEventArgs e)
@@ -108,6 +137,7 @@ namespace SSH_simulator
             textBox_info.Text = "";
             textBox_server.Text = "";
             textBox_server_decoded.Text = "";
+            button_next.IsEnabled = true;
 
             //prvi tab
             textBox_serverIdent.Text = "SSH-2.0-server_v1.0";

@@ -59,7 +59,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AlgorithmsUsed.cs" />
     <Compile Include="identifiers.cs" />
+    <Compile Include="Packet.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="SSHHelper.cs" />
     <Page Include="MainWindow.xaml">

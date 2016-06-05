@@ -17,7 +17,7 @@
             <TextBox x:Name="textBox_server" HorizontalAlignment="Left" Height="200" Margin="7,262,0,0" VerticalAlignment="Top" Width="489" VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True" IsReadOnly="True" FontFamily="Consolas" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" />
             <TextBox x:Name="textBox_server_decoded" HorizontalAlignment="Left" Height="200" Margin="503,262,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="483" ScrollViewer.CanContentScroll="True" VerticalScrollBarVisibility="Auto" UseLayoutRounding="True" IsReadOnly="True" FontFamily="Consolas" AcceptsReturn="True" AcceptsTab="True" />
             <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="323" Margin="7,507,0,0" VerticalAlignment="Top" Width="1269">
-                <TabItem Header="Algoritmi">
+                <TabItem x:Name="tab_algoritmi" Header="Algoritmi">
                     <Grid Background="#FFE5E5E5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
@@ -68,36 +68,51 @@
                         <Label x:Name="label49_Copy" Content="hmac-sha1" HorizontalAlignment="Left" Margin="1170,107,0,0" VerticalAlignment="Top" />
                     </Grid>
                 </TabItem>
-                <TabItem Header="Diffie-Hellman">
+                <TabItem x:Name="tab_dh" Header="Diffie-Hellman">
                     <Grid Background="#FFE5E5E5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <Label x:Name="label12" Content="Modul, p" HorizontalAlignment="Left" Margin="19,10,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label13" Content="Generator, g" HorizontalAlignment="Left" Margin="19,36,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label14" Content="Eksponent, x" HorizontalAlignment="Left" Margin="19,62,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label15" Content="e = g^x mod p" HorizontalAlignment="Left" Margin="19,93,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label16" Content="Tajni ključ K = f^x mod p" HorizontalAlignment="Left" Margin="19,124,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label17" Content="Hash razmjene, H" HorizontalAlignment="Left" Margin="33,183,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label18" Content="Javni ključ servera" HorizontalAlignment="Left" Margin="33,226,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label19" Content="Digitalni potpis servera" HorizontalAlignment="Left" Margin="33,257,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label12" Content="Modul, p" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label13" Content="Generator, g" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label14" Content="Eksponent, x" HorizontalAlignment="Left" Margin="10,62,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label15" Content="e = g^x mod p" HorizontalAlignment="Left" Margin="10,88,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label16" Content="Tajni ključ K = f^x mod p" HorizontalAlignment="Left" Margin="10,114,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label17" Content="Hash razmjene, H" HorizontalAlignment="Left" Margin="10,140,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label18" Content="Javni ključ servera" HorizontalAlignment="Left" Margin="10,165,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label19" Content="Digitalni potpis servera" HorizontalAlignment="Left" Margin="10,191,0,0" VerticalAlignment="Top" />
                         <GridSplitter x:Name="gridSplitter_Copy" HorizontalAlignment="Left" Height="281" Margin="625,0,0,0" VerticalAlignment="Top" Width="6" />
-                        <Label x:Name="label20" Content="Modul, p" HorizontalAlignment="Left" Margin="662,10,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label21" Content="Generator, g" HorizontalAlignment="Left" Margin="662,41,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label22" Content="Eksponent, y" HorizontalAlignment="Left" Margin="671,70,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label23" Content="f = g^y mod p" HorizontalAlignment="Left" Margin="671,101,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label24" Content="Tajni ključ K = e^y mod p" HorizontalAlignment="Left" Margin="662,132,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label26" Content="Digitalni potpis od H" HorizontalAlignment="Left" Margin="671,196,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label25" Content="Hash razmjene, H" HorizontalAlignment="Left" Margin="671,165,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label28" Content="DSA ključ" HorizontalAlignment="Left" Margin="678,248,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label27" Content="RSA ključ" HorizontalAlignment="Left" Margin="671,222,0,0" VerticalAlignment="Top" />
-                        <TextBox x:Name="textBox_RSA" HorizontalAlignment="Left" Height="23" Margin="763,228,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
-                        <TextBox x:Name="textBox_DSA" HorizontalAlignment="Left" Height="23" Margin="773,257,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
-                        <Button x:Name="button_RSA" Content="odaberi" HorizontalAlignment="Left" Margin="920,228,0,0" VerticalAlignment="Top" Width="75" />
-                        <Button x:Name="button_DSA" Content="odaberi" HorizontalAlignment="Left" Margin="920,257,0,0" VerticalAlignment="Top" Width="75" />
+                        <Label x:Name="label20" Content="Modul, p" HorizontalAlignment="Left" Margin="636,10,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label21" Content="Generator, g" HorizontalAlignment="Left" Margin="636,36,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label22" Content="Eksponent, y" HorizontalAlignment="Left" Margin="636,62,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label23" Content="f = g^y mod p" HorizontalAlignment="Left" Margin="636,88,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label24" Content="Tajni ključ K = e^y mod p" HorizontalAlignment="Left" Margin="636,114,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label26" Content="Digitalni potpis od H" HorizontalAlignment="Left" Margin="636,165,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label25" Content="Hash razmjene, H" HorizontalAlignment="Left" Margin="636,140,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label28" Content="DSA ključ" HorizontalAlignment="Left" Margin="636,217,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label27" Content="RSA ključ" HorizontalAlignment="Left" Margin="636,191,0,0" VerticalAlignment="Top" />
+                        <TextBox x:Name="textBox_RSA" HorizontalAlignment="Left" Height="23" Margin="791,197,0,0" VerticalAlignment="Top" Width="356" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_DSA" HorizontalAlignment="Left" Height="23" Margin="791,220,0,0" VerticalAlignment="Top" Width="356" VerticalScrollBarVisibility="Disabled" />
+                        <Button x:Name="button_RSA" Content="odaberi" HorizontalAlignment="Left" Margin="1152,198,0,0" VerticalAlignment="Top" Width="75" />
+                        <Button x:Name="button_DSA" Content="odaberi" HorizontalAlignment="Left" Margin="1152,221,0,0" VerticalAlignment="Top" Width="75" />
+                        <TextBox x:Name="textBox_ser_mod_p" HorizontalAlignment="Left" Height="23" Margin="791,10,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_ser_g" HorizontalAlignment="Left" Height="23" Margin="791,36,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_y" HorizontalAlignment="Left" Height="23" Margin="791,62,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_f" HorizontalAlignment="Left" Height="23" Margin="791,88,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_ser_K" HorizontalAlignment="Left" Height="23" Margin="791,114,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_ser_H" HorizontalAlignment="Left" Height="23" Margin="791,140,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_sig_H" HorizontalAlignment="Left" Height="23" Margin="791,165,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_cli_mod_p" HorizontalAlignment="Left" Height="23" Margin="173,10,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_cli_g" HorizontalAlignment="Left" Height="23" Margin="173,36,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_x" HorizontalAlignment="Left" Height="23" Margin="173,62,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_e" HorizontalAlignment="Left" Height="23" Margin="173,88,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_cli_K" HorizontalAlignment="Left" Height="23" Margin="173,114,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_cli_H" HorizontalAlignment="Left" Height="23" Margin="173,140,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_ser_pub_key" HorizontalAlignment="Left" Height="23" Margin="173,165,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_sig_ser" HorizontalAlignment="Left" Height="23" Margin="173,193,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
                     </Grid>
                 </TabItem>
-                <TabItem Header="Generiranje ključeva" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="125" Margin="-2,-2,-66,0">
+                <TabItem x:Name="tab_keys" Header="Generiranje ključeva" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="125" Margin="-2,-2,-66,0">
                     <Grid Background="#FFE5E5E5">
                         <GridSplitter x:Name="gridSplitter_Copy1" HorizontalAlignment="Left" Height="281" Margin="635,0,0,0" VerticalAlignment="Top" Width="6" />
                         <Label x:Name="label30" Content="Sažetak H" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" />
@@ -118,7 +133,7 @@
                         <Label x:Name="label36_Copy" Content="MAC ključ server - klijent" HorizontalAlignment="Left" Margin="678,263,0,0" VerticalAlignment="Top" />
                     </Grid>
                 </TabItem>
-                <TabItem Header="Autentifikacija" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="94" Margin="-2,-2,-35,0">
+                <TabItem x:Name="tab_auth" Header="Autentifikacija" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="94" Margin="-2,-2,-35,0">
                     <Grid Background="#FFE5E5E5">
                         <GridSplitter x:Name="gridSplitter_Copy2" HorizontalAlignment="Left" Height="281" Margin="641,0,0,0" VerticalAlignment="Top" Width="6" />
                         <Label x:Name="label37" Content="login" HorizontalAlignment="Left" Margin="25,22,0,0" VerticalAlignment="Top" />
@@ -128,7 +143,7 @@
                         <Button x:Name="button_baza_korisnika" Content="odaberi" HorizontalAlignment="Left" Margin="997,33,0,0" VerticalAlignment="Top" Width="75" />
                     </Grid>
                 </TabItem>
-                <TabItem Header="Protokol" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="65" Margin="-2,-2,-6,0">
+                <TabItem x:Name="tab_protokol" Header="Protokol" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="65" Margin="-2,-2,-6,0">
                     <Grid Background="#FFE5E5E5">
                         <Label x:Name="label41" Content="udaljeni identifikator kanala" HorizontalAlignment="Left" Margin="321,10,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label42" Content="veličina prozora" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" />

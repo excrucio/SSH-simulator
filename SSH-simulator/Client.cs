@@ -23,6 +23,8 @@ namespace SSH_simulator
         private StreamReader reader;
         private StreamWriter writer;
         private MainWindow mainWindow;
+        private AlgorithmsUsed algorithmsToUse = new AlgorithmsUsed();
+        private AlgorithmsPacket algorithmsReceived = new AlgorithmsPacket();
 
         public Client(MemoryStream ms, MainWindow mw)
         {
@@ -30,6 +32,11 @@ namespace SSH_simulator
             stream = ms;
             reader = new StreamReader(ms);
             writer = new StreamWriter(ms);
+        }
+
+        public AlgorithmsUsed GetAlgorithmsToUse()
+        {
+            return algorithmsToUse;
         }
 
         public bool SendIdentifierToServer()
@@ -53,20 +60,30 @@ namespace SSH_simulator
 
         public void ReadServerId()
         {
-            stream.Seek(0, SeekOrigin.Begin);
-            string line = reader.ReadLine();
-            stream.Seek(0, SeekOrigin.Begin);
+            try
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+                string line = reader.ReadLine();
+                stream.Seek(0, SeekOrigin.Begin);
 
-            mainWindow.boolRetResult = true;
-            if (!line.StartsWith("SSH-2.0-"))
+                mainWindow.boolRetResult = true;
+                if (!line.StartsWith("SSH-2.0-"))
+                {
+                    mainWindow.boolRetResult = false;
+                    mainWindow.retResult = "Not valid identifier!";
+                    return;
+                }
+
+                mainWindow.textBox_client.Text = line;
+                mainWindow.textBox_client_decoded.Text = line;
+            }
+            catch
             {
                 mainWindow.boolRetResult = false;
-                mainWindow.retResult = "Not valid identifier!";
-                return;
+                mainWindow.retResult = "Neuspješan primitak paketa!";
             }
 
-            mainWindow.textBox_client.Text = line;
-            mainWindow.textBox_client_decoded.Text = line;
+            mainWindow.boolRetResult = true;
         }
 
         public void SendKEXINIT()
@@ -129,37 +146,51 @@ namespace SSH_simulator
                 byte[] compress = Encoding.ASCII.GetBytes("none");
 
                 byte[] delimiter = new byte[3];
-                delimiter[0] = 0x0;
-                delimiter[1] = 0x0;
-                delimiter[2] = 0x0;
+
+                // delimiteri su: 0E (14), 0F (15), 25 (35), 3D (61), 5B (91)
 
                 List<byte> lista = new List<byte>();
 
                 lista.AddRange(payload);
 
-                lista.AddRange(delimiter);
-                lista.AddRange(dh);
+                delimiter = BitConverter.GetBytes(14);
+                // reverse zbog toga da ide iz little u big endian - ("normalni")
+                Array.Reverse(delimiter);
+
                 lista.AddRange(delimiter);
                 lista.AddRange(dh);
 
+                delimiter = BitConverter.GetBytes(15);
+                // reverse zbog toga da ide iz little u big endian - ("normalni")
+                Array.Reverse(delimiter);
+
                 lista.AddRange(delimiter);
                 lista.AddRange(sig);
-                lista.AddRange(delimiter);
-                lista.AddRange(sig);
+
+                delimiter = BitConverter.GetBytes(35);
+                // reverse zbog toga da ide iz little u big endian - ("normalni")
+                Array.Reverse(delimiter);
 
                 lista.AddRange(delimiter);
                 lista.AddRange(cry);
                 lista.AddRange(delimiter);
                 lista.AddRange(cry);
 
+                delimiter = BitConverter.GetBytes(61);
+                // reverse zbog toga da ide iz little u big endian - ("normalni")
+                Array.Reverse(delimiter);
+
                 lista.AddRange(delimiter);
                 lista.AddRange(mac);
                 lista.AddRange(delimiter);
                 lista.AddRange(mac);
+
+                delimiter = BitConverter.GetBytes(91);
+                // reverse zbog toga da ide iz little u big endian - ("normalni")
+                Array.Reverse(delimiter);
 
                 lista.AddRange(delimiter);
                 lista.AddRange(compress);
-
                 lista.AddRange(delimiter);
                 lista.AddRange(compress);
 
@@ -185,32 +216,73 @@ namespace SSH_simulator
 
         public void ReadKEXINIT()
         {
-            stream.Seek(0, SeekOrigin.Begin);
-
-            byte[] size = new byte[4];
-            stream.Read(size, 0, size.Length);
-            Array.Reverse(size);
-            int packetSize = BitConverter.ToInt32(size, 0);
-
-            byte[] paket = new byte[packetSize + size.Length];
-
-            stream.Seek(0, SeekOrigin.Begin);
-            stream.Read(paket, 0, packetSize + size.Length);
-
-            int tip = Convert.ToInt32(paket[5]);
-            string packetType = "undefined";
-            if (Enum.IsDefined(typeof(identifiers), tip))
+            try
             {
-                packetType = Enum.GetName(typeof(identifiers), tip);
+                stream.Seek(0, SeekOrigin.Begin);
+
+                byte[] size = new byte[4];
+                stream.Read(size, 0, size.Length);
+                Array.Reverse(size);
+                int packetSize = BitConverter.ToInt32(size, 0);
+
+                byte[] paket = new byte[packetSize + size.Length];
+
+                stream.Seek(0, SeekOrigin.Begin);
+                stream.Read(paket, 0, packetSize + size.Length);
+
+                int tip = Convert.ToInt32(paket[5]);
+                string packetType = "undefined";
+                if (Enum.IsDefined(typeof(identifiers), tip))
+                {
+                    packetType = Enum.GetName(typeof(identifiers), tip);
+                }
+
+                string output = SSHHelper.ispis(paket);
+
+                mainWindow.textBox_client.AppendText("\n\n\n" + output);
+
+                string outputDecoded = SSHHelper.ispis(paket.Skip(5).ToArray());
+
+                mainWindow.textBox_client_decoded.AppendText("\n\n\nVrsta paketa: " + packetType + " (" + tip + ")\n" + outputDecoded);
+
+                AlgorithmsPacket algoritmi = SSHHelper.GetAlgorithmsPacket(paket);
+
+                algorithmsReceived = algoritmi;
+            }
+            catch
+            {
+                mainWindow.boolRetResult = false;
+                mainWindow.retResult = "Neuspješan primitak paketa!";
             }
 
-            string output = SSHHelper.ispis(paket);
+            mainWindow.boolRetResult = true;
+        }
 
-            mainWindow.textBox_client.AppendText("\n\n\n" + output);
+        public void SetAlgorithms()
+        {
+            try
+            {
+                AlgorithmsUsed usedAl = SSHHelper.GetAlgorithmsForClientToUse(DH_ALGORITHMS, SIGNATURE_ALGORITHMS, ENCRYPTION_ALGORITHMS, MAC_ALGORITHMS, algorithmsReceived);
 
-            string outputDecoded = SSHHelper.ispis(paket.Skip(5).ToArray());
+                algorithmsToUse = usedAl;
 
-            mainWindow.textBox_client_decoded.AppendText("\n\n\nVrsta paketa: " + packetType + " (" + tip + ")\n" + outputDecoded);
+                mainWindow.textBox_info.AppendText("Klijent i server utvrđuju koje algoritme da koriste na osnovu primljenih paketa\n\n");
+
+                if (!(algorithmsToUse.DH_algorithm != null && algorithmsToUse.ENCRYPTION_algorithm != null
+                      && algorithmsToUse.MAC_algorithm != null && algorithmsToUse.SIGNATURE_algorithm != null))
+
+                {
+                    mainWindow.retResult = "Neuspješan dogovor oko korištenja algoritama!";
+                    mainWindow.boolRetResult = false;
+                }
+            }
+            catch
+            {
+                mainWindow.retResult = "Neuspješan dogovor oko korištenja algoritama!";
+                mainWindow.boolRetResult = false;
+            }
+
+            mainWindow.boolRetResult = true;
         }
     }
 }
