@@ -35,6 +35,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.1.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>packages\BouncyCastle.1.8.1\lib\BouncyCastle.Crypto.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Renci.SshNet, Version=2013.4.7.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\SSH.NET.2013.4.7\lib\net40\Renci.SshNet.dll</HintPath>
       <Private>True</Private>
@@ -60,6 +64,12 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AlgorithmsUsed.cs" />
+    <Compile Include="DHg1.cs" />
+    <Compile Include="DHg14.cs" />
+    <Compile Include="ecdh-sha2-nistp256.cs" />
+    <Compile Include="ecdh-sha2-nistp384.cs" />
+    <Compile Include="ecdh-sha2-nistp521.cs" />
+    <Compile Include="ECDH_brainpoolP160r1.cs" />
     <Compile Include="identifiers.cs" />
     <Compile Include="Packet.cs" />
     <Compile Include="Server.cs" />

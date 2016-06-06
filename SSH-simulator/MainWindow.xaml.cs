@@ -73,6 +73,14 @@ namespace SSH_simulator
             //6
             steps.Add(() => ShowAlgorithms());
             steps.Add(() => {/* ništa*/ });
+
+            //7
+            steps.Add(() => client.CalculateDH());
+            steps.Add(() => server.CalculateDH());
+
+            //8
+            steps.Add(() => server.SendDHPacket());
+            steps.Add(() => client.ReadDHPacket());
         }
 
         private void ShowAlgorithms()

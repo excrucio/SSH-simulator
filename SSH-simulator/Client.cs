@@ -1,4 +1,9 @@
-﻿using Renci.SshNet;
+﻿using Org.BouncyCastle;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Math;
+using Org.BouncyCastle.Security;
+using Renci.SshNet;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,10 +19,12 @@ namespace SSH_simulator
 {
     public class Client
     {
-        public static List<string> DH_ALGORITHMS = new List<string> { "diffie-hellman-group1-sha1", "diffie-helmann-group14-sha1" };
+        public static List<string> DH_ALGORITHMS = new List<string> { "diffie-hellman-group1-sha1", "diffie-hellman-group14-sha1" };
         public static List<string> SIGNATURE_ALGORITHMS = new List<string> { "ssh-dss" };
         public static List<string> ENCRYPTION_ALGORITHMS = new List<string> { "3des-cbc" };
         public static List<string> MAC_ALGORITHMS = new List<string> { "hmac-sha1" };
+
+        private AsymmetricCipherKeyPair DH_KeyPair;
 
         private MemoryStream stream;
         private StreamReader reader;
@@ -283,6 +290,78 @@ namespace SSH_simulator
             }
 
             mainWindow.boolRetResult = true;
+        }
+
+        public void CalculateDH()
+        {
+            try
+            {
+                // what dh to calculate
+                // TODO ostali dh klijent
+                switch (algorithmsToUse.DH_algorithm)
+                {
+                    case "diffie-hellman-group1-sha1":
+                        {
+                            CalculateDH_g1();
+                            break;
+                        }
+
+                    case "diffie-hellman-group14-sha1":
+                        {
+                            CalculateDH_g14();
+                            break;
+                        }
+                }
+            }
+            catch
+            {
+                mainWindow.boolRetResult = false;
+                mainWindow.retResult = "Could not generate keys!";
+            }
+
+            mainWindow.boolRetResult = true;
+        }
+
+        private void CalculateDH_g1()
+        {
+            BigInteger p = new BigInteger(DHg1.p_hex, 16);
+            BigInteger g = new BigInteger(DHg1.g_hex, 16);
+
+            var kp = GetDHKeyPair(p, g);
+
+            DH_KeyPair = kp;
+        }
+
+        private void CalculateDH_g14()
+        {
+            BigInteger p = new BigInteger(DHg14.p_hex, 16);
+            BigInteger g = new BigInteger(DHg14.g_hex, 16);
+
+            var kp = GetDHKeyPair(p, g);
+
+            DH_KeyPair = kp;
+        }
+
+        private AsymmetricCipherKeyPair GetDHKeyPair(BigInteger p, BigInteger g)
+        {
+            mainWindow.textBox_cli_mod_p.Text = p.ToString();
+            mainWindow.textBox_cli_g.Text = g.ToString();
+
+            DHParameters importedParameters = new DHParameters(p, g);
+
+            var keyGen = GeneratorUtilities.GetKeyPairGenerator("DH");
+
+            KeyGenerationParameters kgp = new DHKeyGenerationParameters(new SecureRandom(), importedParameters);
+            keyGen.Init(kgp);
+
+            AsymmetricCipherKeyPair KeyPair = keyGen.GenerateKeyPair();
+
+            return KeyPair;
+        }
+
+        public void ReadDHPacket()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -31,7 +31,7 @@
                         <Label x:Name="label9" Content="Digitalni potpis" HorizontalAlignment="Left" Margin="205,32,0,0" VerticalAlignment="Top" FontWeight="Bold" />
                         <Label x:Name="label10" Content="Enkripcija" HorizontalAlignment="Left" Margin="384,32,0,0" VerticalAlignment="Top" FontWeight="Bold" />
                         <Label x:Name="label11" Content="MAC" HorizontalAlignment="Left" Margin="519,32,0,0" VerticalAlignment="Top" FontWeight="Bold" />
-                        <Label x:Name="label46" Content="diffie-nellman-group14-sha1" HorizontalAlignment="Left" Margin="10,107,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label46" Content="diffie-hellman-group14-sha1" HorizontalAlignment="Left" Margin="10,107,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label45" Content="diffie-hellman-group1-sha1" HorizontalAlignment="Left" Margin="10,81,0,0" VerticalAlignment="Top" />
                         <CheckBox x:Name="checkBox_ec_dh" Content="EC-DH" HorizontalAlignment="Left" Margin="19,63,0,0" VerticalAlignment="Top" ClickMode="Press" />
                         <CheckBox x:Name="checkBox_ssh_rsa" Content="ssh-rsa" HorizontalAlignment="Left" Margin="214,63,0,0" VerticalAlignment="Top" />
@@ -55,7 +55,7 @@
                         <Label x:Name="label9_Copy" Content="Digitalni potpis" HorizontalAlignment="Left" Margin="856,32,0,0" VerticalAlignment="Top" FontWeight="Bold" />
                         <Label x:Name="label10_Copy" Content="Enkripcija" HorizontalAlignment="Left" Margin="1035,32,0,0" VerticalAlignment="Top" FontWeight="Bold" />
                         <Label x:Name="label11_Copy" Content="MAC" HorizontalAlignment="Left" Margin="1170,32,0,0" VerticalAlignment="Top" FontWeight="Bold" />
-                        <Label x:Name="label46_Copy" Content="diffie-nellman-group14-sha1" HorizontalAlignment="Left" Margin="661,107,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label46_Copy" Content="diffie-hellman-group14-sha1" HorizontalAlignment="Left" Margin="661,107,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label45_Copy" Content="diffie-hellman-group1-sha1" HorizontalAlignment="Left" Margin="661,81,0,0" VerticalAlignment="Top" />
                         <CheckBox x:Name="checkBox_server_ec_dh" Content="EC-DH" HorizontalAlignment="Left" Margin="670,63,0,0" VerticalAlignment="Top" ClickMode="Press" />
                         <CheckBox x:Name="checkBox_server_ssh_rsa" Content="ssh-rsa" HorizontalAlignment="Left" Margin="865,63,0,0" VerticalAlignment="Top" />
