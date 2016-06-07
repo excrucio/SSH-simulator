@@ -344,7 +344,7 @@ namespace SSH_simulator
         public void SendDHPacket()
         {
             // koji dh paket?? "obični" ili ECDH?
-            //TODO napravi ovo prvo...
+            //TODO 0 napravi ovo prvo...
         }
     }
 }

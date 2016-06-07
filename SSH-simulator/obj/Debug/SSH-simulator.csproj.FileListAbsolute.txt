@@ -15,3 +15,6 @@ D:\Projekti\GIT\SSH-simulator\SSH-simulator\obj\Debug\SSH-simulator.pdb
 D:\Projekti\GIT\SSH-simulator\SSH-simulator\bin\Debug\Renci.SshNet.dll
 D:\Projekti\GIT\SSH-simulator\SSH-simulator\bin\Debug\Renci.SshNet.xml
 D:\Projekti\GIT\SSH-simulator\SSH-simulator\bin\Debug\BouncyCastle.Crypto.dll
+C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\bin\Debug\SSH-simulator.exe.config
+C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\obj\Debug\SSH-simulator.exe
+C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\obj\Debug\SSH-simulator.pdb
