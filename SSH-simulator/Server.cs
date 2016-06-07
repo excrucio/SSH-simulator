@@ -23,6 +23,8 @@ namespace SSH_simulator
 
         private AsymmetricCipherKeyPair DH_KeyPair;
 
+        private ExchangeParameters ex_params = new ExchangeParameters();
+
         private MemoryStream stream;
         private StreamReader reader;
         private StreamWriter writer;
@@ -80,6 +82,7 @@ namespace SSH_simulator
             {
                 mainWindow.boolRetResult = false;
                 mainWindow.retResult = "Neuspješan primitak paketa!";
+                return;
             }
 
             mainWindow.boolRetResult = true;
@@ -124,6 +127,7 @@ namespace SSH_simulator
             {
                 mainWindow.boolRetResult = false;
                 mainWindow.retResult = "Neuspješan primitak paketa!";
+                return;
             }
 
             mainWindow.boolRetResult = true;
@@ -250,6 +254,7 @@ namespace SSH_simulator
             {
                 mainWindow.retResult = "Paket nije moguće poslati!";
                 mainWindow.boolRetResult = false;
+                return;
             }
 
             mainWindow.boolRetResult = true;
@@ -264,11 +269,22 @@ namespace SSH_simulator
                 AlgorithmsUsed usedAl = SSHHelper.GetAlgorithmsForServerToUse(DH_ALGORITHMS, SIGNATURE_ALGORITHMS, ENCRYPTION_ALGORITHMS, MAC_ALGORITHMS, algorithmsReceived);
 
                 algorithmsToUse = usedAl;
+
+                mainWindow.textBox_info.AppendText("Server utvrđuje koje algoritme da koristi na osnovu primljenih paketa\n\n");
+
+                if (!(algorithmsToUse.DH_algorithm != null && algorithmsToUse.ENCRYPTION_algorithm != null
+                      && algorithmsToUse.MAC_algorithm != null && algorithmsToUse.SIGNATURE_algorithm != null))
+
+                {
+                    mainWindow.retResult = "Neuspješan dogovor oko korištenja algoritama!";
+                    mainWindow.boolRetResult = false;
+                }
             }
             catch
             {
                 mainWindow.retResult = "Neuspješan dogovor oko korištenja algoritama!";
                 mainWindow.boolRetResult = false;
+                return;
             }
 
             mainWindow.boolRetResult = true;
@@ -278,6 +294,8 @@ namespace SSH_simulator
         {
             try
             {
+                mainWindow.textBox_info.AppendText("Server računa parametre za Diffie-Hellman razmjenu\n\n");
+
                 // what dh to calculate
                 // TODO ostali dh server
                 switch (algorithmsToUse.DH_algorithm)
@@ -294,11 +312,18 @@ namespace SSH_simulator
                             break;
                         }
                 }
+
+                var privateKey = DH_KeyPair.Private as DHPrivateKeyParameters;
+                var publicKey = DH_KeyPair.Public as DHPublicKeyParameters;
+
+                mainWindow.textBox_y.Text = privateKey.X.ToString();
+                mainWindow.textBox_f.Text = publicKey.Y.ToString();
             }
             catch
             {
                 mainWindow.boolRetResult = false;
                 mainWindow.retResult = "Could not generate keys!";
+                return;
             }
 
             mainWindow.boolRetResult = true;
@@ -311,6 +336,8 @@ namespace SSH_simulator
 
             var kp = GetDHKeyPair(p, g);
 
+            ex_params.p = p;
+
             DH_KeyPair = kp;
         }
 
@@ -318,6 +345,8 @@ namespace SSH_simulator
         {
             BigInteger p = new BigInteger(DHg14.p_hex, 16);
             BigInteger g = new BigInteger(DHg14.g_hex, 16);
+
+            ex_params.p = p;
 
             var kp = GetDHKeyPair(p, g);
 
@@ -341,61 +370,69 @@ namespace SSH_simulator
             return KeyPair;
         }
 
-        public void SendDHPacket()
+        public void ReadDHPacket()
         {
-            // koji dh paket?? "obični" ili ECDH?
-            bool ecdhPacket = algorithmsToUse.DH_algorithm.StartsWith("ecdh");
-
             try
             {
                 stream.Seek(0, SeekOrigin.Begin);
 
-                Random rnd = new Random();
+                byte[] size = new byte[4];
+                stream.Read(size, 0, size.Length);
+                Array.Reverse(size);
+                int packetSize = BitConverter.ToInt32(size, 0);
 
-                List<byte> payload = new List<byte>();
+                byte[] paket = new byte[packetSize + size.Length];
 
-                // identifikator paketa
-                byte[] ident;
-                if (ecdhPacket)
+                stream.Seek(0, SeekOrigin.Begin);
+                stream.Read(paket, 0, packetSize + size.Length);
+
+                int tip = Convert.ToInt32(paket[5]);
+                string packetType = "undefined";
+                if (Enum.IsDefined(typeof(identifiers), tip))
                 {
-                    ident = BitConverter.GetBytes((int)identifiers.SSH_MSG_KEX_ECDH_INIT);
+                    packetType = Enum.GetName(typeof(identifiers), tip);
                 }
-                else
-                {
-                    ident = BitConverter.GetBytes((int)identifiers.SSH_MSG_KEXDH_INIT);
-                }
-                payload.Add(ident[0]);
 
-                var pub = DH_KeyPair.Public as DHPublicKeyParameters;
+                string output = SSHHelper.ispis(paket);
 
-                List<byte> lista = new List<byte>();
+                mainWindow.textBox_server.AppendText("\n\n\n" + output);
 
-                lista.AddRange(payload);
-                lista.AddRange(pub.Y.ToByteArray());
+                string outputDecoded = SSHHelper.ispis(paket.Skip(5).ToArray());
 
-                byte[] all = lista.ToArray();
+                // pokupi parametar e
+                // paket - cijeli paket i sve
+                // duljina paketa - bez sebe
+                //uzmi samo dio s info: duljinaPaketa - duljinaDopune
 
-                // stvori paket
-                byte[] paket = SSHHelper.CreatePacket(all);
+                int dopunaSize = Convert.ToInt32(paket[4]);
 
-                stream.Write(paket, 0, paket.Length);
+                // 6 jer je 4 size, 1 dopuna size, 1 paket identifier
+                // -2 dodatno jer je u size i paket identifier
+                var e_param = new BigInteger(paket, 6, packetSize - dopunaSize - 2);
+
+                var privateKey = DH_KeyPair.Private as DHPrivateKeyParameters;
+                // K = e^y mod p
+                var K = e_param.ModPow(privateKey.X, ex_params.p);
+
+                ex_params.K = K;
+
+                mainWindow.textBox_ser_K.Text = ex_params.K.ToString();
+
+                mainWindow.textBox_server_decoded.AppendText("\n\n\nVrsta paketa: " + packetType + " (" + tip + ")\n" + outputDecoded);
             }
             catch
             {
-                mainWindow.retResult = "Paket nije moguće poslati!";
                 mainWindow.boolRetResult = false;
+                mainWindow.retResult = "Neuspješan primitak paketa!";
+                return;
             }
 
             mainWindow.boolRetResult = true;
+        }
 
-            if (ecdhPacket)
-            {
-                mainWindow.textBox_info.AppendText("Server poslao KEX_ECDH_INIT paket\n\n");
-            }
-            else
-            {
-                mainWindow.textBox_info.AppendText("Server poslao KEXDH_INIT paket\n\n");
-            }
+        public void SendDHPacket()
+        {
+            //TODO 0 throw new NotImplementedException();
         }
     }
 }

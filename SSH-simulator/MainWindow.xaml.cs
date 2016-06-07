@@ -50,6 +50,10 @@ namespace SSH_simulator
             retResult = "";
             boolRetResult = false;
 
+            //****************
+            // koraci
+            //****************
+
             //1
             steps.Add(() => client.SendIdentifierToServer());
             steps.Add(() => server.ReadClientId());
@@ -68,23 +72,27 @@ namespace SSH_simulator
 
             //5
             steps.Add(() => client.SetAlgorithms());
-            steps.Add(() => server.SetAlgorithms());
+            steps.Add(() => {/* ništa*/ });
 
             //6
+            steps.Add(() => server.SetAlgorithms());
             steps.Add(() => ShowAlgorithms());
-            steps.Add(() => {/* ništa*/ });
 
             //7
             steps.Add(() => client.CalculateDH());
-            steps.Add(() => server.CalculateDH());
+            steps.Add(() => {/* ništa*/ });
 
             //8
-            steps.Add(() => server.SendDHPacket());
-            steps.Add(() => client.ReadDHPacket());
+            steps.Add(() => server.CalculateDH());
+            steps.Add(() => {/* ništa*/ });
 
             //9
             steps.Add(() => client.SendDHPacket());
             steps.Add(() => server.ReadDHPacket());
+
+            //10
+            steps.Add(() => server.SendDHPacket());
+            steps.Add(() => client.ReadDHPacket());
         }
 
         private void ShowAlgorithms()
@@ -103,6 +111,8 @@ namespace SSH_simulator
 
         private void button_next_Click(object sender, RoutedEventArgs e)
         {
+            button_next.IsEnabled = false;
+
             for (int i = 0; i < 2; i++)
             {
                 if (steps.Count <= step)
@@ -120,8 +130,9 @@ namespace SSH_simulator
 
                 if (boolRetResult == false)
                 {
-                    ShowDialogMsg(retResult);
                     button_next.IsEnabled = false;
+                    ShowDialogMsg(retResult);
+                    break;
                 }
             }
 
@@ -131,6 +142,13 @@ namespace SSH_simulator
             textBox_client_decoded.ScrollToEnd();
             textBox_server.ScrollToEnd();
             textBox_server_decoded.ScrollToEnd();
+
+            if (boolRetResult == false)
+            {
+                return;
+            }
+
+            button_next.IsEnabled = true;
         }
 
         private void ShowDialogMsg(string retResult)

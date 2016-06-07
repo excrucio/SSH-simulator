@@ -50,7 +50,7 @@ namespace SSH_simulator
         public static string ispis(byte[] data)
         {
             string hex = BitConverter.ToString(data).Replace("-", " ");
-            string text = Encoding.ASCII.GetString(data).Replace('\0', '.').Replace('\n', '.');
+            string text = Encoding.ASCII.GetString(data).Replace('\0', '.').Replace('\n', '.').Replace('\r', '.').Replace('\v', '.').Replace('\t', '.');
 
             int i = 0;
             int j = 0;
