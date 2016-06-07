@@ -344,7 +344,58 @@ namespace SSH_simulator
         public void SendDHPacket()
         {
             // koji dh paket?? "obični" ili ECDH?
-            //TODO 0 napravi ovo prvo...
+            bool ecdhPacket = algorithmsToUse.DH_algorithm.StartsWith("ecdh");
+
+            try
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+
+                Random rnd = new Random();
+
+                List<byte> payload = new List<byte>();
+
+                // identifikator paketa
+                byte[] ident;
+                if (ecdhPacket)
+                {
+                    ident = BitConverter.GetBytes((int)identifiers.SSH_MSG_KEX_ECDH_INIT);
+                }
+                else
+                {
+                    ident = BitConverter.GetBytes((int)identifiers.SSH_MSG_KEXDH_INIT);
+                }
+                payload.Add(ident[0]);
+
+                var pub = DH_KeyPair.Public as DHPublicKeyParameters;
+
+                List<byte> lista = new List<byte>();
+
+                lista.AddRange(payload);
+                lista.AddRange(pub.Y.ToByteArray());
+
+                byte[] all = lista.ToArray();
+
+                // stvori paket
+                byte[] paket = SSHHelper.CreatePacket(all);
+
+                stream.Write(paket, 0, paket.Length);
+            }
+            catch
+            {
+                mainWindow.retResult = "Paket nije moguće poslati!";
+                mainWindow.boolRetResult = false;
+            }
+
+            mainWindow.boolRetResult = true;
+
+            if (ecdhPacket)
+            {
+                mainWindow.textBox_info.AppendText("Server poslao KEX_ECDH_INIT paket\n\n");
+            }
+            else
+            {
+                mainWindow.textBox_info.AppendText("Server poslao KEXDH_INIT paket\n\n");
+            }
         }
     }
 }
