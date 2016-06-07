@@ -81,6 +81,10 @@ namespace SSH_simulator
             //8
             steps.Add(() => server.SendDHPacket());
             steps.Add(() => client.ReadDHPacket());
+
+            //9
+            steps.Add(() => client.SendDHPacket());
+            steps.Add(() => server.ReadDHPacket());
         }
 
         private void ShowAlgorithms()
