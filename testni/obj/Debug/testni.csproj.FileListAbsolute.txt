@@ -4,3 +4,4 @@ D:\Projekti\GIT\SSH-simulator\testni\bin\Debug\testni.pdb
 D:\Projekti\GIT\SSH-simulator\testni\obj\Debug\testni.csprojResolveAssemblyReference.cache
 D:\Projekti\GIT\SSH-simulator\testni\obj\Debug\testni.exe
 D:\Projekti\GIT\SSH-simulator\testni\obj\Debug\testni.pdb
+D:\Projekti\GIT\SSH-simulator\testni\bin\Debug\BouncyCastle.Crypto.dll

@@ -1,4 +1,5 @@
 ﻿using Org.BouncyCastle;
+using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Math;
@@ -156,27 +157,25 @@ namespace SSH_simulator
 
                 byte[] delimiter = new byte[3];
 
-                // delimiteri su: 0E (14), 0F (15), 25 (35), 3D (61), 5B (91)
-
                 List<byte> lista = new List<byte>();
 
                 lista.AddRange(payload);
 
-                delimiter = BitConverter.GetBytes(14);
+                delimiter = BitConverter.GetBytes(dh.Length);
                 // reverse zbog toga da ide iz little u big endian - ("normalni")
                 Array.Reverse(delimiter);
 
                 lista.AddRange(delimiter);
                 lista.AddRange(dh);
 
-                delimiter = BitConverter.GetBytes(15);
+                delimiter = BitConverter.GetBytes(sig.Length);
                 // reverse zbog toga da ide iz little u big endian - ("normalni")
                 Array.Reverse(delimiter);
 
                 lista.AddRange(delimiter);
                 lista.AddRange(sig);
 
-                delimiter = BitConverter.GetBytes(35);
+                delimiter = BitConverter.GetBytes(cry.Length);
                 // reverse zbog toga da ide iz little u big endian - ("normalni")
                 Array.Reverse(delimiter);
 
@@ -185,7 +184,7 @@ namespace SSH_simulator
                 lista.AddRange(delimiter);
                 lista.AddRange(cry);
 
-                delimiter = BitConverter.GetBytes(61);
+                delimiter = BitConverter.GetBytes(mac.Length);
                 // reverse zbog toga da ide iz little u big endian - ("normalni")
                 Array.Reverse(delimiter);
 
@@ -194,7 +193,7 @@ namespace SSH_simulator
                 lista.AddRange(delimiter);
                 lista.AddRange(mac);
 
-                delimiter = BitConverter.GetBytes(91);
+                delimiter = BitConverter.GetBytes(compress.Length);
                 // reverse zbog toga da ide iz little u big endian - ("normalni")
                 Array.Reverse(delimiter);
 
@@ -202,6 +201,9 @@ namespace SSH_simulator
                 lista.AddRange(compress);
                 lista.AddRange(delimiter);
                 lista.AddRange(compress);
+
+                // dodati - first KEXINIT packet folows = false
+                lista.Add(0x0);
 
                 // sve to spojiti i to je korisni dio paketa
 
@@ -402,13 +404,12 @@ namespace SSH_simulator
                 }
                 payload.Add(ident[0]);
 
-                var pub = DH_KeyPair.Public as DHPublicKeyParameters;
+                byte[] publicKey = GetKEXDHPublicKeyBytes();
 
                 List<byte> lista = new List<byte>();
 
                 lista.AddRange(payload);
 
-                var publicKey = pub.Y.ToByteArray();
                 lista.AddRange(publicKey);
 
                 byte[] all = lista.ToArray();
@@ -435,6 +436,32 @@ namespace SSH_simulator
             {
                 mainWindow.textBox_info.AppendText("Klijent poslao KEXDH_INIT paket\n\n");
             }
+        }
+
+        private byte[] GetKEXDHPublicKeyBytes()
+        {
+            bool ecdhPacket = algorithmsToUse.DH_algorithm.StartsWith("ecdh");
+            if (!ecdhPacket)
+            {
+                var pub = DH_KeyPair.Public as DHPublicKeyParameters;
+                var publicKey = pub.Y.ToByteArrayUnsigned();
+                var pubLength = publicKey.Length;
+
+                var size = BitConverter.GetBytes(pubLength);
+                // reverse zbog toga da ide iz little u big endian - ("normalni")
+                Array.Reverse(size);
+
+                List<byte> rezultat = new List<byte>();
+
+                rezultat.AddRange(size);
+                rezultat.AddRange(publicKey);
+
+                return rezultat.ToArray();
+            }
+
+            // inače se radi o ECDH...
+            // TODO ECDH klijent send
+            return null;
         }
 
         public void ReadDHPacket()

@@ -194,27 +194,25 @@ namespace SSH_simulator
 
                 byte[] delimiter = new byte[3];
 
-                // delimiteri su: 0E (14), 0F (15), 25 (35), 3D (61), 5B (91)
-
                 List<byte> lista = new List<byte>();
 
                 lista.AddRange(payload);
 
-                delimiter = BitConverter.GetBytes(14);
+                delimiter = BitConverter.GetBytes(dh.Length);
                 // reverse zbog toga da ide iz little u big endian - ("normalni")
                 Array.Reverse(delimiter);
 
                 lista.AddRange(delimiter);
                 lista.AddRange(dh);
 
-                delimiter = BitConverter.GetBytes(15);
+                delimiter = BitConverter.GetBytes(sig.Length);
                 // reverse zbog toga da ide iz little u big endian - ("normalni")
                 Array.Reverse(delimiter);
 
                 lista.AddRange(delimiter);
                 lista.AddRange(sig);
 
-                delimiter = BitConverter.GetBytes(35);
+                delimiter = BitConverter.GetBytes(cry.Length);
                 // reverse zbog toga da ide iz little u big endian - ("normalni")
                 Array.Reverse(delimiter);
 
@@ -223,7 +221,7 @@ namespace SSH_simulator
                 lista.AddRange(delimiter);
                 lista.AddRange(cry);
 
-                delimiter = BitConverter.GetBytes(61);
+                delimiter = BitConverter.GetBytes(mac.Length);
                 // reverse zbog toga da ide iz little u big endian - ("normalni")
                 Array.Reverse(delimiter);
 
@@ -232,7 +230,7 @@ namespace SSH_simulator
                 lista.AddRange(delimiter);
                 lista.AddRange(mac);
 
-                delimiter = BitConverter.GetBytes(91);
+                delimiter = BitConverter.GetBytes(compress.Length);
                 // reverse zbog toga da ide iz little u big endian - ("normalni")
                 Array.Reverse(delimiter);
 
@@ -240,6 +238,9 @@ namespace SSH_simulator
                 lista.AddRange(compress);
                 lista.AddRange(delimiter);
                 lista.AddRange(compress);
+
+                // dodati - first KEXINIT packet folows = false
+                lista.Add(0x0);
 
                 // sve to spojiti i to je korisni dio paketa
 
@@ -402,13 +403,17 @@ namespace SSH_simulator
                 // pokupi parametar e
                 // paket - cijeli paket i sve
                 // duljina paketa - bez sebe
-                //uzmi samo dio s info: duljinaPaketa - duljinaDopune
+                // uzmi samo dio s info: duljinaPaketa - duljinaDopune - 1
 
                 int dopunaSize = Convert.ToInt32(paket[4]);
 
                 // 6 jer je 4 size, 1 dopuna size, 1 paket identifier
-                // -2 dodatno jer je u size i paket identifier
-                var e_param = new BigInteger(paket, 6, packetSize - dopunaSize - 2);
+                var e_size_array = paket.Skip(6).Take(4).ToArray();
+
+                Array.Reverse(e_size_array);
+                int e_size = BitConverter.ToInt32(e_size_array, 0);
+                var e_array = paket.Skip(6 + 4).Take(e_size).ToArray();
+                var e_param = new BigInteger(e_array);
 
                 var privateKey = DH_KeyPair.Private as DHPrivateKeyParameters;
                 // K = e^y mod p
@@ -434,6 +439,82 @@ namespace SSH_simulator
         {
             //TODO 0 throw new NotImplementedException();
             // radi se od kexdh_replay
+
+            // koji dh paket?? "obični" ili ECDH?
+            bool ecdhPacket = algorithmsToUse.DH_algorithm.StartsWith("ecdh");
+
+            try
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+
+                Random rnd = new Random();
+
+                List<byte> payload = new List<byte>();
+
+                // identifikator paketa
+                byte[] ident;
+                if (ecdhPacket)
+                {
+                    ident = BitConverter.GetBytes((int)identifiers.SSH_MSG_KEX_ECDH_REPLY);
+                }
+                else
+                {
+                    ident = BitConverter.GetBytes((int)identifiers.SSH_MSG_KEXDH_REPLY);
+                }
+                payload.Add(ident[0]);
+
+                // izračunati i dodati stvari u paket
+                //
+
+                var pub = DH_KeyPair.Public as DHPublicKeyParameters;
+
+                List<byte> lista = new List<byte>();
+
+                lista.AddRange(payload);
+
+                var publicKey = pub.Y.ToByteArray();
+                lista.AddRange(publicKey);
+
+                byte[] all = lista.ToArray();
+
+                // stvori paket
+                byte[] paket = SSHHelper.CreatePacket(all);
+
+                stream.Write(paket, 0, paket.Length);
+            }
+            catch
+            {
+                mainWindow.retResult = "Paket nije moguće poslati!";
+                mainWindow.boolRetResult = false;
+                return;
+            }
+
+            mainWindow.boolRetResult = true;
+
+            if (ecdhPacket)
+            {
+                mainWindow.textBox_info.AppendText("Klijent poslao KEX_ECDH_INIT paket\n\n");
+            }
+            else
+            {
+                mainWindow.textBox_info.AppendText("Klijent poslao KEXDH_INIT paket\n\n");
+            }
+        }
+
+        private byte[] GetKEXDHKEysPayload()
+        {
+            bool ecdhPacket = algorithmsToUse.DH_algorithm.StartsWith("ecdh");
+            if (!ecdhPacket)
+            {
+                var pub = DH_KeyPair.Public as DHPublicKeyParameters;
+                var publicKey = pub.Y.ToByteArray();
+
+                return publicKey;
+            }
+
+            // inače se radi o ECDH...
+            // TODO ECDH klijent send
+            return null;
         }
     }
 }

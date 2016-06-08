@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Org.BouncyCastle.Bcpg;
+using Org.BouncyCastle.Math;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipes;
@@ -13,6 +15,10 @@ namespace testni
     {
         private static void Main(string[] args)
         {
+            test();
+
+            return;
+
             Console.WriteLine("Server start call!");
             StartServer();
 
@@ -21,6 +27,37 @@ namespace testni
             StartKlijent("pa kako je, ša ima?");
 
             Console.ReadKey();
+        }
+
+        private static void test()
+        {
+            var num = new BigInteger("789");
+            var publicKey = new MPInteger(num);
+
+            var pubStringKey = publicKey.Value.ToString();
+            int pubLength = pubStringKey.Length;
+
+            var size = BitConverter.GetBytes(pubLength);
+            // reverse zbog toga da ide iz little u big endian - ("normalni")
+            Array.Reverse(size);
+
+            List<byte> rezultat = new List<byte>();
+
+            rezultat.AddRange(size);
+            rezultat.AddRange(Encoding.ASCII.GetBytes(pubStringKey));
+
+            var all = rezultat.ToArray();
+
+            byte[] velicina = new byte[4];
+            all.Take(size.Length);
+            Array.Reverse(velicina);
+            int packetSize = BitConverter.ToInt32(velicina, 0);
+
+            var broj = all.Skip(4).ToArray();
+            var brojString = Encoding.ASCII.GetString(broj);
+            var bigintBroj = new BigInteger(brojString);
+
+            bool valja = bigintBroj.Equals(num);
         }
 
         private static void StartKlijent(string msg)

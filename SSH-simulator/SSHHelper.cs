@@ -50,7 +50,7 @@ namespace SSH_simulator
         public static string ispis(byte[] data)
         {
             string hex = BitConverter.ToString(data).Replace("-", " ");
-            string text = Encoding.ASCII.GetString(data).Replace('\0', '.').Replace('\n', '.').Replace('\r', '.').Replace('\v', '.').Replace('\t', '.');
+            string text = Encoding.ASCII.GetString(data).Replace('\0', '.').Replace('\n', '.').Replace('\r', '.').Replace('\v', '.').Replace('\t', '.').Replace('\f', '.');
 
             int i = 0;
             int j = 0;
@@ -83,32 +83,54 @@ namespace SSH_simulator
             return output;
         }
 
-        internal static AlgorithmsPacket GetAlgorithmsPacket(byte[] paket)
+        internal static AlgorithmsPacket GetAlgorithmsPacket(byte[] data)
         {
-            string paketString = Encoding.ASCII.GetString(paket);
-            string rest = paketString.Split((char)14)[1];
-            string[] split = rest.Split((char)15);
+            byte[] size = new byte[4];
+            size = data.Take(size.Length).ToArray();
+            Array.Reverse(size);
+            int packetSize = BitConverter.ToInt32(size, 0);
 
-            string dh = split[0].Replace("\0", "");
-            split = split[1].Split((char)35);
+            int dopunaSize = Convert.ToInt32(data[4]);
 
-            string sig = split[0].Replace("\0", "");
+            // 6 jer je 4 size, 1 dopuna size, 1 paket identifier + 16 jer je to "cookie"
+            // -2 dodatno jer je u size i paket identifier
+            byte[] paket = data.Skip(6 + 16).Take(packetSize - dopunaSize - 2).ToArray();
 
-            string cry_cli = split[1].Replace("\0", "");
-            split = split[2].Split((char)61);
+            List<string> algoritmi = new List<string>();
 
-            string cry_serv = split[0].Replace("\0", "");
+            // 8 podataka jer nema language name-list dijela
+            for (int i = 0; i < 8; i++)
+            {
+                // veličina
+                byte[] sizeNum = new byte[4];
+                sizeNum = paket.Take(size.Length).ToArray();
+                Array.Reverse(sizeNum);
+                int algSize = BitConverter.ToInt32(sizeNum, 0);
 
-            string mac_cli = split[1].Replace("\0", "");
-            split = split[2].Split((char)91);
+                // podaci
+                byte[] alg = paket.Skip(4).Take(algSize).ToArray();
 
-            string mac_serv = split[0].Replace("\0", "");
+                // 4 zbog size i ostatak zbog samog pročitanog algoritma
+                paket = paket.Skip(4 + algSize).ToArray();
 
-            string cli_compression = split[1].Replace("\0", "");
+                algoritmi.Add(Encoding.ASCII.GetString(alg));
+            }
 
-            int fillSize = paketString[4];
+            string dh = algoritmi[0];
 
-            string serv_compression = split[2].Substring(0, split[2].Length - fillSize).Replace("\0", "");
+            string sig = algoritmi[1];
+
+            string cry_cli = algoritmi[2];
+
+            string cry_serv = algoritmi[3];
+
+            string mac_cli = algoritmi[4];
+
+            string mac_serv = algoritmi[5];
+
+            string cli_compression = algoritmi[6];
+
+            string serv_compression = algoritmi[7];
 
             return new AlgorithmsPacket
             {
