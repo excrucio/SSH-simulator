@@ -433,6 +433,7 @@ namespace SSH_simulator
         public void SendDHPacket()
         {
             //TODO 0 throw new NotImplementedException();
+            // radi se od kexdh_replay
         }
     }
 }
