@@ -19,10 +19,10 @@ namespace SSH_simulator
 {
     public class Server
     {
-        public static List<string> DH_ALGORITHMS = new List<string> { "diffie-hellman-group1-sha1", "diffie-hellman-group14-sha1" };
-        public static List<string> SIGNATURE_ALGORITHMS = new List<string> { "ssh-dss" };
-        public static List<string> ENCRYPTION_ALGORITHMS = new List<string> { "3des-cbc" };
-        public static List<string> MAC_ALGORITHMS = new List<string> { "hmac-sha1" };
+        public List<string> DH_ALGORITHMS = new List<string> { "diffie-hellman-group1-sha1", "diffie-hellman-group14-sha1" };
+        public List<string> SIGNATURE_ALGORITHMS = new List<string> { "ssh-dss" };
+        public List<string> ENCRYPTION_ALGORITHMS = new List<string> { "3des-cbc" };
+        public List<string> MAC_ALGORITHMS = new List<string> { "hmac-sha1" };
 
         private AsymmetricCipherKeyPair DH_KeyPair;
 
@@ -330,6 +330,8 @@ namespace SSH_simulator
                 var privateKey = DH_KeyPair.Private as DHPrivateKeyParameters;
                 var publicKey = DH_KeyPair.Public as DHPublicKeyParameters;
 
+                ex_params.f = publicKey.Y;
+
                 mainWindow.textBox_y.Text = privateKey.X.ToString();
                 mainWindow.textBox_f.Text = publicKey.Y.ToString();
             }
@@ -476,17 +478,17 @@ namespace SSH_simulator
                 payload.Add(ident[0]);
 
                 // pokupi privatni ključ i javni certifikata
-                byte[] serverCertPubKey = null;
-                byte[] serverCertPrivKey = null;
-                AsymmetricCipherKeyPair rsaPrivKey = null;
-                if (ENCRYPTION_ALGORITHMS.Contains("ssh-rsa"))
+                string serverCertPubKey = null;
+                string serverCertPrivKey = null;
+                AsymmetricCipherKeyPair rsaKeys = null;
+                if (algorithmsToUse.SIGNATURE_algorithm == "ssh-rsa")
                 {
                     // privatni ključ
                     using (StreamReader txtStream = File.OpenText(@"ServerCert\server_rsa.pem"))
                     {
                         PemReader reader = new PemReader(txtStream);
-                        rsaPrivKey = (AsymmetricCipherKeyPair)reader.ReadObject();
-                        serverCertPrivKey = reader.ReadPemObject().Content;
+                        rsaKeys = (AsymmetricCipherKeyPair)reader.ReadObject();
+                        serverCertPrivKey = txtStream.ReadToEnd();
                     }
 
                     // javni ključ
@@ -498,7 +500,7 @@ namespace SSH_simulator
                         content = txtStream.ReadLine();
                         string rsaPub = content.Split(' ')[1];
 
-                        serverCertPubKey = Encoding.ASCII.GetBytes(rsaPub);
+                        serverCertPubKey = rsaPub;
                     }
                 }
                 else
@@ -510,11 +512,19 @@ namespace SSH_simulator
                 // izračunati i dodati stvari u paket
 
                 // dodati javi ključ servera (javni ključ certifikata)
-                payload.AddRange(serverCertPubKey);
+                var size_certKey = BitConverter.GetBytes(serverCertPubKey.Length);
+                // reverse zbog toga da ide iz little u big endian - ("normalni")
+                Array.Reverse(size_certKey);
+                payload.AddRange(size_certKey);
+                payload.AddRange(Encoding.ASCII.GetBytes(serverCertPubKey));
 
                 // dodati javi ključ od DH (f parametar)
                 var pub = DH_KeyPair.Public as DHPublicKeyParameters;
                 var publicKey = pub.Y.ToByteArray();
+                var size_pubKey = BitConverter.GetBytes(publicKey.Length);
+                // reverse zbog toga da ide iz little u big endian - ("normalni")
+                Array.Reverse(size_pubKey);
+                payload.AddRange(size_pubKey);
                 payload.AddRange(publicKey);
 
                 // izračunati hash
@@ -525,19 +535,19 @@ namespace SSH_simulator
                 }
                 else
                 {
-                    hash = SSHHelper.ComputeSHA1Hash(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, serverCertPubKey, ex_params.e, pub.Y, ex_params.K);
+                    hash = SSHHelper.ComputeSHA1Hash(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, serverCertPubKey, ex_params.e, ex_params.f, ex_params.K);
                 }
+
+                mainWindow.textBox_ser_H.Text = Encoding.ASCII.GetString(hash);
 
                 // potpisati hash i dodati potpis
                 byte[] signature = null;
                 // rsa
-                if (ENCRYPTION_ALGORITHMS.Contains("ssh-rsa"))
+                if (algorithmsToUse.SIGNATURE_algorithm == "ssh-rsa")
                 {
-                    //TODO !! ovo treba prvo riješiti, koji k je s time.... iznad if blok valja...
-
                     var encryptEngine = new Pkcs1Encoding(new RsaEngine());
 
-                    encryptEngine.Init(true, rsaPrivKey.Private);
+                    encryptEngine.Init(true, rsaKeys.Private);
 
                     var encrypted = Convert.ToBase64String(encryptEngine.ProcessBlock(hash, 0, hash.Length));
 
@@ -546,10 +556,13 @@ namespace SSH_simulator
                 // dss
                 else
                 {
-                    // inače je ssh-dss
                     // TODO server ssh-dss
                 }
 
+                var size_sig = BitConverter.GetBytes(signature.Length);
+                // reverse zbog toga da ide iz little u big endian - ("normalni")
+                Array.Reverse(size_sig);
+                payload.AddRange(size_sig);
                 payload.AddRange(signature);
 
                 byte[] all = payload.ToArray();
@@ -570,11 +583,11 @@ namespace SSH_simulator
 
             if (ecdhPacket)
             {
-                mainWindow.textBox_info.AppendText("Klijent poslao KEX_ECDH_INIT paket\n\n");
+                mainWindow.textBox_info.AppendText("Server poslao KEX_ECDH_REPLY paket\n\n");
             }
             else
             {
-                mainWindow.textBox_info.AppendText("Klijent poslao KEXDH_INIT paket\n\n");
+                mainWindow.textBox_info.AppendText("Server poslao KEXDH_REPLY paket\n\n");
             }
         }
 

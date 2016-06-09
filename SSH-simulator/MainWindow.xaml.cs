@@ -72,7 +72,7 @@ namespace SSH_simulator
 
             //5
             steps.Add(() => client.SetAlgorithms());
-            steps.Add(() => {/* ništa*/ });
+            steps.Add(() => { /* ništa */ });
 
             //6
             steps.Add(() => server.SetAlgorithms());
@@ -80,7 +80,7 @@ namespace SSH_simulator
 
             //7
             steps.Add(() => client.CalculateDH());
-            steps.Add(() => {/* ništa*/ });
+            steps.Add(() => { tab_dh.Focus(); });
 
             //8
             steps.Add(() => server.CalculateDH());
@@ -168,6 +168,7 @@ namespace SSH_simulator
             textBox_server.Text = "";
             textBox_server_decoded.Text = "";
             button_next.IsEnabled = true;
+            tab_algoritmi.Focus();
 
             //prvi tab
             textBox_serverIdent.Text = "SSH-2.0-server_v1.0";
@@ -182,11 +183,27 @@ namespace SSH_simulator
             checkBox_server_ec_dh.IsChecked = false;
             checkBox_server_gost28147.IsChecked = false;
             checkBox_server_hmac_sha2.IsChecked = false;
-            checkBox_server_ssh_rsa.IsChecked = false;
-            checkBox_ssh_rsa.IsChecked = false;
+            checkBox_server_ssh_rsa.IsChecked = true;
+            checkBox_ssh_rsa.IsChecked = true;
 
             // drugi tab
-            // TODO drugi tab reset
+            textBox_cli_mod_p.Text = "";
+            textBox_cli_g.Text = "";
+            textBox_cli_H.Text = "";
+            textBox_cli_K.Text = "";
+            textBox_e.Text = "";
+            textBox_f.Text = "";
+            textBox_x.Text = "";
+            textBox_y.Text = "";
+            textBox_ser_pub_key.Text = "";
+            textBox_sig_ser.Text = "";
+            textBox_ser_g.Text = "";
+            textBox_ser_H.Text = "";
+            textBox_ser_K.Text = "";
+            textBox_ser_mod_p.Text = "";
+
+            // treći tab
+            // TODO treči tab
         }
     }
 }

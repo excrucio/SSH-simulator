@@ -235,11 +235,12 @@ namespace SSH_simulator
             return new AlgorithmsUsed { DH_algorithm = dh, ENCRYPTION_algorithm = cry, MAC_algorithm = mac, SIGNATURE_algorithm = sig };
         }
 
-        public static byte[] ComputeSHA1Hash(string clientIdent, string serverIdent, byte[] ClientKEXINIT, byte[] ServerKEXINIT, byte[] ServerCertPubKey,
+        public static byte[] ComputeSHA1Hash(string clientIdent, string serverIdent, byte[] ClientKEXINIT, byte[] ServerKEXINIT, string ServerCertPubKey,
                                             BigInteger e, BigInteger f, BigInteger K)
         {
             var cIdn = Encoding.ASCII.GetBytes(clientIdent);
             var sIdn = Encoding.ASCII.GetBytes(serverIdent);
+            var key = Encoding.ASCII.GetBytes(ServerCertPubKey);
             var e_array = e.ToByteArrayUnsigned();
             var f_array = f.ToByteArrayUnsigned();
             var K_array = K.ToByteArrayUnsigned();
@@ -250,7 +251,7 @@ namespace SSH_simulator
             arrayToHash.AddRange(sIdn);
             arrayToHash.AddRange(ClientKEXINIT);
             arrayToHash.AddRange(ServerKEXINIT);
-            arrayToHash.AddRange(ServerCertPubKey);
+            arrayToHash.AddRange(key);
             arrayToHash.AddRange(e_array);
             arrayToHash.AddRange(f_array);
             arrayToHash.AddRange(K_array);

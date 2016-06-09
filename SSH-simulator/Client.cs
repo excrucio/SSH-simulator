@@ -1,8 +1,11 @@
 ﻿using Org.BouncyCastle;
 using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Encodings;
+using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Math;
+using Org.BouncyCastle.OpenSsl;
 using Org.BouncyCastle.Security;
 using Renci.SshNet;
 using System;
@@ -20,10 +23,10 @@ namespace SSH_simulator
 {
     public class Client
     {
-        public static List<string> DH_ALGORITHMS = new List<string> { "diffie-hellman-group1-sha1", "diffie-hellman-group14-sha1" };
-        public static List<string> SIGNATURE_ALGORITHMS = new List<string> { "ssh-dss" };
-        public static List<string> ENCRYPTION_ALGORITHMS = new List<string> { "3des-cbc" };
-        public static List<string> MAC_ALGORITHMS = new List<string> { "hmac-sha1" };
+        public List<string> DH_ALGORITHMS = new List<string> { "diffie-hellman-group1-sha1", "diffie-hellman-group14-sha1" };
+        public List<string> SIGNATURE_ALGORITHMS = new List<string> { "ssh-dss" };
+        public List<string> ENCRYPTION_ALGORITHMS = new List<string> { "3des-cbc" };
+        public List<string> MAC_ALGORITHMS = new List<string> { "hmac-sha1" };
 
         private string _clientIdent;
         private string _serverIdent;
@@ -338,6 +341,8 @@ namespace SSH_simulator
                 var privateKey = DH_KeyPair.Private as DHPrivateKeyParameters;
                 var publicKey = DH_KeyPair.Public as DHPublicKeyParameters;
 
+                ex_params.e = publicKey.Y;
+
                 mainWindow.textBox_x.Text = privateKey.X.ToString();
                 mainWindow.textBox_e.Text = publicKey.Y.ToString();
             }
@@ -479,7 +484,158 @@ namespace SSH_simulator
 
         public void ReadDHPacket()
         {
-            //TODO 0 throw new NotImplementedException();
+            try
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+
+                // koji dh paket?? "obični" ili ECDH?
+                bool ecdhPacket = algorithmsToUse.DH_algorithm.StartsWith("ecdh");
+
+                byte[] size = new byte[4];
+                stream.Read(size, 0, size.Length);
+                Array.Reverse(size);
+                int packetSize = BitConverter.ToInt32(size, 0);
+
+                byte[] paket = new byte[packetSize + size.Length];
+
+                stream.Seek(0, SeekOrigin.Begin);
+                stream.Read(paket, 0, packetSize + size.Length);
+
+                int tip = Convert.ToInt32(paket[5]);
+                string packetType = "undefined";
+                if (Enum.IsDefined(typeof(identifiers), tip))
+                {
+                    packetType = Enum.GetName(typeof(identifiers), tip);
+                }
+
+                string output = SSHHelper.ispis(paket);
+
+                mainWindow.textBox_server.AppendText("\n\n\n" + output);
+
+                string outputDecoded = SSHHelper.ispis(paket.Skip(5).ToArray());
+                mainWindow.textBox_server_decoded.AppendText("\n\n\nVrsta paketa: " + packetType + " (" + tip + ")\n" + outputDecoded);
+
+                // pokupi javni ključ poslužitelja
+                // paket - cijeli paket i sve
+                // duljina paketa - bez sebe
+                // uzmi samo dio s info: duljinaPaketa - duljinaDopune - 1
+
+                int dopunaSize = Convert.ToInt32(paket[4]);
+
+                // 6 jer je 4 size, 1 dopuna size, 1 paket identifier
+                var K_S_size_array = paket.Skip(6).Take(4).ToArray();
+                Array.Reverse(K_S_size_array);
+                int K_S_size = BitConverter.ToInt32(K_S_size_array, 0);
+                var K_S_array = paket.Skip(6 + 4).Take(K_S_size).ToArray();
+                var K_S_param = Encoding.ASCII.GetString(K_S_array);
+
+                paket = paket.Skip(6 + 4 + K_S_size).ToArray();
+
+                // provjeri da je K_S valjan
+                // učitaj javni ključ i usporedi
+                string serverCertPubKey = null;
+                if (algorithmsToUse.SIGNATURE_algorithm == "ssh-rsa")
+                {
+                    // javni ključ
+                    using (StreamReader txtStream = File.OpenText(@"ServerCert\public_server_keys"))
+                    {
+                        // prva je dss
+                        string content = txtStream.ReadLine();
+                        //druga je rsa
+                        content = txtStream.ReadLine();
+                        string rsaPub = content.Split(' ')[1];
+
+                        serverCertPubKey = rsaPub;
+                    }
+                }
+                else
+                {
+                    // inače je ssh-dss
+                    // TODO server ssh-dss
+                }
+
+                if (Encoding.ASCII.GetString(K_S_array) != serverCertPubKey)
+                {
+                    mainWindow.boolRetResult = false;
+                    mainWindow.retResult = "Krivi javni ključ servera!";
+                    return;
+                }
+
+                // pokupi f
+                // 4 size
+                var f_size_array = paket.Take(4).ToArray();
+                Array.Reverse(f_size_array);
+                int f_size = BitConverter.ToInt32(f_size_array, 0);
+                var f_array = paket.Skip(4).Take(f_size).ToArray();
+                var f_param = new BigInteger(f_array);
+
+                paket = paket.Skip(4 + f_size).ToArray();
+
+                // pokupi potpis - s
+                // 4 size
+                var s_size_array = paket.Take(4).ToArray();
+                Array.Reverse(s_size_array);
+                int s_size = BitConverter.ToInt32(s_size_array, 0);
+                var s_param = paket.Skip(4).Take(s_size).ToArray();
+
+                var privateKey = DH_KeyPair.Private as DHPrivateKeyParameters;
+                // K = f^x mod p
+                var K = f_param.ModPow(privateKey.X, ex_params.p);
+
+                ex_params.K = K;
+                ex_params.f = f_param;
+
+                mainWindow.textBox_ser_K.Text = ex_params.K.ToString();
+
+                // izračunati hash
+                byte[] hash = null;
+                if (ecdhPacket)
+                {
+                    // TODO ecdh hash
+                }
+                else
+                {
+                    hash = SSHHelper.ComputeSHA1Hash(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, serverCertPubKey, ex_params.e, ex_params.f, ex_params.K);
+                }
+
+                var decryptEngine = new Pkcs1Encoding(new RsaBlindedEngine());
+
+                Org.BouncyCastle.Crypto.Parameters.RsaPrivateCrtKeyParameters key;
+
+                using (var txtreader = new StringReader("-----BEGIN RSA PUBLIC KEY-----" + K_S_param + "-----END RSA PUBLIC KEY-----"))
+                {
+                    key = (Org.BouncyCastle.Crypto.Parameters.RsaPrivateCrtKeyParameters)new PemReader(txtreader).ReadObject();
+                }
+
+                /*
+                using (var txtreader = new StringReader("-----BEGIN RSA PUBLIC KEY-----" + K_S_param + "\n-----END RSA PUBLIC KEY-----"))
+                //using (var txtreader = File.OpenText(@"ServerCert\rsa_server.pub"))
+                {
+                    var reader = new PemReader(txtreader);
+                    AsymmetricCipherKeyPair keyPair = (AsymmetricCipherKeyPair)reader.ReadObject();
+
+                    AsymmetricKeyParameter keyParameter = (AsymmetricKeyParameter)reader.ReadObject();
+
+                    decryptEngine.Init(false, keyParameter);
+                }
+
+                var decrypted = decryptEngine.ProcessBlock(hash, 0, hash.Length);
+
+                if (hash != decrypted)
+                {
+                    mainWindow.boolRetResult = false;
+                    mainWindow.retResult = "Hash paketa se razlikuje!";
+                    return;
+                }
+                */
+                stream.Seek(0, SeekOrigin.Begin);
+            }
+            catch
+            {
+                mainWindow.boolRetResult = false;
+                mainWindow.retResult = "Neuspješan primitak paketa!";
+                return;
+            }
         }
     }
 }
