@@ -25,6 +25,11 @@ namespace SSH_simulator
         public static List<string> ENCRYPTION_ALGORITHMS = new List<string> { "3des-cbc" };
         public static List<string> MAC_ALGORITHMS = new List<string> { "hmac-sha1" };
 
+        private string _clientIdent;
+        private string _serverIdent;
+        private byte[] _clientKEXINIT;
+        private byte[] _serverKEXINIT;
+
         private AsymmetricCipherKeyPair DH_KeyPair;
         private ExchangeParameters ex_params = new ExchangeParameters();
 
@@ -62,6 +67,8 @@ namespace SSH_simulator
                 return false;
             }
 
+            _clientIdent = mainWindow.textBox_clientIdent.Text;
+
             mainWindow.boolRetResult = true;
             mainWindow.textBox_info.Text = "Klijent poslao identifikacijski paket\n\n";
             return true;
@@ -82,6 +89,8 @@ namespace SSH_simulator
                     mainWindow.retResult = "Not valid identifier!";
                     return;
                 }
+
+                _serverIdent = line;
 
                 mainWindow.textBox_client.Text = line;
                 mainWindow.textBox_client_decoded.Text = line;
@@ -212,6 +221,8 @@ namespace SSH_simulator
                 // stvori paket
                 byte[] paket = SSHHelper.CreatePacket(all);
 
+                _clientKEXINIT = paket;
+
                 stream.Write(paket, 0, paket.Length);
             }
             catch
@@ -241,6 +252,8 @@ namespace SSH_simulator
 
                 stream.Seek(0, SeekOrigin.Begin);
                 stream.Read(paket, 0, packetSize + size.Length);
+
+                _serverKEXINIT = paket;
 
                 int tip = Convert.ToInt32(paket[5]);
                 string packetType = "undefined";

@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Org.BouncyCastle.Math;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -231,6 +233,36 @@ namespace SSH_simulator
             }
 
             return new AlgorithmsUsed { DH_algorithm = dh, ENCRYPTION_algorithm = cry, MAC_algorithm = mac, SIGNATURE_algorithm = sig };
+        }
+
+        public static byte[] ComputeSHA1Hash(string clientIdent, string serverIdent, byte[] ClientKEXINIT, byte[] ServerKEXINIT, byte[] ServerCertPubKey,
+                                            BigInteger e, BigInteger f, BigInteger K)
+        {
+            var cIdn = Encoding.ASCII.GetBytes(clientIdent);
+            var sIdn = Encoding.ASCII.GetBytes(serverIdent);
+            var e_array = e.ToByteArrayUnsigned();
+            var f_array = f.ToByteArrayUnsigned();
+            var K_array = K.ToByteArrayUnsigned();
+
+            List<byte> arrayToHash = new List<byte>();
+
+            arrayToHash.AddRange(cIdn);
+            arrayToHash.AddRange(sIdn);
+            arrayToHash.AddRange(ClientKEXINIT);
+            arrayToHash.AddRange(ServerKEXINIT);
+            arrayToHash.AddRange(ServerCertPubKey);
+            arrayToHash.AddRange(e_array);
+            arrayToHash.AddRange(f_array);
+            arrayToHash.AddRange(K_array);
+
+            byte[] hash;
+
+            using (SHA1Managed sha1 = new SHA1Managed())
+            {
+                hash = sha1.ComputeHash(arrayToHash.ToArray());
+            }
+
+            return hash;
         }
     }
 }

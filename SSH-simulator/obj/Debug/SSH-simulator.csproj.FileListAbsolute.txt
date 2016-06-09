@@ -32,3 +32,6 @@ C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\obj\Debug\MainWindow.baml
 C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\obj\Debug\SSH-simulator.g.resources
 C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\obj\Debug\SSH_simulator.Properties.Resources.resources
 C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\obj\Debug\SSH-simulator.csproj.GenerateResource.Cache
+C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\bin\Debug\ServerCert\public_server_keys
+C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\bin\Debug\ServerCert\server_dsa.pem
+C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\bin\Debug\ServerCert\server_rsa.pem

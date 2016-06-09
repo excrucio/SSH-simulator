@@ -1,5 +1,6 @@
 ﻿using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Math;
+using Org.BouncyCastle.Utilities.IO.Pem;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,6 +32,12 @@ namespace testni
 
         private static void test()
         {
+            StreamReader txtStream = File.OpenText(@"ServerCert\server_rsa.pem");
+            PemReader reader = new PemReader(txtStream);
+            var obj = reader.ReadPemObject();
+            var tst = obj.Generate();
+            var t2 = Convert.ToBase64String((obj.Content));
+
             var num = new BigInteger("789");
             var publicKey = new MPInteger(num);
 

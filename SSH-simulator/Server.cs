@@ -1,6 +1,9 @@
 ﻿using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Encodings;
+using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Math;
+using Org.BouncyCastle.OpenSsl;
 using Org.BouncyCastle.Security;
 using System;
 using System.Collections.Generic;
@@ -24,6 +27,11 @@ namespace SSH_simulator
         private AsymmetricCipherKeyPair DH_KeyPair;
 
         private ExchangeParameters ex_params = new ExchangeParameters();
+
+        private string _clientIdent;
+        private string _serverIdent;
+        private byte[] _clientKEXINIT;
+        private byte[] _serverKEXINIT;
 
         private MemoryStream stream;
         private StreamReader reader;
@@ -53,7 +61,7 @@ namespace SSH_simulator
                 mainWindow.retResult = "Nije moguće kontaktirati klijenta!";
                 return false;
             }
-
+            _serverIdent = mainWindow.textBox_serverIdent.Text;
             mainWindow.boolRetResult = true;
             mainWindow.textBox_info.AppendText("Server poslao identifikacijski paket\n\n");
             return true;
@@ -75,6 +83,7 @@ namespace SSH_simulator
                     return;
                 }
 
+                _clientIdent = line;
                 mainWindow.textBox_server.Text = line;
                 mainWindow.textBox_server_decoded.Text = line;
             }
@@ -103,6 +112,8 @@ namespace SSH_simulator
 
                 stream.Seek(0, SeekOrigin.Begin);
                 stream.Read(paket, 0, packetSize + size.Length);
+
+                _clientKEXINIT = paket;
 
                 int tip = Convert.ToInt32(paket[5]);
                 string packetType = "undefined";
@@ -248,6 +259,8 @@ namespace SSH_simulator
 
                 // stvori paket
                 byte[] paket = SSHHelper.CreatePacket(all);
+
+                _serverKEXINIT = paket;
 
                 stream.Write(paket, 0, paket.Length);
             }
@@ -420,6 +433,7 @@ namespace SSH_simulator
                 var K = e_param.ModPow(privateKey.X, ex_params.p);
 
                 ex_params.K = K;
+                ex_params.e = e_param;
 
                 mainWindow.textBox_ser_K.Text = ex_params.K.ToString();
 
@@ -437,7 +451,6 @@ namespace SSH_simulator
 
         public void SendDHPacket()
         {
-            //TODO 0 throw new NotImplementedException();
             // radi se od kexdh_replay
 
             // koji dh paket?? "obični" ili ECDH?
@@ -446,8 +459,6 @@ namespace SSH_simulator
             try
             {
                 stream.Seek(0, SeekOrigin.Begin);
-
-                Random rnd = new Random();
 
                 List<byte> payload = new List<byte>();
 
@@ -461,21 +472,87 @@ namespace SSH_simulator
                 {
                     ident = BitConverter.GetBytes((int)identifiers.SSH_MSG_KEXDH_REPLY);
                 }
+
                 payload.Add(ident[0]);
 
+                // pokupi privatni ključ i javni certifikata
+                byte[] serverCertPubKey = null;
+                byte[] serverCertPrivKey = null;
+                AsymmetricCipherKeyPair rsaPrivKey = null;
+                if (ENCRYPTION_ALGORITHMS.Contains("ssh-rsa"))
+                {
+                    // privatni ključ
+                    using (StreamReader txtStream = File.OpenText(@"ServerCert\server_rsa.pem"))
+                    {
+                        PemReader reader = new PemReader(txtStream);
+                        rsaPrivKey = (AsymmetricCipherKeyPair)reader.ReadObject();
+                        serverCertPrivKey = reader.ReadPemObject().Content;
+                    }
+
+                    // javni ključ
+                    using (StreamReader txtStream = File.OpenText(@"ServerCert\public_server_keys"))
+                    {
+                        // prva je dss
+                        string content = txtStream.ReadLine();
+                        //druga je rsa
+                        content = txtStream.ReadLine();
+                        string rsaPub = content.Split(' ')[1];
+
+                        serverCertPubKey = Encoding.ASCII.GetBytes(rsaPub);
+                    }
+                }
+                else
+                {
+                    // inače je ssh-dss
+                    // TODO server ssh-dss
+                }
+
                 // izračunati i dodati stvari u paket
-                //
 
+                // dodati javi ključ servera (javni ključ certifikata)
+                payload.AddRange(serverCertPubKey);
+
+                // dodati javi ključ od DH (f parametar)
                 var pub = DH_KeyPair.Public as DHPublicKeyParameters;
-
-                List<byte> lista = new List<byte>();
-
-                lista.AddRange(payload);
-
                 var publicKey = pub.Y.ToByteArray();
-                lista.AddRange(publicKey);
+                payload.AddRange(publicKey);
 
-                byte[] all = lista.ToArray();
+                // izračunati hash
+                byte[] hash = null;
+                if (ecdhPacket)
+                {
+                    // TODO ecdh hash
+                }
+                else
+                {
+                    hash = SSHHelper.ComputeSHA1Hash(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, serverCertPubKey, ex_params.e, pub.Y, ex_params.K);
+                }
+
+                // potpisati hash i dodati potpis
+                byte[] signature = null;
+                // rsa
+                if (ENCRYPTION_ALGORITHMS.Contains("ssh-rsa"))
+                {
+                    //TODO !! ovo treba prvo riješiti, koji k je s time.... iznad if blok valja...
+
+                    var encryptEngine = new Pkcs1Encoding(new RsaEngine());
+
+                    encryptEngine.Init(true, rsaPrivKey.Private);
+
+                    var encrypted = Convert.ToBase64String(encryptEngine.ProcessBlock(hash, 0, hash.Length));
+
+                    signature = Encoding.ASCII.GetBytes(encrypted);
+                }
+                // dss
+                else
+                {
+                    // inače je ssh-dss
+                    // TODO server ssh-dss
+                }
+
+                payload.AddRange(signature);
+
+                byte[] all = payload.ToArray();
 
                 // stvori paket
                 byte[] paket = SSHHelper.CreatePacket(all);
