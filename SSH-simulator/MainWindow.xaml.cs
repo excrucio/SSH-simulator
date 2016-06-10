@@ -79,12 +79,12 @@ namespace SSH_simulator
             steps.Add(() => ShowAlgorithms());
 
             //7
-            steps.Add(() => client.CalculateDH());
             steps.Add(() => { tab_dh.Focus(); });
+            steps.Add(() => client.CalculateDH());
 
             //8
             steps.Add(() => server.CalculateDH());
-            steps.Add(() => {/* ništa*/ });
+            steps.Add(() => {/* ništa */ });
 
             //9
             steps.Add(() => client.SendDHPacket());
@@ -95,12 +95,24 @@ namespace SSH_simulator
             steps.Add(() => client.ReadDHPacket());
 
             //11
+            steps.Add(() => { tab_keys.Focus(); });
+            steps.Add(() => { /* ništa */ });
+
+            //12
             steps.Add(() => client.SendNEWKEYSPacket());
             steps.Add(() => server.ReadNEWKEYSPacket());
 
-            //12
+            //13
             steps.Add(() => server.SendNEWKEYSPacket());
             steps.Add(() => client.ReadNEWKEYSPacket());
+
+            //14
+            steps.Add(() => client.GenerateEncryptionKeys());
+            steps.Add(() => { /* ništa */ });
+
+            //15
+            steps.Add(() => server.GenerateEncryptionKeys());
+            steps.Add(() => { /* ništa */ });
         }
 
         private void ShowAlgorithms()

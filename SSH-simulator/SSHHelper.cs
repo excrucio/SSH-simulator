@@ -275,5 +275,146 @@ namespace SSH_simulator
 
             return hash;
         }
+
+        public static EncryptionKeys GenerateEncryptionKeys(BigInteger K, string H, string sessionIdentifier)
+        {
+            // session identifier = H - ostaje isti čak i ako se ključevi promijene (i sam H je tada drugačiji...)
+
+            /*
+            Inicijalni IV (klijent -> poslužitelj) = hash (K || H || "A" || identifikator_sjednice)
+            Inicijalni IV (poslužitelj -> klijent) = hash (K || H || "B" || identifikator_sjednice)
+            Kljuc enkripcije (klijent -> poslužitelj) = hash (K || H || "C" || identifikator_sjednice)
+            Kljuc enkripcije (poslužitelj -> klijent) = hash (K || H || "D" || identifikator_sjednice)
+            MAC kljuc (klijent -> poslužitelj) = hash (K || H || "E" || identifikator_sjednice)
+            MAC kljuc (klijent -> poslužitelj) = hash (K || H || "F" || identifikator_sjednice)
+             */
+
+            // TODO !! provjeri duljine ključeva!!!!!
+            // 3DES ključ je 56 bita - 7 B
+            // aes256 je 256 bita - 32 B
+
+            EncryptionKeys keys = new EncryptionKeys();
+            List<byte> forHash = new List<byte>();
+            byte[] hash;
+
+            var K_array = K.ToByteArrayUnsigned();
+            var K_size = K_array.Length;
+            var K_size_array = BitConverter.GetBytes(K_size);
+            // reverse zbog toga da ide iz little u big endian - ("normalni")
+            Array.Reverse(K_size_array);
+
+            var H_array = Convert.FromBase64String(H);
+            var H_size = H_array.Length;
+            var H_size_array = BitConverter.GetBytes(H_size);
+            // reverse zbog toga da ide iz little u big endian - ("normalni")
+            Array.Reverse(H_size_array);
+
+            var sessionIdent_array = Convert.FromBase64String(sessionIdentifier);
+            var sessionIdent_size = sessionIdent_array.Length;
+            var sessionIdent_size_array = BitConverter.GetBytes(sessionIdent_size);
+            // reverse zbog toga da ide iz little u big endian - ("normalni")
+            Array.Reverse(sessionIdent_size_array);
+
+            var A = Convert.ToByte('A');
+            var B = Convert.ToByte('B');
+            var C = Convert.ToByte('C');
+            var D = Convert.ToByte('D');
+            var E = Convert.ToByte('E');
+            var F = Convert.ToByte('F');
+
+            var KH_array = new List<byte>();
+
+            KH_array.AddRange(K_size_array);
+            KH_array.AddRange(K_array);
+
+            KH_array.AddRange(H_size_array);
+            KH_array.AddRange(H_array);
+
+            // vektor k -> s
+            forHash.Clear();
+
+            forHash.AddRange(KH_array);
+
+            forHash.Add(A);
+
+            forHash.AddRange(sessionIdent_array);
+
+            using (SHA1Managed sha1 = new SHA1Managed())
+            {
+                keys.vectoCS = Convert.ToBase64String(sha1.ComputeHash(forHash.ToArray()));
+            }
+
+            // vektor s -> k
+            forHash.Clear();
+
+            forHash.AddRange(KH_array);
+
+            forHash.Add(B);
+
+            forHash.AddRange(sessionIdent_array);
+
+            using (SHA1Managed sha1 = new SHA1Managed())
+            {
+                keys.vectorSC = Convert.ToBase64String(sha1.ComputeHash(forHash.ToArray()));
+            }
+
+            // enkripcija k -> s
+            forHash.Clear();
+
+            forHash.AddRange(KH_array);
+
+            forHash.Add(C);
+
+            forHash.AddRange(sessionIdent_array);
+
+            using (SHA1Managed sha1 = new SHA1Managed())
+            {
+                keys.cryCS = Convert.ToBase64String(sha1.ComputeHash(forHash.ToArray()));
+            }
+
+            // enkripcija s -> k
+            forHash.Clear();
+
+            forHash.AddRange(KH_array);
+
+            forHash.Add(D);
+
+            forHash.AddRange(sessionIdent_array);
+
+            using (SHA1Managed sha1 = new SHA1Managed())
+            {
+                keys.crySC = Convert.ToBase64String(sha1.ComputeHash(forHash.ToArray()));
+            }
+
+            // MAC ključ k -> s
+            forHash.Clear();
+
+            forHash.AddRange(KH_array);
+
+            forHash.Add(E);
+
+            forHash.AddRange(sessionIdent_array);
+
+            using (SHA1Managed sha1 = new SHA1Managed())
+            {
+                keys.MACKeyCS = Convert.ToBase64String(sha1.ComputeHash(forHash.ToArray()));
+            }
+
+            // MAC ključ s -> k
+            forHash.Clear();
+
+            forHash.AddRange(KH_array);
+
+            forHash.Add(F);
+
+            forHash.AddRange(sessionIdent_array);
+
+            using (SHA1Managed sha1 = new SHA1Managed())
+            {
+                keys.MACKeySC = Convert.ToBase64String(sha1.ComputeHash(forHash.ToArray()));
+            }
+
+            return keys;
+        }
     }
 }

@@ -8,5 +8,6 @@ namespace SSH_simulator
         public BigInteger f { get; set; }
         public BigInteger K { get; set; }
         public BigInteger p { get; set; }
+        public string H { get; set; }
     }
 }

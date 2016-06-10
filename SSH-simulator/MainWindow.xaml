@@ -16,7 +16,7 @@
             <TextBox x:Name="textBox_client_decoded" HorizontalAlignment="Left" Height="191" Margin="503,36,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="483" ScrollViewer.CanContentScroll="True" VerticalScrollBarVisibility="Auto" UseLayoutRounding="True" HorizontalScrollBarVisibility="Auto" IsReadOnly="True" FontFamily="Consolas" AcceptsReturn="True" AcceptsTab="True" />
             <TextBox x:Name="textBox_server" HorizontalAlignment="Left" Height="200" Margin="7,262,0,0" VerticalAlignment="Top" Width="489" VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True" IsReadOnly="True" FontFamily="Consolas" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap" />
             <TextBox x:Name="textBox_server_decoded" HorizontalAlignment="Left" Height="200" Margin="503,262,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="483" ScrollViewer.CanContentScroll="True" VerticalScrollBarVisibility="Auto" UseLayoutRounding="True" IsReadOnly="True" FontFamily="Consolas" AcceptsReturn="True" AcceptsTab="True" />
-            <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="323" Margin="7,507,0,0" VerticalAlignment="Top" Width="1269">
+            <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="323" Margin="7,507,0,0" VerticalAlignment="Top" Width="1271">
                 <TabItem x:Name="tab_algoritmi" Header="Algoritmi">
                     <Grid Background="#FFE5E5E5">
                         <Grid.ColumnDefinitions>
@@ -96,52 +96,84 @@
                         <TextBox x:Name="textBox_DSA" HorizontalAlignment="Left" Height="23" Margin="791,220,0,0" VerticalAlignment="Top" Width="356" VerticalScrollBarVisibility="Disabled" IsEnabled="False" />
                         <Button x:Name="button_RSA" Content="odaberi" HorizontalAlignment="Left" Margin="1152,198,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False" />
                         <Button x:Name="button_DSA" Content="odaberi" HorizontalAlignment="Left" Margin="1152,221,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False" />
-                        <TextBox x:Name="textBox_ser_mod_p" HorizontalAlignment="Left" Height="23" Margin="791,10,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
-                        <TextBox x:Name="textBox_ser_g" HorizontalAlignment="Left" Height="23" Margin="791,36,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
-                        <TextBox x:Name="textBox_y" HorizontalAlignment="Left" Height="23" Margin="791,62,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
-                        <TextBox x:Name="textBox_f" HorizontalAlignment="Left" Height="23" Margin="791,88,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
-                        <TextBox x:Name="textBox_ser_K" HorizontalAlignment="Left" Height="23" Margin="791,114,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
-                        <TextBox x:Name="textBox_ser_H" HorizontalAlignment="Left" Height="23" Margin="791,140,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
-                        <TextBox x:Name="textBox_sig_H" HorizontalAlignment="Left" Height="23" Margin="791,165,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
-                        <TextBox x:Name="textBox_cli_mod_p" HorizontalAlignment="Left" Height="23" Margin="173,10,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
-                        <TextBox x:Name="textBox_cli_g" HorizontalAlignment="Left" Height="23" Margin="173,36,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
-                        <TextBox x:Name="textBox_x" HorizontalAlignment="Left" Height="23" Margin="173,62,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
-                        <TextBox x:Name="textBox_e" HorizontalAlignment="Left" Height="23" Margin="173,88,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
-                        <TextBox x:Name="textBox_cli_K" HorizontalAlignment="Left" Height="23" Margin="173,114,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
-                        <TextBox x:Name="textBox_cli_H" HorizontalAlignment="Left" Height="23" Margin="173,140,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
-                        <TextBox x:Name="textBox_ser_pub_key" HorizontalAlignment="Left" Height="23" Margin="173,165,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
-                        <TextBox x:Name="textBox_sig_ser" HorizontalAlignment="Left" Height="23" Margin="173,193,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_ser_mod_p" HorizontalAlignment="Left" Height="23" Margin="791,10,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" CharacterCasing="Lower" />
+                        <TextBox x:Name="textBox_ser_g" HorizontalAlignment="Left" Height="23" Margin="791,36,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" CharacterCasing="Lower" />
+                        <TextBox x:Name="textBox_y" HorizontalAlignment="Left" Height="23" Margin="791,62,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" CharacterCasing="Lower" />
+                        <TextBox x:Name="textBox_f" HorizontalAlignment="Left" Height="23" Margin="791,88,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" CharacterCasing="Lower" />
+                        <TextBox x:Name="textBox_ser_K" HorizontalAlignment="Left" Height="23" Margin="791,114,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" CharacterCasing="Lower" />
+                        <TextBox x:Name="textBox_ser_H" HorizontalAlignment="Left" Height="23" Margin="791,140,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" CharacterCasing="Lower" />
+                        <TextBox x:Name="textBox_sig_H" HorizontalAlignment="Left" Height="23" Margin="791,165,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" CharacterCasing="Lower" />
+                        <TextBox x:Name="textBox_cli_mod_p" HorizontalAlignment="Left" Height="23" Margin="173,10,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" CharacterCasing="Lower" />
+                        <TextBox x:Name="textBox_cli_g" HorizontalAlignment="Left" Height="23" Margin="173,36,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" CharacterCasing="Lower" />
+                        <TextBox x:Name="textBox_x" HorizontalAlignment="Left" Height="23" Margin="173,62,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" CharacterCasing="Lower" />
+                        <TextBox x:Name="textBox_e" HorizontalAlignment="Left" Height="23" Margin="173,88,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" CharacterCasing="Lower" />
+                        <TextBox x:Name="textBox_cli_K" HorizontalAlignment="Left" Height="23" Margin="173,114,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" CharacterCasing="Lower" />
+                        <TextBox x:Name="textBox_cli_H" HorizontalAlignment="Left" Height="23" Margin="173,140,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" CharacterCasing="Lower" />
+                        <TextBox x:Name="textBox_ser_pub_key" HorizontalAlignment="Left" Height="23" Margin="173,165,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" CharacterCasing="Lower" />
+                        <TextBox x:Name="textBox_sig_ser" HorizontalAlignment="Left" Height="23" Margin="173,193,0,0" VerticalAlignment="Top" Width="436" VerticalScrollBarVisibility="Disabled" CharacterCasing="Lower" />
                     </Grid>
                 </TabItem>
                 <TabItem x:Name="tab_keys" Header="Generiranje ključeva" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="125" Margin="-2,-2,-66,0">
                     <Grid Background="#FFE5E5E5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
                         <GridSplitter x:Name="gridSplitter_Copy1" HorizontalAlignment="Left" Height="281" Margin="635,0,0,0" VerticalAlignment="Top" Width="6" />
-                        <Label x:Name="label30" Content="Sažetak H" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label29" Content="Tajni ključ K" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label31" Content="vektor klijent - server" HorizontalAlignment="Left" Margin="25,82,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label32" Content="vektor server - klijent" HorizontalAlignment="Left" Margin="36,113,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label33" Content="ključ enkripcije klijent - server" HorizontalAlignment="Left" Margin="36,164,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label34" Content="ključ enkripcije server - klijent" HorizontalAlignment="Left" Margin="36,206,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label35" Content="MAC ključ klijent - server" HorizontalAlignment="Left" Margin="36,237,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label36" Content="MAC ključ server - klijent" HorizontalAlignment="Left" Margin="36,268,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label30_Copy" Content="Sažetak H" HorizontalAlignment="Left" Margin="652,31,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label29_Copy" Content="Tajni ključ K" HorizontalAlignment="Left" Margin="652,5,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label31_Copy" Content="vektor klijent - server" HorizontalAlignment="Left" Margin="667,77,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label32_Copy" Content="vektor server - klijent" HorizontalAlignment="Left" Margin="678,108,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label33_Copy" Content="ključ enkripcije klijent - server" HorizontalAlignment="Left" Margin="678,159,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label34_Copy" Content="ključ enkripcije server - klijent" HorizontalAlignment="Left" Margin="678,201,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label35_Copy" Content="MAC ključ klijent - server" HorizontalAlignment="Left" Margin="678,232,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label36_Copy" Content="MAC ključ server - klijent" HorizontalAlignment="Left" Margin="678,263,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label30" Content="Sažetak H" HorizontalAlignment="Left" Margin="11,72,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label29" Content="Tajni ključ K" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label31" Content="vektor klijent - server" HorizontalAlignment="Left" Margin="10,103,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label32" Content="vektor server - klijent" HorizontalAlignment="Left" Margin="10,134,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label33" Content="ključ enkripcije klijent - server" HorizontalAlignment="Left" Margin="10,165,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label34" Content="ključ enkripcije server - klijent" HorizontalAlignment="Left" Margin="11,196,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label35" Content="MAC ključ klijent - server" HorizontalAlignment="Left" Margin="11,227,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label36" Content="MAC ključ server - klijent" HorizontalAlignment="Left" Margin="11,258,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label30_Copy" Content="Sažetak H" HorizontalAlignment="Left" Margin="646,75,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label29_Copy" Content="Tajni ključ K" HorizontalAlignment="Left" Margin="645,44,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label31_Copy" Content="vektor klijent - server" HorizontalAlignment="Left" Margin="645,106,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label32_Copy" Content="vektor server - klijent" HorizontalAlignment="Left" Margin="645,137,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label33_Copy" Content="ključ enkripcije klijent - server" HorizontalAlignment="Left" Margin="645,168,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label34_Copy" Content="ključ enkripcije server - klijent" HorizontalAlignment="Left" Margin="646,199,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label35_Copy" Content="MAC ključ klijent - server" HorizontalAlignment="Left" Margin="646,230,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label36_Copy" Content="MAC ključ server - klijent" HorizontalAlignment="Left" Margin="646,261,0,0" VerticalAlignment="Top" />
+                        <TextBox x:Name="textBox_cli_cry_c_s" HorizontalAlignment="Left" Height="23" Margin="181,168,0,0" VerticalAlignment="Top" Width="449" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_cli_s_c" HorizontalAlignment="Left" Height="23" Margin="181,137,0,0" VerticalAlignment="Top" Width="449" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_cli_c_s" HorizontalAlignment="Left" Height="23" Margin="181,106,0,0" VerticalAlignment="Top" Width="449" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_cli_H1" HorizontalAlignment="Left" Height="23" Margin="181,75,0,0" VerticalAlignment="Top" Width="449" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_cli_K1" HorizontalAlignment="Left" Height="23" Margin="181,44,0,0" VerticalAlignment="Top" Width="449" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_cli_cry_s_c" HorizontalAlignment="Left" Height="23" Margin="181,199,0,0" VerticalAlignment="Top" Width="449" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_cli_MAC_c_s" HorizontalAlignment="Left" Height="23" Margin="181,230,0,0" VerticalAlignment="Top" Width="449" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_cli_MAC_s_c" HorizontalAlignment="Left" Height="23" Margin="181,261,0,0" VerticalAlignment="Top" Width="449" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_ser_cry_c_s" HorizontalAlignment="Left" Height="23" Margin="814,171,0,0" VerticalAlignment="Top" Width="449" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_ser_s_c" HorizontalAlignment="Left" Height="23" Margin="814,140,0,0" VerticalAlignment="Top" Width="449" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_ser_c_s" HorizontalAlignment="Left" Height="23" Margin="814,109,0,0" VerticalAlignment="Top" Width="449" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_ser_H1" HorizontalAlignment="Left" Height="23" Margin="814,78,0,0" VerticalAlignment="Top" Width="449" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_ser_K1" HorizontalAlignment="Left" Height="23" Margin="814,47,0,0" VerticalAlignment="Top" Width="449" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_ser_cry_s_c" HorizontalAlignment="Left" Height="23" Margin="814,202,0,0" VerticalAlignment="Top" Width="449" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_ser_MAC_c_s" HorizontalAlignment="Left" Height="23" Margin="814,233,0,0" VerticalAlignment="Top" Width="449" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_ser_MAC_s_c" HorizontalAlignment="Left" Height="23" Margin="814,264,0,0" VerticalAlignment="Top" Width="449" VerticalScrollBarVisibility="Disabled" />
+                        <Label x:Name="label51" Content="ENKRIPCIJA:" HorizontalAlignment="Left" Margin="57,15,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.535,0.222" FontWeight="Bold" FontSize="11" />
+                        <Label x:Name="label52" Content="MAC algoritam:" HorizontalAlignment="Left" Margin="342,13,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="11" />
+                        <Label x:Name="label_cli_cry" Content="" HorizontalAlignment="Left" Margin="136,15,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.318,0.352" FontWeight="Bold" FontSize="11" />
+                        <Label x:Name="label_cli_mac" Content="" HorizontalAlignment="Left" Margin="439,15,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="11" />
+                        <Label x:Name="label51_Copy" Content="ENKRIPCIJA:" HorizontalAlignment="Left" Margin="697,13,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.535,0.222" FontWeight="Bold" FontSize="11" />
+                        <Label x:Name="label52_Copy" Content="MAC algoritam:" HorizontalAlignment="Left" Margin="982,11,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="11" />
+                        <Label x:Name="label_ser_cry" Content="" HorizontalAlignment="Left" Margin="776,13,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.318,0.352" FontWeight="Bold" FontSize="11" />
+                        <Label x:Name="label_ser_mac" Content="" HorizontalAlignment="Left" Margin="1079,13,0,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="11" />
                     </Grid>
                 </TabItem>
                 <TabItem x:Name="tab_auth" Header="Autentifikacija" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="94" Margin="-2,-2,-35,0">
                     <Grid Background="#FFE5E5E5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
                         <GridSplitter x:Name="gridSplitter_Copy2" HorizontalAlignment="Left" Height="281" Margin="641,0,0,0" VerticalAlignment="Top" Width="6" />
-                        <Label x:Name="label37" Content="login" HorizontalAlignment="Left" Margin="25,22,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label38" Content="lozinka" HorizontalAlignment="Left" Margin="10,48,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label39" Content="Baza koirisnika" HorizontalAlignment="Left" Margin="683,22,0,0" VerticalAlignment="Top" />
-                        <TextBox x:Name="textBox_baza_korisnika" HorizontalAlignment="Left" Height="23" Margin="848,22,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
-                        <Button x:Name="button_baza_korisnika" Content="odaberi" HorizontalAlignment="Left" Margin="997,33,0,0" VerticalAlignment="Top" Width="75" />
+                        <Label x:Name="label37" Content="login" HorizontalAlignment="Left" Margin="20,22,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.594,0.439" />
+                        <Label x:Name="label38" Content="lozinka" HorizontalAlignment="Left" Margin="20,53,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label39" Content="Baza korisnika" HorizontalAlignment="Left" Margin="683,25,0,0" VerticalAlignment="Top" />
+                        <TextBox x:Name="textBox_baza_korisnika" HorizontalAlignment="Left" Height="23" Margin="773,26,0,0" VerticalAlignment="Top" Width="373" />
+                        <Button x:Name="button_baza_korisnika" Content="odaberi" HorizontalAlignment="Left" Margin="1162,28,0,0" VerticalAlignment="Top" Width="75" />
+                        <TextBox x:Name="textBox_login" HorizontalAlignment="Left" Height="23" Margin="92,26,0,0" Text="root" VerticalAlignment="Top" Width="493" />
+                        <TextBox x:Name="textBox_pass" HorizontalAlignment="Left" Height="23" Margin="92,57,0,0" Text="toor" VerticalAlignment="Top" Width="493" />
                     </Grid>
                 </TabItem>
                 <TabItem x:Name="tab_protokol" Header="Protokol" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="65" Margin="-2,-2,-6,0">
@@ -175,15 +207,15 @@
             </TabControl>
             <Button x:Name="button_next" Content="Idući korak" HorizontalAlignment="Left" Height="44" Margin="991,7,0,0" VerticalAlignment="Top" Width="140" Click="button_next_Click" />
             <Button x:Name="button_reset" Content="Reset" HorizontalAlignment="Left" Height="44" Margin="1136,7,0,0" VerticalAlignment="Top" Width="140" Click="button_reset_Click" />
-            <Label x:Name="label" Content="Klijent" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" />
-            <Label x:Name="label1" Content="Klijent dekodirano" HorizontalAlignment="Left" Margin="496,10,0,0" VerticalAlignment="Top" />
-            <Label x:Name="label2" Content="Server" HorizontalAlignment="Left" Margin="10,236,0,0" VerticalAlignment="Top" />
-            <Label x:Name="label3" Content="Server dekodirano" HorizontalAlignment="Left" Margin="496,236,0,0" VerticalAlignment="Top" />
+            <Label x:Name="label" Content="Klijent" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontWeight="Bold" />
+            <Label x:Name="label1" Content="Klijent dekodirano" HorizontalAlignment="Left" Margin="496,10,0,0" VerticalAlignment="Top" FontWeight="Bold" />
+            <Label x:Name="label2" Content="Server" HorizontalAlignment="Left" Margin="10,236,0,0" VerticalAlignment="Top" FontWeight="Bold" />
+            <Label x:Name="label3" Content="Server dekodirano" HorizontalAlignment="Left" Margin="496,236,0,0" VerticalAlignment="Top" FontWeight="Bold" />
             <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="327" Margin="445,493,0,0" VerticalAlignment="Top" Width="0" />
-            <Label x:Name="label4" Content="Klijent" HorizontalAlignment="Left" VerticalAlignment="Top" Height="41" Width="72" FontWeight="ExtraBlack" FontSize="16" BorderThickness="1" RenderTransformOrigin="3.583,3.024" Margin="248,470,0,0" />
-            <Label x:Name="label5" Content="Server" HorizontalAlignment="Left" Margin="918,471,0,0" VerticalAlignment="Top" Height="41" Width="61" FontSize="16" FontWeight="ExtraBlack" />
-            <TextBox x:Name="textBox_info" HorizontalAlignment="Left" Height="219" Margin="991,159,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="287" IsReadOnly="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Foreground="#FF420C0C" FontFamily="Consolas" AcceptsReturn="True" AcceptsTab="True" />
-            <Label x:Name="label50" Content="INFO" HorizontalAlignment="Left" Margin="991,133,0,0" VerticalAlignment="Top" />
+            <Label x:Name="label4" Content="Klijent" HorizontalAlignment="Left" VerticalAlignment="Top" Height="41" Width="72" FontWeight="ExtraBlack" FontSize="18" BorderThickness="1" RenderTransformOrigin="3.583,3.024" Margin="248,470,0,0" />
+            <Label x:Name="label5" Content="Server" HorizontalAlignment="Left" Margin="918,471,0,0" VerticalAlignment="Top" Height="41" Width="68" FontSize="18" FontWeight="ExtraBlack" />
+            <TextBox x:Name="textBox_info" HorizontalAlignment="Left" Height="372" Margin="991,90,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="287" IsReadOnly="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Foreground="#FF420C0C" FontFamily="Consolas" AcceptsReturn="True" AcceptsTab="True" />
+            <Label x:Name="label50" Content="INFO" HorizontalAlignment="Left" Margin="991,64,0,0" VerticalAlignment="Top" FontWeight="Bold" />
         </Grid>
     </Viewbox>
 </Window>

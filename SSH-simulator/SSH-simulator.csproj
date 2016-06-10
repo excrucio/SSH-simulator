@@ -70,6 +70,7 @@
     <Compile Include="ecdh-sha2-nistp384.cs" />
     <Compile Include="ecdh-sha2-nistp521.cs" />
     <Compile Include="ECDH_brainpoolP160r1.cs" />
+    <Compile Include="EncryptionKeys.cs" />
     <Compile Include="ExchangeParameters.cs" />
     <Compile Include="identifiers.cs" />
     <Compile Include="Packet.cs" />

@@ -38,6 +38,8 @@ namespace SSH_simulator
         private AsymmetricCipherKeyPair DH_KeyPair;
         private ExchangeParameters ex_params = new ExchangeParameters();
 
+        private EncryptionKeys keys = new EncryptionKeys();
+
         private MemoryStream stream;
         private StreamReader reader;
         private StreamWriter writer;
@@ -533,7 +535,7 @@ namespace SSH_simulator
 
                 paket = paket.Skip(6 + 4 + K_S_size).ToArray();
 
-                mainWindow.textBox_ser_pub_key.Text = K_S_param;
+                mainWindow.textBox_ser_pub_key.Text = BitConverter.ToString(Convert.FromBase64String(K_S_param)).Replace("-", "").ToLower();
 
                 /*
                 // provjeri da je K_S valjan
@@ -618,7 +620,7 @@ namespace SSH_simulator
 
                 var sig = Encoding.ASCII.GetString(s_param);
 
-                mainWindow.textBox_sig_ser.Text = sig;
+                mainWindow.textBox_sig_ser.Text = BitConverter.ToString(s_param).Replace("-", "").ToLower();
 
                 var dec = Convert.FromBase64String(sig);
                 var decrypted = decryptEngine.ProcessBlock(dec, 0, dec.Length);
@@ -626,7 +628,9 @@ namespace SSH_simulator
                 var hashBase64 = Convert.ToBase64String(hash);
                 var sigHashBase64 = Convert.ToBase64String(decrypted);
 
-                mainWindow.textBox_cli_H.Text = hashBase64;
+                ex_params.H = hashBase64;
+
+                mainWindow.textBox_cli_H.Text = BitConverter.ToString(hash).Replace("-", "").ToLower();
 
                 if (hashBase64 != sigHashBase64)
                 {
@@ -649,13 +653,110 @@ namespace SSH_simulator
 
         public void SendNEWKEYSPacket()
         {
-            // TODO !! sada to
-            throw new NotImplementedException();
+            try
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+
+                List<byte> payload = new List<byte>();
+
+                // identifikator paketa
+                byte[] ident = BitConverter.GetBytes((int)identifiers.SSH_MSG_NEWKEYS);
+
+                payload.Add(ident[0]);
+
+                byte[] all = payload.ToArray();
+
+                // stvori paket
+                byte[] paket = SSHHelper.CreatePacket(all);
+
+                mainWindow.textBox_info.AppendText("Klijent šalje NEWKEYS paket\n\n");
+
+                stream.Write(paket, 0, paket.Length);
+            }
+            catch
+            {
+                mainWindow.retResult = "Paket nije moguće poslati!";
+                mainWindow.boolRetResult = false;
+                return;
+            }
         }
 
         public void ReadNEWKEYSPacket()
         {
-            throw new NotImplementedException();
+            try
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+
+                byte[] size = new byte[4];
+                stream.Read(size, 0, size.Length);
+                Array.Reverse(size);
+                int packetSize = BitConverter.ToInt32(size, 0);
+
+                byte[] paket = new byte[packetSize + size.Length];
+
+                stream.Seek(0, SeekOrigin.Begin);
+                stream.Read(paket, 0, packetSize + size.Length);
+
+                int tip = Convert.ToInt32(paket[5]);
+                string packetType = "undefined";
+                if (Enum.IsDefined(typeof(identifiers), tip))
+                {
+                    packetType = Enum.GetName(typeof(identifiers), tip);
+                }
+
+                string output = SSHHelper.ispis(paket);
+
+                mainWindow.textBox_client.AppendText("\n\n\n" + output);
+
+                string outputDecoded = SSHHelper.ispis(paket.Skip(5).ToArray());
+
+                // pokupi parametar e
+                // paket - cijeli paket i sve
+                // duljina paketa - bez sebe
+                // uzmi samo dio s info: duljinaPaketa - duljinaDopune - 1
+
+                int dopunaSize = Convert.ToInt32(paket[4]);
+
+                mainWindow.textBox_client_decoded.AppendText("\n\n\nVrsta paketa: " + packetType + " (" + tip + ")\n" + outputDecoded);
+            }
+            catch
+            {
+                mainWindow.boolRetResult = false;
+                mainWindow.retResult = "Neuspješan primitak paketa!";
+                return;
+            }
+
+            mainWindow.boolRetResult = true;
+        }
+
+        public void GenerateEncryptionKeys()
+        {
+            try
+            {
+                mainWindow.label_cli_cry.Content = algorithmsToUse.ENCRYPTION_algorithm;
+                mainWindow.label_cli_mac.Content = algorithmsToUse.MAC_algorithm;
+
+                mainWindow.textBox_cli_K1.Text = ex_params.K.ToString();
+                mainWindow.textBox_cli_H1.Text = BitConverter.ToString(Convert.FromBase64String(ex_params.H)).Replace("-", "").ToLower();
+
+                mainWindow.textBox_info.AppendText("Klijent računa računa ključeve za enkripciju\n\n");
+
+                keys = SSHHelper.GenerateEncryptionKeys(ex_params.K, ex_params.H, ex_params.H);
+
+                mainWindow.textBox_cli_c_s.Text = BitConverter.ToString(Convert.FromBase64String(keys.vectoCS)).Replace("-", "").ToLower();
+                mainWindow.textBox_cli_s_c.Text = BitConverter.ToString(Convert.FromBase64String(keys.vectorSC)).Replace("-", "").ToLower();
+                mainWindow.textBox_cli_cry_c_s.Text = BitConverter.ToString(Convert.FromBase64String(keys.cryCS)).Replace("-", "").ToLower();
+                mainWindow.textBox_cli_cry_s_c.Text = BitConverter.ToString(Convert.FromBase64String(keys.crySC)).Replace("-", "").ToLower();
+                mainWindow.textBox_cli_MAC_c_s.Text = BitConverter.ToString(Convert.FromBase64String(keys.MACKeyCS)).Replace("-", "").ToLower();
+                mainWindow.textBox_cli_MAC_s_c.Text = BitConverter.ToString(Convert.FromBase64String(keys.MACKeySC)).Replace("-", "").ToLower();
+            }
+            catch
+            {
+                mainWindow.boolRetResult = false;
+                mainWindow.retResult = "Klijent nije uspio izgenerirati ključeve!";
+            }
+
+            mainWindow.boolRetResult = true;
         }
     }
 }

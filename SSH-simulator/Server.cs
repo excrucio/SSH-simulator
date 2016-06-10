@@ -28,6 +28,8 @@ namespace SSH_simulator
 
         private ExchangeParameters ex_params = new ExchangeParameters();
 
+        private EncryptionKeys keys = new EncryptionKeys();
+
         private string _clientIdent;
         private string _serverIdent;
         private byte[] _clientKEXINIT;
@@ -428,7 +430,9 @@ namespace SSH_simulator
                 Array.Reverse(e_size_array);
                 int e_size = BitConverter.ToInt32(e_size_array, 0);
                 var e_array = paket.Skip(6 + 4).Take(e_size).ToArray();
-                var e_param = new BigInteger(e_array);
+                // 1 je zato jer se koristi unsigned array...
+                // nema logike, ali jbg... tako je...
+                var e_param = new BigInteger(1, e_array);
 
                 var privateKey = DH_KeyPair.Private as DHPrivateKeyParameters;
                 // K = e^y mod p
@@ -536,7 +540,11 @@ namespace SSH_simulator
                     hash = SSHHelper.ComputeSHA1Hash(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, serverCertPubKey, ex_params.e, ex_params.f, ex_params.K);
                 }
 
-                mainWindow.textBox_ser_H.Text = Convert.ToBase64String(hash);
+                string hashBase64 = Convert.ToBase64String(hash);
+
+                ex_params.H = hashBase64;
+
+                mainWindow.textBox_ser_H.Text = BitConverter.ToString(hash).Replace("-", "").ToLower();
 
                 // potpisati hash i dodati potpis
                 byte[] signature = null;
@@ -546,10 +554,10 @@ namespace SSH_simulator
                     var encryptEngine = new Pkcs1Encoding(new RsaEngine());
 
                     encryptEngine.Init(true, rsaKeys.Private);
+                    var crypt = encryptEngine.ProcessBlock(hash, 0, hash.Length);
+                    var encrypted = Convert.ToBase64String(crypt);
 
-                    var encrypted = Convert.ToBase64String(encryptEngine.ProcessBlock(hash, 0, hash.Length));
-
-                    mainWindow.textBox_sig_H.Text = encrypted;
+                    mainWindow.textBox_sig_H.Text = BitConverter.ToString(crypt).Replace("-", "").ToLower();
 
                     signature = Encoding.ASCII.GetBytes(encrypted);
                 }
@@ -609,12 +617,110 @@ namespace SSH_simulator
 
         public void ReadNEWKEYSPacket()
         {
-            throw new NotImplementedException();
+            try
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+
+                byte[] size = new byte[4];
+                stream.Read(size, 0, size.Length);
+                Array.Reverse(size);
+                int packetSize = BitConverter.ToInt32(size, 0);
+
+                byte[] paket = new byte[packetSize + size.Length];
+
+                stream.Seek(0, SeekOrigin.Begin);
+                stream.Read(paket, 0, packetSize + size.Length);
+
+                int tip = Convert.ToInt32(paket[5]);
+                string packetType = "undefined";
+                if (Enum.IsDefined(typeof(identifiers), tip))
+                {
+                    packetType = Enum.GetName(typeof(identifiers), tip);
+                }
+
+                string output = SSHHelper.ispis(paket);
+
+                mainWindow.textBox_server.AppendText("\n\n\n" + output);
+
+                string outputDecoded = SSHHelper.ispis(paket.Skip(5).ToArray());
+
+                // pokupi parametar e
+                // paket - cijeli paket i sve
+                // duljina paketa - bez sebe
+                // uzmi samo dio s info: duljinaPaketa - duljinaDopune - 1
+
+                int dopunaSize = Convert.ToInt32(paket[4]);
+
+                mainWindow.textBox_server_decoded.AppendText("\n\n\nVrsta paketa: " + packetType + " (" + tip + ")\n" + outputDecoded);
+            }
+            catch
+            {
+                mainWindow.boolRetResult = false;
+                mainWindow.retResult = "Neuspješan primitak paketa!";
+                return;
+            }
+
+            mainWindow.boolRetResult = true;
         }
 
         public void SendNEWKEYSPacket()
         {
-            throw new NotImplementedException();
+            try
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+
+                List<byte> payload = new List<byte>();
+
+                // identifikator paketa
+                byte[] ident = BitConverter.GetBytes((int)identifiers.SSH_MSG_NEWKEYS);
+
+                payload.Add(ident[0]);
+
+                byte[] all = payload.ToArray();
+
+                // stvori paket
+                byte[] paket = SSHHelper.CreatePacket(all);
+
+                mainWindow.textBox_info.AppendText("Server šalje NEWKEYS paket\n\n");
+
+                stream.Write(paket, 0, paket.Length);
+            }
+            catch
+            {
+                mainWindow.retResult = "Paket nije moguće poslati!";
+                mainWindow.boolRetResult = false;
+                return;
+            }
+        }
+
+        public void GenerateEncryptionKeys()
+        {
+            try
+            {
+                mainWindow.label_ser_cry.Content = algorithmsToUse.ENCRYPTION_algorithm;
+                mainWindow.label_ser_mac.Content = algorithmsToUse.MAC_algorithm;
+
+                mainWindow.textBox_ser_K1.Text = ex_params.K.ToString();
+                mainWindow.textBox_ser_H1.Text = BitConverter.ToString(Convert.FromBase64String(ex_params.H)).Replace("-", "").ToLower();
+
+                mainWindow.textBox_info.AppendText("Server računa računa ključeve za enkripciju\n\n");
+
+                keys = SSHHelper.GenerateEncryptionKeys(ex_params.K, ex_params.H, ex_params.H);
+
+                mainWindow.textBox_ser_c_s.Text = BitConverter.ToString(Convert.FromBase64String(keys.vectoCS)).Replace("-", "").ToLower();
+                mainWindow.textBox_ser_s_c.Text = BitConverter.ToString(Convert.FromBase64String(keys.vectorSC)).Replace("-", "").ToLower();
+                mainWindow.textBox_ser_cry_c_s.Text = BitConverter.ToString(Convert.FromBase64String(keys.cryCS)).Replace("-", "").ToLower();
+                mainWindow.textBox_ser_cry_s_c.Text = BitConverter.ToString(Convert.FromBase64String(keys.crySC)).Replace("-", "").ToLower();
+                mainWindow.textBox_ser_MAC_c_s.Text = BitConverter.ToString(Convert.FromBase64String(keys.MACKeyCS)).Replace("-", "").ToLower();
+                mainWindow.textBox_ser_MAC_s_c.Text = BitConverter.ToString(Convert.FromBase64String(keys.MACKeySC)).Replace("-", "").ToLower();
+            }
+            catch
+            {
+                mainWindow.boolRetResult = false;
+                mainWindow.retResult = "Server nije uspio izgenerirati ključeve!";
+            }
+
+            mainWindow.boolRetResult = true;
         }
     }
 }
