@@ -6,6 +6,7 @@ D:\Projekti\GIT\SSH-simulator\testni\obj\Debug\testni.exe
 D:\Projekti\GIT\SSH-simulator\testni\obj\Debug\testni.pdb
 D:\Projekti\GIT\SSH-simulator\testni\bin\Debug\BouncyCastle.Crypto.dll
 C:\GIT\PRIVATE\SSH-simulator\testni\bin\Debug\ServerCert\public_server_keys
+C:\GIT\PRIVATE\SSH-simulator\testni\bin\Debug\ServerCert\server_dsa.pem
 C:\GIT\PRIVATE\SSH-simulator\testni\bin\Debug\ServerCert\server_rsa.pem
 C:\GIT\PRIVATE\SSH-simulator\testni\bin\Debug\testni.exe.config
 C:\GIT\PRIVATE\SSH-simulator\testni\bin\Debug\testni.exe
@@ -14,4 +15,3 @@ C:\GIT\PRIVATE\SSH-simulator\testni\bin\Debug\BouncyCastle.Crypto.dll
 C:\GIT\PRIVATE\SSH-simulator\testni\obj\Debug\testni.csprojResolveAssemblyReference.cache
 C:\GIT\PRIVATE\SSH-simulator\testni\obj\Debug\testni.exe
 C:\GIT\PRIVATE\SSH-simulator\testni\obj\Debug\testni.pdb
-C:\GIT\PRIVATE\SSH-simulator\testni\bin\Debug\ServerCert\server_dsa.pem

@@ -93,6 +93,14 @@ namespace SSH_simulator
             //10
             steps.Add(() => server.SendDHPacket());
             steps.Add(() => client.ReadDHPacket());
+
+            //11
+            steps.Add(() => client.SendNEWKEYSPacket());
+            steps.Add(() => server.ReadNEWKEYSPacket());
+
+            //12
+            steps.Add(() => server.SendNEWKEYSPacket());
+            steps.Add(() => client.ReadNEWKEYSPacket());
         }
 
         private void ShowAlgorithms()
@@ -151,13 +159,21 @@ namespace SSH_simulator
             button_next.IsEnabled = true;
         }
 
-        private void ShowDialogMsg(string retResult)
+        public void ShowDialogMsg(string retResult)
         {
             MessageBox.Show(retResult);
         }
 
         private void button_reset_Click(object sender, RoutedEventArgs e)
         {
+            var win = App.Current.MainWindow;
+            App.Current.MainWindow = new MainWindow();
+
+            win.Close();
+            App.Current.MainWindow.Show();
+
+            return;
+
             // resetiraj sve korake
             InitializeSteps();
 
@@ -203,7 +219,6 @@ namespace SSH_simulator
             textBox_ser_mod_p.Text = "";
 
             // treći tab
-            // TODO treči tab
         }
     }
 }

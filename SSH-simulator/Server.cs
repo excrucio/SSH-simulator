@@ -479,7 +479,6 @@ namespace SSH_simulator
 
                 // pokupi privatni ključ i javni certifikata
                 string serverCertPubKey = null;
-                string serverCertPrivKey = null;
                 AsymmetricCipherKeyPair rsaKeys = null;
                 if (algorithmsToUse.SIGNATURE_algorithm == "ssh-rsa")
                 {
@@ -488,7 +487,6 @@ namespace SSH_simulator
                     {
                         PemReader reader = new PemReader(txtStream);
                         rsaKeys = (AsymmetricCipherKeyPair)reader.ReadObject();
-                        serverCertPrivKey = txtStream.ReadToEnd();
                     }
 
                     // javni ključ
@@ -538,7 +536,7 @@ namespace SSH_simulator
                     hash = SSHHelper.ComputeSHA1Hash(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, serverCertPubKey, ex_params.e, ex_params.f, ex_params.K);
                 }
 
-                mainWindow.textBox_ser_H.Text = Encoding.ASCII.GetString(hash);
+                mainWindow.textBox_ser_H.Text = Convert.ToBase64String(hash);
 
                 // potpisati hash i dodati potpis
                 byte[] signature = null;
@@ -550,6 +548,8 @@ namespace SSH_simulator
                     encryptEngine.Init(true, rsaKeys.Private);
 
                     var encrypted = Convert.ToBase64String(encryptEngine.ProcessBlock(hash, 0, hash.Length));
+
+                    mainWindow.textBox_sig_H.Text = encrypted;
 
                     signature = Encoding.ASCII.GetBytes(encrypted);
                 }
@@ -605,6 +605,16 @@ namespace SSH_simulator
             // inače se radi o ECDH...
             // TODO ECDH klijent send
             return null;
+        }
+
+        public void ReadNEWKEYSPacket()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SendNEWKEYSPacket()
+        {
+            throw new NotImplementedException();
         }
     }
 }

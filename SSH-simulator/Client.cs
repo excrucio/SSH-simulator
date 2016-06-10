@@ -10,12 +10,14 @@ using Org.BouncyCastle.Security;
 using Renci.SshNet;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -531,6 +533,9 @@ namespace SSH_simulator
 
                 paket = paket.Skip(6 + 4 + K_S_size).ToArray();
 
+                mainWindow.textBox_ser_pub_key.Text = K_S_param;
+
+                /*
                 // provjeri da je K_S valjan
                 // učitaj javni ključ i usporedi
                 string serverCertPubKey = null;
@@ -560,6 +565,7 @@ namespace SSH_simulator
                     mainWindow.retResult = "Krivi javni ključ servera!";
                     return;
                 }
+                */
 
                 // pokupi f
                 // 4 size
@@ -582,6 +588,8 @@ namespace SSH_simulator
                 // K = f^x mod p
                 var K = f_param.ModPow(privateKey.X, ex_params.p);
 
+                mainWindow.textBox_cli_K.Text = K.ToString();
+
                 ex_params.K = K;
                 ex_params.f = f_param;
 
@@ -595,40 +603,41 @@ namespace SSH_simulator
                 }
                 else
                 {
-                    hash = SSHHelper.ComputeSHA1Hash(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, serverCertPubKey, ex_params.e, ex_params.f, ex_params.K);
+                    Debug.WriteLine("Sada klijent:");
+                    hash = SSHHelper.ComputeSHA1Hash(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, K_S_param, ex_params.e, ex_params.f, ex_params.K);
                 }
 
-                var decryptEngine = new Pkcs1Encoding(new RsaBlindedEngine());
+                var decryptEngine = new Pkcs1Encoding(new RsaEngine());
 
-                Org.BouncyCastle.Crypto.Parameters.RsaPrivateCrtKeyParameters key;
-
-                using (var txtreader = new StringReader("-----BEGIN RSA PUBLIC KEY-----" + K_S_param + "-----END RSA PUBLIC KEY-----"))
+                using (StreamReader txtStream = File.OpenText(@"ServerCert\server_rsa.pem"))
                 {
-                    key = (Org.BouncyCastle.Crypto.Parameters.RsaPrivateCrtKeyParameters)new PemReader(txtreader).ReadObject();
+                    PemReader reader = new PemReader(txtStream);
+                    AsymmetricCipherKeyPair pair = (AsymmetricCipherKeyPair)reader.ReadObject();
+                    decryptEngine.Init(false, pair.Public);
                 }
 
-                /*
-                using (var txtreader = new StringReader("-----BEGIN RSA PUBLIC KEY-----" + K_S_param + "\n-----END RSA PUBLIC KEY-----"))
-                //using (var txtreader = File.OpenText(@"ServerCert\rsa_server.pub"))
-                {
-                    var reader = new PemReader(txtreader);
-                    AsymmetricCipherKeyPair keyPair = (AsymmetricCipherKeyPair)reader.ReadObject();
+                var sig = Encoding.ASCII.GetString(s_param);
 
-                    AsymmetricKeyParameter keyParameter = (AsymmetricKeyParameter)reader.ReadObject();
+                mainWindow.textBox_sig_ser.Text = sig;
 
-                    decryptEngine.Init(false, keyParameter);
-                }
+                var dec = Convert.FromBase64String(sig);
+                var decrypted = decryptEngine.ProcessBlock(dec, 0, dec.Length);
 
-                var decrypted = decryptEngine.ProcessBlock(hash, 0, hash.Length);
+                var hashBase64 = Convert.ToBase64String(hash);
+                var sigHashBase64 = Convert.ToBase64String(decrypted);
 
-                if (hash != decrypted)
+                mainWindow.textBox_cli_H.Text = hashBase64;
+
+                if (hashBase64 != sigHashBase64)
                 {
                     mainWindow.boolRetResult = false;
                     mainWindow.retResult = "Hash paketa se razlikuje!";
                     return;
                 }
-                */
+
                 stream.Seek(0, SeekOrigin.Begin);
+
+                mainWindow.ShowDialogMsg("Uspješno autentificiran server!");
             }
             catch
             {
@@ -636,6 +645,17 @@ namespace SSH_simulator
                 mainWindow.retResult = "Neuspješan primitak paketa!";
                 return;
             }
+        }
+
+        public void SendNEWKEYSPacket()
+        {
+            // TODO !! sada to
+            throw new NotImplementedException();
+        }
+
+        public void ReadNEWKEYSPacket()
+        {
+            throw new NotImplementedException();
         }
     }
 }

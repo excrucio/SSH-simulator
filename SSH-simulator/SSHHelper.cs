@@ -1,6 +1,7 @@
 ﻿using Org.BouncyCastle.Math;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -238,6 +239,15 @@ namespace SSH_simulator
         public static byte[] ComputeSHA1Hash(string clientIdent, string serverIdent, byte[] ClientKEXINIT, byte[] ServerKEXINIT, string ServerCertPubKey,
                                             BigInteger e, BigInteger f, BigInteger K)
         {
+            Debug.WriteLine("ci=" + clientIdent);
+            Debug.WriteLine("si=" + serverIdent);
+            Debug.WriteLine("CK=" + Convert.ToBase64String(ClientKEXINIT));
+            Debug.WriteLine("SK=" + Convert.ToBase64String(ServerKEXINIT));
+            Debug.WriteLine("sPub=" + ServerCertPubKey);
+            Debug.WriteLine("e=" + e.ToString());
+            Debug.WriteLine("f=" + f.ToString());
+            Debug.WriteLine("K=" + K.ToString());
+
             var cIdn = Encoding.ASCII.GetBytes(clientIdent);
             var sIdn = Encoding.ASCII.GetBytes(serverIdent);
             var key = Encoding.ASCII.GetBytes(ServerCertPubKey);

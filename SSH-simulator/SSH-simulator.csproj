@@ -116,9 +116,6 @@
     <None Include="ServerCert\public_server_keys">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="ServerCert\rsa_server.pub">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="ServerCert\server_dsa.pem">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
