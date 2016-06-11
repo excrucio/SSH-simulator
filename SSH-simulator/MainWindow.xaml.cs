@@ -112,7 +112,17 @@ namespace SSH_simulator
 
             //15
             steps.Add(() => server.GenerateEncryptionKeys());
-            steps.Add(() => { /* ništa */ });
+            steps.Add(() => { tab_auth.Focus(); });
+
+            //16
+            steps.Add(() => client.SendServiceRequestPacket());
+            steps.Add(() => server.ReadServiceRequestPacket());
+
+            //17
+            steps.Add(() => server.SendServiceAcceptPacket());
+            steps.Add(() => client.ReadServiceAcceptPacket());
+
+            //18
         }
 
         private void ShowAlgorithms()

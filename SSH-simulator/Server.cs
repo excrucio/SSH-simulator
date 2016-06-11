@@ -29,6 +29,7 @@ namespace SSH_simulator
         private ExchangeParameters ex_params = new ExchangeParameters();
 
         private EncryptionKeys keys = new EncryptionKeys();
+        private EncryptionAlgorithms encryptionAlgorithms;
 
         private string _clientIdent;
         private string _serverIdent;
@@ -705,14 +706,14 @@ namespace SSH_simulator
 
                 mainWindow.textBox_info.AppendText("Server računa računa ključeve za enkripciju\n\n");
 
-                keys = SSHHelper.GenerateEncryptionKeys(ex_params.K, ex_params.H, ex_params.H);
+                keys = SSHHelper.GenerateEncryptionKeys(algorithmsToUse.ENCRYPTION_algorithm, algorithmsToUse.MAC_algorithm, ref encryptionAlgorithms, ex_params.K, ex_params.H, ex_params.H);
 
-                mainWindow.textBox_ser_c_s.Text = BitConverter.ToString(Convert.FromBase64String(keys.vectoCS)).Replace("-", "").ToLower();
-                mainWindow.textBox_ser_s_c.Text = BitConverter.ToString(Convert.FromBase64String(keys.vectorSC)).Replace("-", "").ToLower();
-                mainWindow.textBox_ser_cry_c_s.Text = BitConverter.ToString(Convert.FromBase64String(keys.cryCS)).Replace("-", "").ToLower();
-                mainWindow.textBox_ser_cry_s_c.Text = BitConverter.ToString(Convert.FromBase64String(keys.crySC)).Replace("-", "").ToLower();
-                mainWindow.textBox_ser_MAC_c_s.Text = BitConverter.ToString(Convert.FromBase64String(keys.MACKeyCS)).Replace("-", "").ToLower();
-                mainWindow.textBox_ser_MAC_s_c.Text = BitConverter.ToString(Convert.FromBase64String(keys.MACKeySC)).Replace("-", "").ToLower();
+                mainWindow.textBox_ser_c_s.Text = BitConverter.ToString(keys.vectorCS).Replace("-", "").ToLower();
+                mainWindow.textBox_ser_s_c.Text = BitConverter.ToString(keys.vectorSC).Replace("-", "").ToLower();
+                mainWindow.textBox_ser_cry_c_s.Text = BitConverter.ToString(keys.cryCS).Replace("-", "").ToLower();
+                mainWindow.textBox_ser_cry_s_c.Text = BitConverter.ToString(keys.crySC).Replace("-", "").ToLower();
+                mainWindow.textBox_ser_MAC_c_s.Text = BitConverter.ToString(keys.MACKeyCS).Replace("-", "").ToLower();
+                mainWindow.textBox_ser_MAC_s_c.Text = BitConverter.ToString(keys.MACKeySC).Replace("-", "").ToLower();
             }
             catch
             {
@@ -721,6 +722,105 @@ namespace SSH_simulator
             }
 
             mainWindow.boolRetResult = true;
+        }
+
+        public void ReadServiceRequestPacket()
+        {
+            // čitaj i provjeri MAC
+            try
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+
+                byte[] size = new byte[4];
+                stream.Read(size, 0, size.Length);
+                Array.Reverse(size);
+                int packetSize = BitConverter.ToInt32(size, 0);
+
+                byte[] paket = new byte[packetSize + size.Length];
+
+                stream.Seek(0, SeekOrigin.Begin);
+                stream.Read(paket, 0, packetSize + size.Length);
+
+                int tip = Convert.ToInt32(paket[5]);
+                string packetType = "undefined";
+                if (Enum.IsDefined(typeof(identifiers), tip))
+                {
+                    packetType = Enum.GetName(typeof(identifiers), tip);
+                }
+
+                string output = SSHHelper.ispis(paket);
+
+                mainWindow.textBox_server.AppendText("\n\n\n" + output);
+
+                string outputDecoded = SSHHelper.ispis(paket.Skip(5).ToArray());
+
+                // pokupi parametar e
+                // paket - cijeli paket i sve
+                // duljina paketa - bez sebe
+                // uzmi samo dio s info: duljinaPaketa - duljinaDopune - 1
+
+                int dopunaSize = Convert.ToInt32(paket[4]);
+
+                mainWindow.textBox_server_decoded.AppendText("\n\n\nVrsta paketa: " + packetType + " (" + tip + ")\n" + outputDecoded);
+            }
+            catch
+            {
+                mainWindow.boolRetResult = false;
+                mainWindow.retResult = "Neuspješan primitak paketa!";
+                return;
+            }
+
+            mainWindow.boolRetResult = true;
+        }
+
+        private void SendServiceDisconnectPacket()
+        {
+            try
+            {
+                mainWindow.textBox_info.AppendText("Server šalje SERVICE_DISCONNECT paket\n\n");
+                mainWindow.button_next.IsEnabled = false;
+                mainWindow.boolRetResult = false;
+                mainWindow.retResult = "MAC se ne podudara!\nPrekid veze!";
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                // TODO napravi paket i pošalji
+
+                stream.Seek(0, SeekOrigin.Begin);
+            }
+        }
+
+        public void SendServiceAcceptPacket()
+        {
+            // TODO napravi paket
+            try
+            {
+                mainWindow.textBox_info.AppendText("Server šalje SERVICE_ACCEPT paket\n\n");
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                List<byte> payload = new List<byte>();
+
+                // identifikator paketa
+                byte[] ident = BitConverter.GetBytes((int)identifiers.SSH_MSG_SERVICE_ACCEPT);
+
+                payload.Add(ident[0]);
+
+                byte[] all = payload.ToArray();
+
+                // stvori paket
+                byte[] paket = SSHHelper.CreatePacket(all);
+
+                var paket_crypt = (byte[])encryptionAlgorithms.encryption.Invoke(null, new object[] { paket, keys.cryCS, keys.vectorCS, true });
+
+                stream.Write(paket_crypt, 0, paket_crypt.Length);
+            }
+            catch
+            {
+                mainWindow.retResult = "Paket nije moguće poslati!";
+                mainWindow.boolRetResult = false;
+                return;
+            }
         }
     }
 }

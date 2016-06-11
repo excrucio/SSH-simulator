@@ -8,11 +8,11 @@ namespace SSH_simulator
 {
     public class EncryptionKeys
     {
-        public string vectoCS { get; set; }
-        public string vectorSC { get; set; }
-        public string cryCS { get; set; }
-        public string crySC { get; set; }
-        public string MACKeyCS { get; set; }
-        public string MACKeySC { get; set; }
+        public byte[] vectorCS { get; set; }
+        public byte[] vectorSC { get; set; }
+        public byte[] cryCS { get; set; }
+        public byte[] crySC { get; set; }
+        public byte[] MACKeyCS { get; set; }
+        public byte[] MACKeySC { get; set; }
     }
 }

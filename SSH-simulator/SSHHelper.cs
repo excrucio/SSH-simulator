@@ -1,8 +1,16 @@
-﻿using Org.BouncyCastle.Math;
+﻿using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Modes;
+using Org.BouncyCastle.Crypto.Paddings;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Math;
+using Org.BouncyCastle.Security;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -276,7 +284,7 @@ namespace SSH_simulator
             return hash;
         }
 
-        public static EncryptionKeys GenerateEncryptionKeys(BigInteger K, string H, string sessionIdentifier)
+        public static EncryptionKeys GenerateEncryptionKeys(string encryptionAl, string macAl, ref EncryptionAlgorithms encryptionAlgorithms, BigInteger K, string H, string sessionIdentifier)
         {
             // session identifier = H - ostaje isti čak i ako se ključevi promijene (i sam H je tada drugačiji...)
 
@@ -289,13 +297,8 @@ namespace SSH_simulator
             MAC kljuc (klijent -> poslužitelj) = hash (K || H || "F" || identifikator_sjednice)
              */
 
-            // TODO !! provjeri duljine ključeva!!!!!
-            // 3DES ključ je 56 bita - 7 B
-            // aes256 je 256 bita - 32 B
-
             EncryptionKeys keys = new EncryptionKeys();
             List<byte> forHash = new List<byte>();
-            byte[] hash;
 
             var K_array = K.ToByteArrayUnsigned();
             var K_size = K_array.Length;
@@ -341,7 +344,23 @@ namespace SSH_simulator
 
             using (SHA1Managed sha1 = new SHA1Managed())
             {
-                keys.vectoCS = Convert.ToBase64String(sha1.ComputeHash(forHash.ToArray()));
+                var key_list = sha1.ComputeHash(forHash.ToArray()).ToList();
+                /*
+                If the key length needed is longer than the output of the HASH, the
+                key is extended by computing HASH of the concatenation of K and H and
+                the entire key so far, and appending the resulting bytes (as many as
+                HASH generates) to the key
+                 */
+                while (key_list.Count < 8)
+                {
+                    var temp = new List<byte>();
+                    temp.AddRange(K_array);
+                    temp.AddRange(H_array);
+                    temp.AddRange(key_list);
+                    key_list.AddRange(sha1.ComputeHash(temp.ToArray()));
+                }
+
+                keys.vectorCS = key_list.Take(8).ToArray();
             }
 
             // vektor s -> k
@@ -355,36 +374,98 @@ namespace SSH_simulator
 
             using (SHA1Managed sha1 = new SHA1Managed())
             {
-                keys.vectorSC = Convert.ToBase64String(sha1.ComputeHash(forHash.ToArray()));
+                var key_list = sha1.ComputeHash(forHash.ToArray()).ToList();
+                /*
+                If the key length needed is longer than the output of the HASH, the
+                key is extended by computing HASH of the concatenation of K and H and
+                the entire key so far, and appending the resulting bytes (as many as
+                HASH generates) to the key
+                 */
+                while (key_list.Count < 8)
+                {
+                    var temp = new List<byte>();
+                    temp.AddRange(K_array);
+                    temp.AddRange(H_array);
+                    temp.AddRange(key_list);
+                    key_list.AddRange(sha1.ComputeHash(temp.ToArray()));
+                }
+
+                keys.vectorSC = key_list.Take(8).ToArray();
             }
 
-            // enkripcija k -> s
-            forHash.Clear();
-
-            forHash.AddRange(KH_array);
-
-            forHash.Add(C);
-
-            forHash.AddRange(sessionIdent_array);
-
-            using (SHA1Managed sha1 = new SHA1Managed())
+            switch (encryptionAl)
             {
-                keys.cryCS = Convert.ToBase64String(sha1.ComputeHash(forHash.ToArray()));
+                case "3des-cbc":
+                    {
+                        var encryKeys = Generate3DESKeys(K, H, sessionIdentifier);
+                        keys.cryCS = encryKeys.cryCS;
+                        keys.crySC = encryKeys.crySC;
+                        encryptionAlgorithms.encryption = typeof(SSHHelper).GetMethod("Encrypt_Decrypt3DES_CBC");
+                        break;
+                    }
             }
 
-            // enkripcija s -> k
-            forHash.Clear();
-
-            forHash.AddRange(KH_array);
-
-            forHash.Add(D);
-
-            forHash.AddRange(sessionIdent_array);
-
-            using (SHA1Managed sha1 = new SHA1Managed())
+            switch (macAl)
             {
-                keys.crySC = Convert.ToBase64String(sha1.ComputeHash(forHash.ToArray()));
+                case "hmac-sha1":
+                    {
+                        EncryptionKeys encryKeys = GenerateHMAC_SHA1Keys(K, H, sessionIdentifier);
+                        keys.MACKeyCS = encryKeys.MACKeyCS;
+                        keys.MACKeySC = encryKeys.MACKeySC;
+                        encryptionAlgorithms.MAC = typeof(SSHHelper).GetMethod("Compute_hmac_sha1");
+                        break;
+                    }
             }
+
+            return keys;
+        }
+
+        public static byte[] Compute_hmac_sha1(byte[] paket, byte[] key)
+        {
+            HMACSHA1 hmacsha1 = new HMACSHA1(key);
+
+            byte[] hashmessage = hmacsha1.ComputeHash(paket);
+
+            return hashmessage;
+        }
+
+        private static EncryptionKeys GenerateHMAC_SHA1Keys(BigInteger K, string H, string sessionIdentifier)
+        {
+            EncryptionKeys keys = new EncryptionKeys();
+            List<byte> forHash = new List<byte>();
+
+            var K_array = K.ToByteArrayUnsigned();
+            var K_size = K_array.Length;
+            var K_size_array = BitConverter.GetBytes(K_size);
+            // reverse zbog toga da ide iz little u big endian - ("normalni")
+            Array.Reverse(K_size_array);
+
+            var H_array = Convert.FromBase64String(H);
+            var H_size = H_array.Length;
+            var H_size_array = BitConverter.GetBytes(H_size);
+            // reverse zbog toga da ide iz little u big endian - ("normalni")
+            Array.Reverse(H_size_array);
+
+            var sessionIdent_array = Convert.FromBase64String(sessionIdentifier);
+            var sessionIdent_size = sessionIdent_array.Length;
+            var sessionIdent_size_array = BitConverter.GetBytes(sessionIdent_size);
+            // reverse zbog toga da ide iz little u big endian - ("normalni")
+            Array.Reverse(sessionIdent_size_array);
+
+            var A = Convert.ToByte('A');
+            var B = Convert.ToByte('B');
+            var C = Convert.ToByte('C');
+            var D = Convert.ToByte('D');
+            var E = Convert.ToByte('E');
+            var F = Convert.ToByte('F');
+
+            var KH_array = new List<byte>();
+
+            KH_array.AddRange(K_size_array);
+            KH_array.AddRange(K_array);
+
+            KH_array.AddRange(H_size_array);
+            KH_array.AddRange(H_array);
 
             // MAC ključ k -> s
             forHash.Clear();
@@ -397,7 +478,7 @@ namespace SSH_simulator
 
             using (SHA1Managed sha1 = new SHA1Managed())
             {
-                keys.MACKeyCS = Convert.ToBase64String(sha1.ComputeHash(forHash.ToArray()));
+                keys.MACKeyCS = sha1.ComputeHash(forHash.ToArray());
             }
 
             // MAC ključ s -> k
@@ -411,10 +492,136 @@ namespace SSH_simulator
 
             using (SHA1Managed sha1 = new SHA1Managed())
             {
-                keys.MACKeySC = Convert.ToBase64String(sha1.ComputeHash(forHash.ToArray()));
+                keys.MACKeySC = sha1.ComputeHash(forHash.ToArray());
             }
 
             return keys;
+        }
+
+        private static EncryptionKeys Generate3DESKeys(BigInteger K, string H, string sessionIdentifier)
+        {
+            EncryptionKeys keys = new EncryptionKeys();
+            List<byte> forHash = new List<byte>();
+
+            var K_array = K.ToByteArrayUnsigned();
+            var K_size = K_array.Length;
+            var K_size_array = BitConverter.GetBytes(K_size);
+            // reverse zbog toga da ide iz little u big endian - ("normalni")
+            Array.Reverse(K_size_array);
+
+            var H_array = Convert.FromBase64String(H);
+            var H_size = H_array.Length;
+            var H_size_array = BitConverter.GetBytes(H_size);
+            // reverse zbog toga da ide iz little u big endian - ("normalni")
+            Array.Reverse(H_size_array);
+
+            var sessionIdent_array = Convert.FromBase64String(sessionIdentifier);
+            var sessionIdent_size = sessionIdent_array.Length;
+            var sessionIdent_size_array = BitConverter.GetBytes(sessionIdent_size);
+            // reverse zbog toga da ide iz little u big endian - ("normalni")
+            Array.Reverse(sessionIdent_size_array);
+
+            var A = Convert.ToByte('A');
+            var B = Convert.ToByte('B');
+            var C = Convert.ToByte('C');
+            var D = Convert.ToByte('D');
+            var E = Convert.ToByte('E');
+            var F = Convert.ToByte('F');
+
+            var KH_array = new List<byte>();
+
+            KH_array.AddRange(K_size_array);
+            KH_array.AddRange(K_array);
+
+            KH_array.AddRange(H_size_array);
+            KH_array.AddRange(H_array);
+
+            // 3DES ključ 192b = 24B
+            // aes256 je 256 bita - 32B
+
+            // enkripcija k -> s
+            forHash.Clear();
+
+            forHash.AddRange(KH_array);
+
+            forHash.Add(C);
+
+            forHash.AddRange(sessionIdent_array);
+
+            using (SHA1Managed sha1 = new SHA1Managed())
+            {
+                var key_list = sha1.ComputeHash(forHash.ToArray()).ToList();
+                /*
+                If the key length needed is longer than the output of the HASH, the
+                key is extended by computing HASH of the concatenation of K and H and
+                the entire key so far, and appending the resulting bytes (as many as
+                HASH generates) to the key
+                 */
+                while (key_list.Count < 24)
+                {
+                    var temp = new List<byte>();
+                    temp.AddRange(K_array);
+                    temp.AddRange(H_array);
+                    temp.AddRange(key_list);
+                    key_list.AddRange(sha1.ComputeHash(temp.ToArray()));
+                }
+
+                keys.cryCS = key_list.Take(25).ToArray();
+            }
+
+            // enkripcija s -> k
+            forHash.Clear();
+
+            forHash.AddRange(KH_array);
+
+            forHash.Add(D);
+
+            forHash.AddRange(sessionIdent_array);
+
+            using (SHA1Managed sha1 = new SHA1Managed())
+            {
+                var key_list = sha1.ComputeHash(forHash.ToArray()).ToList();
+                /*
+                If the key length needed is longer than the output of the HASH, the
+                key is extended by computing HASH of the concatenation of K and H and
+                the entire key so far, and appending the resulting bytes (as many as
+                HASH generates) to the key
+                 */
+                while (key_list.Count < 24)
+                {
+                    var temp = new List<byte>();
+                    temp.AddRange(K_array);
+                    temp.AddRange(H_array);
+                    temp.AddRange(key_list);
+                    key_list.AddRange(sha1.ComputeHash(temp.ToArray()));
+                }
+
+                keys.crySC = key_list.Take(24).ToArray();
+            }
+
+            return keys;
+        }
+
+        /// <summary>
+        /// Encryption using 3DES algorithm in CBC mode
+        /// </summary>
+        /// <param name="message">Input message bytes</param>
+        /// <param name="isEncryption">true for encrypting, false for decrypting</param>
+        /// <param name="iv">initialization vector</param>
+        /// <param name="key">key for encryption</param>
+        /// <returns>Encrypted message bytes</returns>
+        public static byte[] Encrypt_Decrypt3DES_CBC(byte[] message, byte[] key, byte[] iv, bool isEncryption)
+        {
+            DesEdeEngine desedeEngine = new DesEdeEngine();
+            BufferedBlockCipher bufferedCipher = new PaddedBufferedBlockCipher(new CbcBlockCipher(desedeEngine), new Pkcs7Padding());
+            // 192 bita ključ = 24 bajta
+            KeyParameter keyparam = ParameterUtilities.CreateKeyParameter("DESEDE", key);
+            ParametersWithIV keyWithIV = new ParametersWithIV(keyparam, iv);
+
+            byte[] output = new byte[bufferedCipher.GetOutputSize(message.Length)];
+            bufferedCipher.Init(isEncryption, keyWithIV);
+            output = bufferedCipher.DoFinal(message);
+            return output;
         }
     }
 }
