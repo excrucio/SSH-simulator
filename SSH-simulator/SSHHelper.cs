@@ -412,6 +412,7 @@ namespace SSH_simulator
                         EncryptionKeys encryKeys = GenerateHMAC_SHA1Keys(K, H, sessionIdentifier);
                         keys.MACKeyCS = encryKeys.MACKeyCS;
                         keys.MACKeySC = encryKeys.MACKeySC;
+                        keys.MAClength = encryKeys.MAClength;
                         encryptionAlgorithms.MAC = typeof(SSHHelper).GetMethod("Compute_hmac_sha1");
                         break;
                     }
@@ -433,6 +434,8 @@ namespace SSH_simulator
         {
             EncryptionKeys keys = new EncryptionKeys();
             List<byte> forHash = new List<byte>();
+
+            keys.MAClength = 20;
 
             var K_array = K.ToByteArrayUnsigned();
             var K_size = K_array.Length;
@@ -566,7 +569,7 @@ namespace SSH_simulator
                     key_list.AddRange(sha1.ComputeHash(temp.ToArray()));
                 }
 
-                keys.cryCS = key_list.Take(25).ToArray();
+                keys.cryCS = key_list.Take(24).ToArray();
             }
 
             // enkripcija s -> k
@@ -612,6 +615,8 @@ namespace SSH_simulator
         /// <returns>Encrypted message bytes</returns>
         public static byte[] Encrypt_Decrypt3DES_CBC(byte[] message, byte[] key, byte[] iv, bool isEncryption)
         {
+            Debug.WriteLine("msg=" + Convert.ToBase64String(message));
+
             DesEdeEngine desedeEngine = new DesEdeEngine();
             BufferedBlockCipher bufferedCipher = new PaddedBufferedBlockCipher(new CbcBlockCipher(desedeEngine), new Pkcs7Padding());
             // 192 bita ključ = 24 bajta
@@ -621,6 +626,9 @@ namespace SSH_simulator
             byte[] output = new byte[bufferedCipher.GetOutputSize(message.Length)];
             bufferedCipher.Init(isEncryption, keyWithIV);
             output = bufferedCipher.DoFinal(message);
+
+            Debug.WriteLine("msgENCRY=" + Convert.ToBase64String(output));
+
             return output;
         }
     }

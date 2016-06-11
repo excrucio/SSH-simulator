@@ -99,20 +99,24 @@ namespace SSH_simulator
             steps.Add(() => { /* ništa */ });
 
             //12
-            steps.Add(() => client.SendNEWKEYSPacket());
-            steps.Add(() => server.ReadNEWKEYSPacket());
-
-            //13
-            steps.Add(() => server.SendNEWKEYSPacket());
-            steps.Add(() => client.ReadNEWKEYSPacket());
-
-            //14
             steps.Add(() => client.GenerateEncryptionKeys());
             steps.Add(() => { /* ništa */ });
 
-            //15
+            //13
             steps.Add(() => server.GenerateEncryptionKeys());
-            steps.Add(() => { tab_auth.Focus(); });
+            steps.Add(() => { /* ništa */ });
+
+            //14
+            steps.Add(() => client.SendNEWKEYSPacket());
+            steps.Add(() => server.ReadNEWKEYSPacket());
+
+            //15
+            steps.Add(() => server.SendNEWKEYSPacket());
+            steps.Add(() =>
+            {
+                client.ReadNEWKEYSPacket();
+                tab_auth.Focus();
+            });
 
             //16
             steps.Add(() => client.SendServiceRequestPacket());

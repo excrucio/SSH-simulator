@@ -14,5 +14,6 @@ namespace SSH_simulator
         public byte[] crySC { get; set; }
         public byte[] MACKeyCS { get; set; }
         public byte[] MACKeySC { get; set; }
+        public int MAClength { get; set; }
     }
 }

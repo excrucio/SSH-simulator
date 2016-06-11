@@ -29,7 +29,9 @@ namespace SSH_simulator
         private ExchangeParameters ex_params = new ExchangeParameters();
 
         private EncryptionKeys keys = new EncryptionKeys();
-        private EncryptionAlgorithms encryptionAlgorithms;
+        private EncryptionAlgorithms encryptionAlgorithms = new EncryptionAlgorithms();
+
+        private string authResponse;
 
         private string _clientIdent;
         private string _serverIdent;
@@ -731,35 +733,60 @@ namespace SSH_simulator
             {
                 stream.Seek(0, SeekOrigin.Begin);
 
+                byte[] paket = new byte[stream.Length - keys.MAClength];
+
+                stream.Read(paket, 0, (int)stream.Length - keys.MAClength);
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                //paket = (byte[])encryptionAlgorithms.encryption.Invoke(null, new object[] { paket, keys.cryCS, keys.vectorCS, false });
+                paket = SSHHelper.Encrypt_Decrypt3DES_CBC(paket, keys.cryCS, keys.vectorCS, false);
+
                 byte[] size = new byte[4];
-                stream.Read(size, 0, size.Length);
+                size = paket.Take(size.Length).ToArray();
                 Array.Reverse(size);
                 int packetSize = BitConverter.ToInt32(size, 0);
 
-                byte[] paket = new byte[packetSize + size.Length];
+                byte[] paket_decoded = new byte[packetSize + size.Length];
 
                 stream.Seek(0, SeekOrigin.Begin);
-                stream.Read(paket, 0, packetSize + size.Length);
+                paket_decoded = paket.Take(packetSize + size.Length).ToArray();
 
-                int tip = Convert.ToInt32(paket[5]);
+                int tip = Convert.ToInt32(paket_decoded[5]);
                 string packetType = "undefined";
                 if (Enum.IsDefined(typeof(identifiers), tip))
                 {
                     packetType = Enum.GetName(typeof(identifiers), tip);
                 }
 
-                string output = SSHHelper.ispis(paket);
+                // pokupi vrstu autentifikacije
+                // 6 = zbog 4 veličine, 1 veličina dopune, 1 vrsta paketa + 4 veličina stringa
+                byte[] infoSize_array = new byte[4];
+                infoSize_array = paket.Skip(6).Take(infoSize_array.Length).ToArray();
+                Array.Reverse(infoSize_array);
+                int infoSize = BitConverter.ToInt32(infoSize_array, 0);
+                authResponse = Encoding.ASCII.GetString(paket_decoded.Skip(6 + 4).Take(infoSize).ToArray());
+
+                string output = SSHHelper.ispis(paket_decoded);
 
                 mainWindow.textBox_server.AppendText("\n\n\n" + output);
 
-                string outputDecoded = SSHHelper.ispis(paket.Skip(5).ToArray());
+                // MAC dio
+                byte[] mac = (byte[])encryptionAlgorithms.MAC.Invoke(null, new object[] { paket_decoded, keys.MACKeyCS });
 
-                // pokupi parametar e
-                // paket - cijeli paket i sve
-                // duljina paketa - bez sebe
-                // uzmi samo dio s info: duljinaPaketa - duljinaDopune - 1
+                byte[] macReceived = new byte[keys.MAClength];
+                macReceived = paket.Skip(packetSize - size.Length).ToArray();
 
-                int dopunaSize = Convert.ToInt32(paket[4]);
+                if (Convert.ToString(mac) != Convert.ToString(macReceived))
+                {
+                    //problem
+                    SendServiceDisconnectPacket();
+                }
+
+                string macHex = SSHHelper.ispis(macReceived);
+                mainWindow.textBox_server.AppendText("MAC:\n" + macHex);
+
+                string outputDecoded = SSHHelper.ispis(paket_decoded.Skip(5).ToArray());
 
                 mainWindow.textBox_server_decoded.AppendText("\n\n\nVrsta paketa: " + packetType + " (" + tip + ")\n" + outputDecoded);
             }
@@ -788,11 +815,17 @@ namespace SSH_simulator
 
                 stream.Seek(0, SeekOrigin.Begin);
             }
+            catch
+            {
+                mainWindow.boolRetResult = false;
+                mainWindow.retResult = "Neuspješano slanje paketa!";
+                return;
+            }
         }
 
         public void SendServiceAcceptPacket()
         {
-            // TODO napravi paket
+            // napravi paket
             try
             {
                 mainWindow.textBox_info.AppendText("Server šalje SERVICE_ACCEPT paket\n\n");
@@ -806,14 +839,32 @@ namespace SSH_simulator
 
                 payload.Add(ident[0]);
 
+                string req = authResponse;
+                byte[] req_array = Encoding.ASCII.GetBytes(req);
+                var size = BitConverter.GetBytes(req.Length);
+                // reverse zbog toga da ide iz little u big endian - ("normalni")
+                Array.Reverse(size);
+
+                payload.AddRange(size);
+                payload.AddRange(req_array);
+
                 byte[] all = payload.ToArray();
 
                 // stvori paket
                 byte[] paket = SSHHelper.CreatePacket(all);
 
-                var paket_crypt = (byte[])encryptionAlgorithms.encryption.Invoke(null, new object[] { paket, keys.cryCS, keys.vectorCS, true });
+                byte[] mac = (byte[])encryptionAlgorithms.MAC.Invoke(null, new object[] { paket, keys.MACKeySC });
 
-                stream.Write(paket_crypt, 0, paket_crypt.Length);
+                byte[] paket_crypt = (byte[])encryptionAlgorithms.encryption.Invoke(null, new object[] { paket, keys.crySC, keys.vectorSC, true });
+
+                List<byte> wholePacket = new List<byte>();
+
+                wholePacket.AddRange(paket_crypt);
+                wholePacket.AddRange(mac);
+
+                stream.SetLength(wholePacket.Count);
+
+                stream.Write(wholePacket.ToArray(), 0, wholePacket.Count);
             }
             catch
             {
@@ -821,6 +872,8 @@ namespace SSH_simulator
                 mainWindow.boolRetResult = false;
                 return;
             }
+
+            mainWindow.boolRetResult = true;
         }
     }
 }
