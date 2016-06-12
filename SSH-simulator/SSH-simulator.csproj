@@ -66,8 +66,6 @@
     <Compile Include="AlgorithmsUsed.cs" />
     <Compile Include="DHg1.cs" />
     <Compile Include="DHg14.cs" />
-    <Compile Include="ecdh-sha2-nistp256.cs" />
-    <Compile Include="ecdh-sha2-nistp384.cs" />
     <Compile Include="ecdh-sha2-nistp521.cs" />
     <Compile Include="ECDH_brainpoolP160r1.cs" />
     <Compile Include="EncryptionAlgorithms.cs" />

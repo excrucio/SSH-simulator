@@ -292,12 +292,12 @@ namespace SSH_simulator
             textBox_clientIdent.Text = "SSH-2.0-client_v1.0";
             checkBox_aes256_cbc.IsChecked = false;
             checkBox_blowfish_ctr.IsChecked = false;
-            checkBox_ec_dh.IsChecked = false;
+            checkBox_ecdh_sha2_nistp521.IsChecked = false;
             checkBox_gost28147.IsChecked = false;
             checkBox_hmac_sha2.IsChecked = false;
             checkBox_server_aes256_cbc.IsChecked = false;
             checkBox_server_blowfish_ctr.IsChecked = false;
-            checkBox_server_ec_dh.IsChecked = false;
+            checkBox_server_ecdh_sha2_nistp521.IsChecked = false;
             checkBox_server_gost28147.IsChecked = false;
             checkBox_server_hmac_sha2.IsChecked = false;
             checkBox_server_ssh_rsa.IsChecked = true;

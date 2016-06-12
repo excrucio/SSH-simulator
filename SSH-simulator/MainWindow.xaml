@@ -33,7 +33,7 @@
                         <Label x:Name="label11" Content="MAC" HorizontalAlignment="Left" Margin="519,32,0,0" VerticalAlignment="Top" FontWeight="Bold" />
                         <Label x:Name="label46" Content="diffie-hellman-group14-sha1" HorizontalAlignment="Left" Margin="10,107,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label45" Content="diffie-hellman-group1-sha1" HorizontalAlignment="Left" Margin="10,81,0,0" VerticalAlignment="Top" />
-                        <CheckBox x:Name="checkBox_ec_dh" Content="ecdh-sha2-nistp521" HorizontalAlignment="Left" Margin="18,61,0,0" VerticalAlignment="Top" ClickMode="Press" />
+                        <CheckBox x:Name="checkBox_ecdh_sha2_nistp521" Content="ecdh-sha2-nistp521" HorizontalAlignment="Left" Margin="18,61,0,0" VerticalAlignment="Top" ClickMode="Press" />
                         <CheckBox x:Name="checkBox_ssh_rsa" Content="ssh-rsa" HorizontalAlignment="Left" Margin="214,63,0,0" VerticalAlignment="Top" IsChecked="True" IsEnabled="False" />
                         <Label x:Name="label47" Content="ssh-dss" HorizontalAlignment="Left" Margin="214,81,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label48" Content="3des-cbc" HorizontalAlignment="Left" Margin="391,81,0,0" VerticalAlignment="Top" />
@@ -57,7 +57,7 @@
                         <Label x:Name="label11_Copy" Content="MAC" HorizontalAlignment="Left" Margin="1170,32,0,0" VerticalAlignment="Top" FontWeight="Bold" />
                         <Label x:Name="label46_Copy" Content="diffie-hellman-group14-sha1" HorizontalAlignment="Left" Margin="661,107,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label45_Copy" Content="diffie-hellman-group1-sha1" HorizontalAlignment="Left" Margin="661,81,0,0" VerticalAlignment="Top" />
-                        <CheckBox x:Name="checkBox_server_ec_dh" Content="ecdh-sha2-nistp521" HorizontalAlignment="Left" Margin="670,63,0,0" VerticalAlignment="Top" ClickMode="Press" />
+                        <CheckBox x:Name="checkBox_server_ecdh_sha2_nistp521" Content="ecdh-sha2-nistp521" HorizontalAlignment="Left" Margin="670,63,0,0" VerticalAlignment="Top" ClickMode="Press" />
                         <CheckBox x:Name="checkBox_server_ssh_rsa" Content="ssh-rsa" HorizontalAlignment="Left" Margin="865,63,0,0" VerticalAlignment="Top" IsChecked="True" IsEnabled="False" />
                         <Label x:Name="label47_Copy" Content="ssh-dss" HorizontalAlignment="Left" Margin="865,81,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label48_Copy" Content="3des-cbc" HorizontalAlignment="Left" Margin="1057,81,0,0" VerticalAlignment="Top" />

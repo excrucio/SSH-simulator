@@ -37,4 +37,3 @@ C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\obj\Debug\SSH_simulator.Properties.Re
 C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\obj\Debug\SSH-simulator.csproj.GenerateResource.Cache
 C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\obj\Debug\SSH-simulator.exe
 C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\obj\Debug\SSH-simulator.pdb
-C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\obj\Debug\SSH-simulator.csprojResolveAssemblyReference.cache

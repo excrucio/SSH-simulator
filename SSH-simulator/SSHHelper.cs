@@ -284,7 +284,7 @@ namespace SSH_simulator
             return hash;
         }
 
-        public static EncryptionKeys GenerateEncryptionKeys(string encryptionAl, string macAl, ref EncryptionAlgorithms encryptionAlgorithms, BigInteger K, string H, string sessionIdentifier)
+        public static EncryptionKeys GenerateEncryptionKeysFor3DES_CBC(string encryptionAl, string macAl, ref EncryptionAlgorithms encryptionAlgorithms, BigInteger K, string H, string sessionIdentifier)
         {
             // session identifier = H - ostaje isti čak i ako se ključevi promijene (i sam H je tada drugačiji...)
 
@@ -630,6 +630,51 @@ namespace SSH_simulator
             Debug.WriteLine("msgENCRY=" + Convert.ToBase64String(output));
 
             return output;
+        }
+
+        internal static byte[] ComputeSHA2Hash(string clientIdent, string serverIdent, byte[] ClientKEXINIT, byte[] ServerKEXINIT, string ServerCertPubKey, BigInteger x_r, BigInteger y_r, BigInteger x, BigInteger y, BigInteger K)
+        {
+            Debug.WriteLine("ci=" + clientIdent);
+            Debug.WriteLine("si=" + serverIdent);
+            Debug.WriteLine("CK=" + Convert.ToBase64String(ClientKEXINIT));
+            Debug.WriteLine("SK=" + Convert.ToBase64String(ServerKEXINIT));
+            Debug.WriteLine("sPub=" + ServerCertPubKey);
+            Debug.WriteLine("x_r=" + x_r.ToString());
+            Debug.WriteLine("y_r=" + y_r.ToString());
+            Debug.WriteLine("x=" + x.ToString());
+            Debug.WriteLine("y=" + y.ToString());
+            Debug.WriteLine("K=" + K.ToString());
+
+            var cIdn = Encoding.ASCII.GetBytes(clientIdent);
+            var sIdn = Encoding.ASCII.GetBytes(serverIdent);
+            var key = Encoding.ASCII.GetBytes(ServerCertPubKey);
+            var x_r_array = x_r.ToByteArrayUnsigned();
+            var y_r_array = y_r.ToByteArrayUnsigned();
+            var x_array = x.ToByteArrayUnsigned();
+            var y_array = y.ToByteArrayUnsigned();
+            var K_array = K.ToByteArrayUnsigned();
+
+            List<byte> arrayToHash = new List<byte>();
+
+            arrayToHash.AddRange(cIdn);
+            arrayToHash.AddRange(sIdn);
+            arrayToHash.AddRange(ClientKEXINIT);
+            arrayToHash.AddRange(ServerKEXINIT);
+            arrayToHash.AddRange(key);
+            arrayToHash.AddRange(x_r_array);
+            arrayToHash.AddRange(y_r_array);
+            arrayToHash.AddRange(x_array);
+            arrayToHash.AddRange(y_array);
+            arrayToHash.AddRange(K_array);
+
+            byte[] hash;
+
+            using (SHA256Managed sha256 = new SHA256Managed())
+            {
+                hash = sha256.ComputeHash(arrayToHash.ToArray());
+            }
+
+            return hash;
         }
     }
 }

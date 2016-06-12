@@ -12,6 +12,5 @@ C:\GIT\PRIVATE\SSH-simulator\testni\bin\Debug\testni.exe.config
 C:\GIT\PRIVATE\SSH-simulator\testni\bin\Debug\testni.exe
 C:\GIT\PRIVATE\SSH-simulator\testni\bin\Debug\testni.pdb
 C:\GIT\PRIVATE\SSH-simulator\testni\bin\Debug\BouncyCastle.Crypto.dll
-C:\GIT\PRIVATE\SSH-simulator\testni\obj\Debug\testni.csprojResolveAssemblyReference.cache
 C:\GIT\PRIVATE\SSH-simulator\testni\obj\Debug\testni.exe
 C:\GIT\PRIVATE\SSH-simulator\testni\obj\Debug\testni.pdb

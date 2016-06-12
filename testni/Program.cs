@@ -3,6 +3,7 @@ using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Agreement;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Generators;
@@ -50,10 +51,12 @@ namespace testni
         private static void Main(string[] args)
         {
             AsymmetricCipherKeyPair keyPair = ecdh_sha2_nistp521.getKeyPair();
+            var o = keyPair.Public as ECPublicKeyParameters;
+            var ui = o.PublicKeyParamSet;
             var senderPrivate = ((ECPrivateKeyParameters)keyPair.Private).D.ToByteArrayUnsigned();
             var senderPublic = ((ECPublicKeyParameters)keyPair.Public).Q.GetEncoded();
 
-            var pri = ((ECPrivateKeyParameters)keyPair.Private).D.ToString();
+            var p = (ECPrivateKeyParameters)PrivateKeyFactory.CreateKey(senderPrivate);
             var pub = ((ECPublicKeyParameters)keyPair.Public).Q.ToString();
             var pub2 = BitConverter.ToString(senderPublic).Replace("-", "").ToLower();
 

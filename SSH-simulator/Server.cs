@@ -184,9 +184,9 @@ namespace SSH_simulator
                 // popis algoritama odvojeni s po 3 "prazna" bajta
                 //dh, dh server, potpis, potpis server, enkripcija, enkripcija server, mac, mac server, kompresija, kompresija server
 
-                if ((bool)mainWindow.checkBox_server_ec_dh.IsChecked)
+                if ((bool)mainWindow.checkBox_server_ecdh_sha2_nistp521.IsChecked)
                 {
-                    DH_ALGORITHMS.Insert(0, "ec-dh");
+                    DH_ALGORITHMS.Insert(0, "ecdh-sha2-nistp521");
                 }
 
                 if ((bool)mainWindow.checkBox_server_ssh_rsa.IsChecked)
@@ -335,11 +335,17 @@ namespace SSH_simulator
                             Calculate_ecdh_sha2_nistp521();
                             var senderPrivate = ((ECPrivateKeyParameters)DH_KeyPair.Private).D.ToByteArrayUnsigned();
                             var senderPublic = ((ECPublicKeyParameters)DH_KeyPair.Public).Q.GetEncoded();
+
                             mainWindow.textBox_y.Text = BitConverter.ToString(senderPrivate).Replace("-", "").ToLower();
                             mainWindow.textBox_f.Text = BitConverter.ToString(senderPublic).Replace("-", "").ToLower();
 
+                            ex_params.x = ((ECPublicKeyParameters)DH_KeyPair.Public).Q.X.ToBigInteger();
+                            ex_params.y = ((ECPublicKeyParameters)DH_KeyPair.Public).Q.Y.ToBigInteger();
+
                             mainWindow.label_ser_privatni_kljuc_DH.Content = "DH privatni ključ";
                             mainWindow.label_ser_javni_kljuc.Content = "DH javni ključ";
+
+                            mainWindow.label_ser_privatni_kljuc.Content = "Tajni ključ K";
                             break;
                         }
                     case "diffie-hellman-group1-sha1":
@@ -382,8 +388,10 @@ namespace SSH_simulator
         private void Calculate_ecdh_sha2_nistp521()
         {
             AsymmetricCipherKeyPair keyPair = ecdh_sha2_nistp521.getKeyPair();
-            var senderPrivate = ((ECPrivateKeyParameters)keyPair.Private).D.ToString();
-            var senderPublic = ((ECPublicKeyParameters)keyPair.Public).Q.ToString();
+
+            mainWindow.textBox_ser_mod_p.Text = "nistp521";
+            mainWindow.label_ser_krivulja.Content = "krivulja";
+            mainWindow.textBox_ser_g.Text = ((ECKeyParameters)keyPair.Public).Parameters.G.ToString();
 
             DH_KeyPair = keyPair;
         }
@@ -504,7 +512,78 @@ namespace SSH_simulator
 
         private void ReadECDHPacket()
         {
-            //TODO čitaj ECDH paket
+            try
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+
+                byte[] size = new byte[4];
+                stream.Read(size, 0, size.Length);
+                Array.Reverse(size);
+                int packetSize = BitConverter.ToInt32(size, 0);
+
+                byte[] paket = new byte[packetSize + size.Length];
+
+                stream.Seek(0, SeekOrigin.Begin);
+                stream.Read(paket, 0, packetSize + size.Length);
+
+                string packetType = "SSH_MSG_KEX_ECDH_INIT";
+
+                string output = SSHHelper.ispis(paket);
+
+                mainWindow.textBox_server.AppendText("\n\n\n" + output);
+
+                string outputDecoded = SSHHelper.ispis(paket.Skip(5).ToArray());
+
+                // pokupi parametar x
+                // paket - cijeli paket i sve
+                // duljina paketa - bez sebe
+                // uzmi samo dio s info: duljinaPaketa - duljinaDopune - 1
+
+                int dopunaSize = Convert.ToInt32(paket[4]);
+
+                // 6 jer je 4 size, 1 dopuna size, 1 paket identifier
+                var x_size_array = paket.Skip(6).Take(4).ToArray();
+
+                Array.Reverse(x_size_array);
+                int x_size = BitConverter.ToInt32(x_size_array, 0);
+                var x_array = paket.Skip(6 + 4).Take(x_size).ToArray();
+                // 1 je zato jer se koristi unsigned array...
+                // nema logike, ali jbg... tako je...
+                var x_param = new BigInteger(1, x_array);
+
+                paket = paket.Skip(6 + 4 + x_size).ToArray();
+
+                // pokupi parametar y
+
+                var y_size_array = paket.Take(4).ToArray();
+
+                Array.Reverse(y_size_array);
+                int y_size = BitConverter.ToInt32(y_size_array, 0);
+                var y_array = paket.Skip(4).Take(y_size).ToArray();
+                // 1 je zato jer se koristi unsigned array...
+                // nema logike, ali jbg... tako je...
+                var y_param = new BigInteger(1, y_array);
+
+                var privateKey = DH_KeyPair.Private as ECPrivateKeyParameters;
+
+                BigInteger sharedKey = ecdh_sha2_nistp521.CalculateSharedKey(x_param, y_param, privateKey);
+
+                ex_params.K = sharedKey;
+                ex_params.x_c = x_param;
+                ex_params.y_c = y_param;
+
+                mainWindow.textBox_ser_K.Text = ex_params.K.ToString();
+
+                mainWindow.textBox_server_decoded.AppendText("\n\n\nVrsta paketa: " + packetType + " (30)\n" + outputDecoded);
+            }
+            catch
+            {
+                mainWindow.boolRetResult = false;
+                mainWindow.retResult = "Neuspješan primitak paketa!";
+                return;
+            }
+
+            mainWindow.boolRetResult = true;
         }
 
         public void SendDHPacket()
@@ -529,14 +608,8 @@ namespace SSH_simulator
 
                 // identifikator paketa
                 byte[] ident;
-                if (ecdhPacket)
-                {
-                    ident = BitConverter.GetBytes((int)identifiers.SSH_MSG_KEX_ECDH_REPLY);
-                }
-                else
-                {
-                    ident = BitConverter.GetBytes((int)identifiers.SSH_MSG_KEXDH_REPLY);
-                }
+
+                ident = BitConverter.GetBytes((int)identifiers.SSH_MSG_KEXDH_REPLY);
 
                 payload.Add(ident[0]);
 
@@ -590,14 +663,8 @@ namespace SSH_simulator
 
                 // izračunati hash
                 byte[] hash = null;
-                if (ecdhPacket)
-                {
-                    // TODO ecdh hash
-                }
-                else
-                {
-                    hash = SSHHelper.ComputeSHA1Hash(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, serverCertPubKey, ex_params.e, ex_params.f, ex_params.K);
-                }
+
+                hash = SSHHelper.ComputeSHA1Hash(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, serverCertPubKey, ex_params.e, ex_params.f, ex_params.K);
 
                 string hashBase64 = Convert.ToBase64String(hash);
 
@@ -648,19 +715,157 @@ namespace SSH_simulator
 
             mainWindow.boolRetResult = true;
 
-            if (ecdhPacket)
-            {
-                mainWindow.textBox_info.AppendText("Server poslao KEX_ECDH_REPLY paket\n\n");
-            }
-            else
-            {
-                mainWindow.textBox_info.AppendText("Server poslao KEXDH_REPLY paket\n\n");
-            }
+            mainWindow.textBox_info.AppendText("Server poslao KEXDH_REPLY paket\n\n");
         }
 
         private void SendECDHPacket()
         {
-            //TODO šalji ECDH paket
+            /*
+            byte      SSH_MSG_KEXDH_REPLY
+            string    server public host key
+            mpint     x
+            mpint     y
+            string    signature of H
+            */
+
+            try
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+
+                List<byte> payload = new List<byte>();
+
+                // identifikator paketa
+                byte[] ident;
+
+                ident = BitConverter.GetBytes((int)identifiers.SSH_MSG_KEX_ECDH_REPLY);
+
+                payload.Add(ident[0]);
+
+                // pokupi privatni ključ i javni certifikata
+                string serverCertPubKey = null;
+                AsymmetricCipherKeyPair rsaKeys = null;
+                if (algorithmsToUse.SIGNATURE_algorithm == "ssh-rsa")
+                {
+                    // privatni ključ
+                    using (StreamReader txtStream = File.OpenText(@"ServerCert\server_rsa.pem"))
+                    {
+                        PemReader reader = new PemReader(txtStream);
+                        rsaKeys = (AsymmetricCipherKeyPair)reader.ReadObject();
+                    }
+
+                    // javni ključ
+                    using (StreamReader txtStream = File.OpenText(@"ServerCert\public_server_keys"))
+                    {
+                        // prva je dss
+                        string content = txtStream.ReadLine();
+                        //druga je rsa
+                        content = txtStream.ReadLine();
+                        string rsaPub = content.Split(' ')[1];
+
+                        serverCertPubKey = rsaPub;
+                    }
+                }
+                else
+                {
+                    // inače je ssh-dss
+                }
+
+                // izračunati i dodati stvari u paket
+
+                // dodati javi ključ servera (javni ključ certifikata)
+                var size_certKey = BitConverter.GetBytes(serverCertPubKey.Length);
+                // reverse zbog toga da ide iz little u big endian - ("normalni")
+                Array.Reverse(size_certKey);
+                payload.AddRange(size_certKey);
+                payload.AddRange(Encoding.ASCII.GetBytes(serverCertPubKey));
+
+                var pubKeys = GetKEXECDHPublicKeyBytes();
+                payload.AddRange(pubKeys);
+
+                // izračunati hash
+                byte[] hash = null;
+
+                hash = SSHHelper.ComputeSHA2Hash(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, serverCertPubKey, ex_params.x_c, ex_params.y_c, ex_params.x, ex_params.y, ex_params.K);
+
+                string hashBase64 = Convert.ToBase64String(hash);
+
+                ex_params.H = hashBase64;
+
+                mainWindow.textBox_ser_H.Text = BitConverter.ToString(hash).Replace("-", "").ToLower();
+
+                // potpisati hash i dodati potpis
+                byte[] signature = null;
+                // rsa
+                if (algorithmsToUse.SIGNATURE_algorithm == "ssh-rsa")
+                {
+                    var encryptEngine = new Pkcs1Encoding(new RsaEngine());
+
+                    encryptEngine.Init(true, rsaKeys.Private);
+                    var crypt = encryptEngine.ProcessBlock(hash, 0, hash.Length);
+                    var encrypted = Convert.ToBase64String(crypt);
+
+                    mainWindow.textBox_sig_H.Text = BitConverter.ToString(crypt).Replace("-", "").ToLower();
+
+                    signature = Encoding.ASCII.GetBytes(encrypted);
+                }
+                // dss
+                else
+                {
+                    // TODO server ssh-dss
+                }
+
+                var size_sig = BitConverter.GetBytes(signature.Length);
+                // reverse zbog toga da ide iz little u big endian - ("normalni")
+                Array.Reverse(size_sig);
+                payload.AddRange(size_sig);
+                payload.AddRange(signature);
+
+                byte[] all = payload.ToArray();
+
+                // stvori paket
+                byte[] paket = SSHHelper.CreatePacket(all);
+
+                stream.Write(paket, 0, paket.Length);
+            }
+            catch
+            {
+                mainWindow.retResult = "Paket nije moguće poslati!";
+                mainWindow.boolRetResult = false;
+                return;
+            }
+
+            mainWindow.boolRetResult = true;
+
+            mainWindow.textBox_info.AppendText("Server poslao KEX_ECDH_REPLY paket\n\n");
+        }
+
+        private byte[] GetKEXECDHPublicKeyBytes()
+        {
+            bool ecdhPacket = algorithmsToUse.DH_algorithm.StartsWith("ecdh");
+
+            // inače se radi o ECDH...
+            var pub = DH_KeyPair.Public as ECPublicKeyParameters;
+            var xPub = pub.Q.X.ToBigInteger().ToByteArrayUnsigned();
+            var yPub = pub.Q.Y.ToBigInteger().ToByteArrayUnsigned();
+            var xPubLength = xPub.Length;
+            var yPubLength = yPub.Length;
+
+            var xsize = BitConverter.GetBytes(xPubLength);
+            // reverse zbog toga da ide iz little u big endian - ("normalni")
+            Array.Reverse(xsize);
+
+            var ysize = BitConverter.GetBytes(yPubLength);
+            // reverse zbog toga da ide iz little u big endian - ("normalni")
+            Array.Reverse(ysize);
+
+            List<byte> rezultat = new List<byte>();
+
+            rezultat.AddRange(xsize);
+            rezultat.AddRange(xPub);
+            rezultat.AddRange(ysize);
+            rezultat.AddRange(yPub);
+
+            return rezultat.ToArray();
         }
 
         public void ReadNEWKEYSPacket()
@@ -691,13 +896,6 @@ namespace SSH_simulator
                 mainWindow.textBox_server.AppendText("\n\n\n" + output);
 
                 string outputDecoded = SSHHelper.ispis(paket.Skip(5).ToArray());
-
-                // pokupi parametar e
-                // paket - cijeli paket i sve
-                // duljina paketa - bez sebe
-                // uzmi samo dio s info: duljinaPaketa - duljinaDopune - 1
-
-                int dopunaSize = Convert.ToInt32(paket[4]);
 
                 mainWindow.textBox_server_decoded.AppendText("\n\n\nVrsta paketa: " + packetType + " (" + tip + ")\n" + outputDecoded);
             }
@@ -753,7 +951,14 @@ namespace SSH_simulator
 
                 mainWindow.textBox_info.AppendText("Server računa ključeve za enkripciju\n\n");
 
-                keys = SSHHelper.GenerateEncryptionKeys(algorithmsToUse.ENCRYPTION_algorithm, algorithmsToUse.MAC_algorithm, ref encryptionAlgorithms, ex_params.K, ex_params.H, ex_params.H);
+                switch (algorithmsToUse.ENCRYPTION_algorithm)
+                {
+                    case "3des-cbc":
+                        {
+                            keys = SSHHelper.GenerateEncryptionKeysFor3DES_CBC(algorithmsToUse.ENCRYPTION_algorithm, algorithmsToUse.MAC_algorithm, ref encryptionAlgorithms, ex_params.K, ex_params.H, ex_params.H);
+                            break;
+                        }
+                }
 
                 mainWindow.textBox_ser_c_s.Text = BitConverter.ToString(keys.vectorCS).Replace("-", "").ToLower();
                 mainWindow.textBox_ser_s_c.Text = BitConverter.ToString(keys.vectorSC).Replace("-", "").ToLower();
