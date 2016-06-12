@@ -169,8 +169,8 @@
                         <Label x:Name="label37" Content="login" HorizontalAlignment="Left" Margin="20,22,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.594,0.439" />
                         <Label x:Name="label38" Content="lozinka" HorizontalAlignment="Left" Margin="20,53,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label39" Content="Baza korisnika" HorizontalAlignment="Left" Margin="683,25,0,0" VerticalAlignment="Top" />
-                        <TextBox x:Name="textBox_baza_korisnika" HorizontalAlignment="Left" Height="23" Margin="773,26,0,0" VerticalAlignment="Top" Width="373" />
-                        <Button x:Name="button_baza_korisnika" Content="odaberi" HorizontalAlignment="Left" Margin="1162,28,0,0" VerticalAlignment="Top" Width="75" />
+                        <TextBox x:Name="textBox_baza_korisnika" HorizontalAlignment="Left" Height="23" Margin="773,26,0,0" VerticalAlignment="Top" Width="373" Text="UsersDB.txt" />
+                        <Button x:Name="button_baza_korisnika" Content="odaberi" HorizontalAlignment="Left" Margin="1162,28,0,0" VerticalAlignment="Top" Width="75" Click="button_baza_korisnika_Click" />
                         <TextBox x:Name="textBox_login" HorizontalAlignment="Left" Height="23" Margin="92,26,0,0" Text="root" VerticalAlignment="Top" Width="493" />
                         <TextBox x:Name="textBox_pass" HorizontalAlignment="Left" Height="23" Margin="92,57,0,0" Text="toor" VerticalAlignment="Top" Width="493" />
                     </Grid>
@@ -182,15 +182,15 @@
                         <Label x:Name="label40" Content="lokalni identifikator kanala" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label41_Copy" Content="udaljeni identifikator kanala" HorizontalAlignment="Left" Margin="778,46,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label40_Copy" Content="lokalni identifikator kanala" HorizontalAlignment="Left" Margin="778,15,0,0" VerticalAlignment="Top" />
-                        <TextBox x:Name="textBox_naredba" HorizontalAlignment="Left" Height="23" Margin="457,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="298" />
+                        <TextBox x:Name="textBox_naredba" HorizontalAlignment="Left" Height="23" Margin="457,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="298" VerticalScrollBarVisibility="Disabled" />
                         <Label x:Name="label43" Content="Naredba za izvršavanje" HorizontalAlignment="Left" Margin="321,36,0,0" VerticalAlignment="Top" />
                         <TextBox x:Name="textBox2" HorizontalAlignment="Left" Height="184" Margin="10,97,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="745" />
                         <Label x:Name="label44" Content="Rezultat naredbe" HorizontalAlignment="Left" Margin="10,71,0,0" VerticalAlignment="Top" />
-                        <TextBox x:Name="textBox_server_udaljeni_kanal" HorizontalAlignment="Left" Height="23" Margin="951,46,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
-                        <TextBox x:Name="textBox_klijent_udaljeni_kanal" HorizontalAlignment="Left" Height="23" Margin="509,15,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
-                        <TextBox x:Name="textBox_klijent_lokalni_kanal" HorizontalAlignment="Left" Height="23" Margin="159,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="138" />
-                        <TextBox x:Name="textBox_velicina_prozora" HorizontalAlignment="Left" Height="23" Margin="159,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="138" />
-                        <TextBox x:Name="textBox_server_lokalni_kanal" HorizontalAlignment="Left" Height="23" Margin="951,15,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+                        <TextBox x:Name="textBox_server_udaljeni_kanal" HorizontalAlignment="Left" Height="23" Margin="951,46,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" VerticalScrollBarVisibility="Disabled" IsReadOnly="True" />
+                        <TextBox x:Name="textBox_klijent_udaljeni_kanal" HorizontalAlignment="Left" Height="23" Margin="509,15,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" VerticalScrollBarVisibility="Disabled" IsReadOnly="True" />
+                        <TextBox x:Name="textBox_klijent_lokalni_kanal" HorizontalAlignment="Left" Height="23" Margin="159,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="138" VerticalScrollBarVisibility="Disabled" IsReadOnly="True" />
+                        <TextBox x:Name="textBox_velicina_prozora" HorizontalAlignment="Left" Height="23" Margin="159,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="138" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_server_lokalni_kanal" HorizontalAlignment="Left" Height="23" Margin="951,15,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" VerticalScrollBarVisibility="Disabled" IsReadOnly="True" />
                         <GridSplitter x:Name="gridSplitter_Copy3" HorizontalAlignment="Left" Height="288" Margin="768,0,0,0" VerticalAlignment="Top" Width="6" RenderTransformOrigin="0.5,0.5">
                             <GridSplitter.RenderTransform>
                                 <TransformGroup>

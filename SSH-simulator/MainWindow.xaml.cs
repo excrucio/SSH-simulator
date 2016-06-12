@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipes;
@@ -30,7 +31,7 @@ namespace SSH_simulator
         private Server server;
 
         private List<Action> steps = new List<Action>();
-        private int step = 0;
+        internal int step = 0;
 
         public MainWindow()
         {
@@ -112,21 +113,39 @@ namespace SSH_simulator
 
             //15
             steps.Add(() => server.SendNEWKEYSPacket());
-            steps.Add(() =>
-            {
-                client.ReadNEWKEYSPacket();
-                tab_auth.Focus();
-            });
+            steps.Add(() => client.ReadNEWKEYSPacket());
 
             //16
+            steps.Add(() => { tab_auth.Focus(); });
+            steps.Add(() => { ShowDialogMsg("Sav promet od sada je enkrpitiran!"); });
+
+            //17
             steps.Add(() => client.SendServiceRequestPacket());
             steps.Add(() => server.ReadServiceRequestPacket());
 
-            //17
+            //18
             steps.Add(() => server.SendServiceAcceptPacket());
             steps.Add(() => client.ReadServiceAcceptPacket());
 
-            //18
+            //19
+            steps.Add(() => client.SendAuth());
+            steps.Add(() => server.ReadAuth());
+
+            //20
+            steps.Add(() => server.SendAuthResponse());
+            steps.Add(() => client.ReadAuthResponse());
+
+            //21
+            steps.Add(() => { tab_protokol.Focus(); });
+            steps.Add(() => { /* ništa */ });
+
+            //22
+            steps.Add(() => client.SendChannelOpenPacket());
+            steps.Add(() => server.ReadChannelOpenPacket());
+
+            //23
+            steps.Add(() => server.SendChannelOpenResponse());
+            steps.Add(() => client.ReadChannelOpenResponse());
         }
 
         private void ShowAlgorithms()
@@ -166,6 +185,7 @@ namespace SSH_simulator
                 {
                     button_next.IsEnabled = false;
                     ShowDialogMsg(retResult);
+
                     break;
                 }
             }
@@ -245,6 +265,27 @@ namespace SSH_simulator
             textBox_ser_mod_p.Text = "";
 
             // treći tab
+        }
+
+        private void button_baza_korisnika_Click(object sender, RoutedEventArgs e)
+        {
+            // Create an instance of the open file dialog box.
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+
+            // Set filter options and filter index.
+            openFileDialog1.Filter = "Text Files (.txt)|*.txt|All Files (*.*)|*.*";
+            openFileDialog1.FilterIndex = 1;
+
+            openFileDialog1.Multiselect = false;
+
+            // Call the ShowDialog method to show the dialog box.
+            bool? userClickedOK = openFileDialog1.ShowDialog();
+
+            // Process input if the user clicked OK.
+            if (userClickedOK == true)
+            {
+                textBox_baza_korisnika.Text = openFileDialog1.FileName;
+            }
         }
     }
 }
