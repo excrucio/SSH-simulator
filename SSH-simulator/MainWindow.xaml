@@ -184,7 +184,7 @@
                         <Label x:Name="label40_Copy" Content="lokalni identifikator kanala" HorizontalAlignment="Left" Margin="854,9,0,0" VerticalAlignment="Top" />
                         <TextBox x:Name="textBox_naredba" HorizontalAlignment="Left" Height="23" Margin="373,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="205" VerticalScrollBarVisibility="Disabled" Text="tree /F /A" />
                         <Label x:Name="label43" Content="Naredba za izvršavanje*" HorizontalAlignment="Left" Margin="212,36,0,0" VerticalAlignment="Top" />
-                        <TextBox x:Name="textBox2" HorizontalAlignment="Left" Height="184" Margin="10,97,0,0" VerticalAlignment="Top" Width="667" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
+                        <TextBox x:Name="textBox_rezultat" HorizontalAlignment="Left" Height="184" Margin="10,97,0,0" VerticalAlignment="Top" Width="667" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" />
                         <Label x:Name="label44" Content="Rezultat naredbe" HorizontalAlignment="Left" Margin="10,71,0,0" VerticalAlignment="Top" />
                         <TextBox x:Name="textBox_server_udaljeni_kanal" HorizontalAlignment="Left" Height="23" Margin="1027,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" VerticalScrollBarVisibility="Disabled" IsReadOnly="True" />
                         <TextBox x:Name="textBox_klijent_udaljeni_kanal" HorizontalAlignment="Left" Height="23" Margin="373,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="47" VerticalScrollBarVisibility="Disabled" IsReadOnly="True" />

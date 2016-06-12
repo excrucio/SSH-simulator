@@ -158,20 +158,34 @@ namespace SSH_simulator
                 client.ReadChannelResponsePacket();
             });
             steps.Add(() => ServerCommandExecutingAndSendingData());
+
+            //26
+            steps.Add(() => server.SendChannelEOFPacket());
+            steps.Add(() => client.ReadChannelEOFPacket());
+
+            //27
+            steps.Add(() => server.SendChannelClosePacket());
+            steps.Add(() => client.ReadChannelClosePacket());
+
+            //28
+            steps.Add(() => client.SendChannelClosePacket());
+            steps.Add(() => server.ReadChannelClosePacket());
         }
 
         private void ServerCommandExecutingAndSendingData()
         {
             try
             {
-                string data = server.ExecuteCommand();
+                server.ExecuteCommand();
                 bool more = false;
                 do
                 {
-                    more = server.SendChannelDataPackets(data);
+                    more = server.SendChannelDataPackets();
                     if (more)
                     {
                         client.ReadChannelDataPacket();
+                        client.SendWindowAdjustPacket();
+                        server.ReadWindowAdjustPacket();
                     }
                 } while (more);
 
@@ -209,8 +223,8 @@ namespace SSH_simulator
             {
                 if (steps.Count <= step)
                 {
-                    // TODO provjeriti
-                    step -= 4;
+                    // ako je na kraju, vrati ga za 6 jer je tamo channel open request
+                    step -= 6;
                     if (step < 0)
                     {
                         step = 0;
