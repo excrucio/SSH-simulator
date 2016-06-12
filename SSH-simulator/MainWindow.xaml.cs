@@ -225,7 +225,7 @@ namespace SSH_simulator
                 {
                     // ako je na kraju, vrati ga za 6 jer je tamo channel open request
                     var action = steps.Where(a => a.Method.Name == (new Action(client.SendChannelOpenPacket)).Method.Name).First();
-                    int test = steps.IndexOf(action) - 1;
+                    int test = steps.IndexOf(action);
                     step = test;
                     if (step < 0)
                     {
