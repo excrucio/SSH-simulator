@@ -56,100 +56,100 @@ namespace SSH_simulator
             //****************
 
             //1
-            steps.Add(() => client.SendIdentifierToServer());
-            steps.Add(() => server.ReadClientId());
+            steps.Add(client.SendIdentifierToServer);
+            steps.Add(server.ReadClientId);
 
             //2
-            steps.Add(() => server.SendIdentifierToClient());
-            steps.Add(() => client.ReadServerId());
+            steps.Add(server.SendIdentifierToClient);
+            steps.Add(client.ReadServerId);
 
             //3
-            steps.Add(() => client.SendKEXINIT());
-            steps.Add(() => server.ReadKEXINIT());
+            steps.Add(client.SendKEXINIT);
+            steps.Add(server.ReadKEXINIT);
 
             //4
-            steps.Add(() => server.SendKEXINIT());
-            steps.Add(() => client.ReadKEXINIT());
+            steps.Add(server.SendKEXINIT);
+            steps.Add(client.ReadKEXINIT);
 
             //5
-            steps.Add(() => client.SetAlgorithms());
+            steps.Add(client.SetAlgorithms);
             steps.Add(() => { /* ništa */ });
 
             //6
-            steps.Add(() => server.SetAlgorithms());
-            steps.Add(() => ShowAlgorithms());
+            steps.Add(server.SetAlgorithms);
+            steps.Add(ShowAlgorithms);
 
             //7
             steps.Add(() => { tab_dh.Focus(); });
-            steps.Add(() => client.CalculateDH());
+            steps.Add(client.CalculateDH);
 
             //8
-            steps.Add(() => server.CalculateDH());
+            steps.Add(server.CalculateDH);
             steps.Add(() => {/* ništa */ });
 
             //9
-            steps.Add(() => client.SendDHPacket());
-            steps.Add(() => server.ReadDHPacket());
+            steps.Add(client.SendDHPacket);
+            steps.Add(server.ReadDHPacket);
 
             //10
-            steps.Add(() => server.SendDHPacket());
-            steps.Add(() => client.ReadDHPacket());
+            steps.Add(server.SendDHPacket);
+            steps.Add(client.ReadDHPacket);
 
             //11
             steps.Add(() => { tab_keys.Focus(); });
             steps.Add(() => { /* ništa */ });
 
             //12
-            steps.Add(() => client.GenerateEncryptionKeys());
+            steps.Add(client.GenerateEncryptionKeys);
             steps.Add(() => { /* ništa */ });
 
             //13
-            steps.Add(() => server.GenerateEncryptionKeys());
+            steps.Add(server.GenerateEncryptionKeys);
             steps.Add(() => { /* ništa */ });
 
             //14
-            steps.Add(() => client.SendNEWKEYSPacket());
-            steps.Add(() => server.ReadNEWKEYSPacket());
+            steps.Add(client.SendNEWKEYSPacket);
+            steps.Add(server.ReadNEWKEYSPacket);
 
             //15
-            steps.Add(() => server.SendNEWKEYSPacket());
-            steps.Add(() => client.ReadNEWKEYSPacket());
+            steps.Add(server.SendNEWKEYSPacket);
+            steps.Add(client.ReadNEWKEYSPacket);
 
             //16
             steps.Add(() => { tab_auth.Focus(); });
             steps.Add(() => { ShowDialogMsg("Sav promet od sada je enkrpitiran!"); });
 
             //17
-            steps.Add(() => client.SendServiceRequestPacket());
-            steps.Add(() => server.ReadServiceRequestPacket());
+            steps.Add(client.SendServiceRequestPacket);
+            steps.Add(server.ReadServiceRequestPacket);
 
             //18
-            steps.Add(() => server.SendServiceAcceptPacket());
-            steps.Add(() => client.ReadServiceAcceptPacket());
+            steps.Add(server.SendServiceAcceptPacket);
+            steps.Add(client.ReadServiceAcceptPacket);
 
             //19
-            steps.Add(() => client.SendAuth());
-            steps.Add(() => server.ReadAuth());
+            steps.Add(client.SendAuth);
+            steps.Add(server.ReadAuth);
 
             //20
-            steps.Add(() => server.SendAuthResponse());
-            steps.Add(() => client.ReadAuthResponse());
+            steps.Add(server.SendAuthResponse);
+            steps.Add(client.ReadAuthResponse);
 
             //21
             steps.Add(() => { tab_protokol.Focus(); });
             steps.Add(() => { /* ništa */ });
 
             //22
-            steps.Add(() => client.SendChannelOpenPacket());
-            steps.Add(() => server.ReadChannelOpenPacket());
+            steps.Add(client.SendChannelOpenPacket);
+            steps.Add(server.ReadChannelOpenPacket);
 
             //23
-            steps.Add(() => server.SendChannelOpenResponse());
-            steps.Add(() => client.ReadChannelOpenResponse());
+            steps.Add(server.SendChannelOpenResponse);
+            steps.Add(client.ReadChannelOpenResponse);
 
             //24
-            steps.Add(() => client.SendChannelRequestPacket());
-            steps.Add(() => server.ReadChannelRequestPacket());
+            steps.Add(client.SendChannelRequestPacket);
+            steps.Add(server.ReadChannelRequestPacket);
 
             //25
             steps.Add(() =>
@@ -157,19 +157,19 @@ namespace SSH_simulator
                 server.SendChannelRespondPacket();
                 client.ReadChannelResponsePacket();
             });
-            steps.Add(() => ServerCommandExecutingAndSendingData());
+            steps.Add(ServerCommandExecutingAndSendingData);
 
             //26
-            steps.Add(() => server.SendChannelEOFPacket());
-            steps.Add(() => client.ReadChannelEOFPacket());
+            steps.Add(server.SendChannelEOFPacket);
+            steps.Add(client.ReadChannelEOFPacket);
 
             //27
-            steps.Add(() => server.SendChannelClosePacket());
-            steps.Add(() => client.ReadChannelClosePacket());
+            steps.Add(server.SendChannelClosePacket);
+            steps.Add(client.ReadChannelClosePacket);
 
             //28
-            steps.Add(() => client.SendChannelClosePacket());
-            steps.Add(() => server.ReadChannelClosePacket());
+            steps.Add(client.SendChannelClosePacket);
+            steps.Add(server.ReadChannelClosePacket);
         }
 
         private void ServerCommandExecutingAndSendingData()
@@ -224,7 +224,9 @@ namespace SSH_simulator
                 if (steps.Count <= step)
                 {
                     // ako je na kraju, vrati ga za 6 jer je tamo channel open request
-                    step -= 6;
+                    var action = steps.Where(a => a.Method.Name == (new Action(client.SendChannelOpenPacket)).Method.Name).First();
+                    int test = steps.IndexOf(action) - 1;
+                    step = test;
                     if (step < 0)
                     {
                         step = 0;

@@ -64,7 +64,7 @@ namespace SSH_simulator
             writer = new StreamWriter(ms);
         }
 
-        public bool SendIdentifierToClient()
+        public void SendIdentifierToClient()
         {
             try
             {
@@ -75,12 +75,12 @@ namespace SSH_simulator
             {
                 mainWindow.boolRetResult = false;
                 mainWindow.retResult = "Nije moguće kontaktirati klijenta!";
-                return false;
+                return;
             }
             _serverIdent = mainWindow.textBox_serverIdent.Text;
             mainWindow.boolRetResult = true;
             mainWindow.textBox_info.AppendText("Server poslao identifikacijski paket\n\n");
-            return true;
+            return;
         }
 
         public void ReadClientId()

@@ -67,7 +67,7 @@ namespace SSH_simulator
             return algorithmsToUse;
         }
 
-        public bool SendIdentifierToServer()
+        public void SendIdentifierToServer()
         {
             try
             {
@@ -78,14 +78,14 @@ namespace SSH_simulator
             {
                 mainWindow.boolRetResult = false;
                 mainWindow.retResult = "Nije moguće kontaktirati server!";
-                return false;
+                return;
             }
 
             _clientIdent = mainWindow.textBox_clientIdent.Text;
 
             mainWindow.boolRetResult = true;
             mainWindow.textBox_info.Text = "Klijent poslao identifikacijski paket\n\n";
-            return true;
+            return;
         }
 
         public void ReadServerId()
