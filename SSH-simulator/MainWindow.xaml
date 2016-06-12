@@ -33,39 +33,39 @@
                         <Label x:Name="label11" Content="MAC" HorizontalAlignment="Left" Margin="519,32,0,0" VerticalAlignment="Top" FontWeight="Bold" />
                         <Label x:Name="label46" Content="diffie-hellman-group14-sha1" HorizontalAlignment="Left" Margin="10,107,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label45" Content="diffie-hellman-group1-sha1" HorizontalAlignment="Left" Margin="10,81,0,0" VerticalAlignment="Top" />
-                        <CheckBox x:Name="checkBox_ec_dh" Content="EC-DH" HorizontalAlignment="Left" Margin="19,63,0,0" VerticalAlignment="Top" ClickMode="Press" />
+                        <CheckBox x:Name="checkBox_ec_dh" Content="ecdh-sha2-nistp521" HorizontalAlignment="Left" Margin="18,61,0,0" VerticalAlignment="Top" ClickMode="Press" />
                         <CheckBox x:Name="checkBox_ssh_rsa" Content="ssh-rsa" HorizontalAlignment="Left" Margin="214,63,0,0" VerticalAlignment="Top" IsChecked="True" IsEnabled="False" />
                         <Label x:Name="label47" Content="ssh-dss" HorizontalAlignment="Left" Margin="214,81,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label48" Content="3des-cbc" HorizontalAlignment="Left" Margin="391,107,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label48" Content="3des-cbc" HorizontalAlignment="Left" Margin="391,81,0,0" VerticalAlignment="Top" />
                         <CheckBox x:Name="checkBox_aes256_cbc" Content="aes256-cbc" HorizontalAlignment="Left" Margin="384,63,0,0" VerticalAlignment="Top" />
-                        <CheckBox x:Name="checkBox_blowfish_ctr" Content="blowfish-ctr" HorizontalAlignment="Left" Margin="383,86,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
+                        <CheckBox x:Name="checkBox_blowfish_ctr" Content="blowfish-ctr" HorizontalAlignment="Left" Margin="384,112,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
                             <CheckBox.RenderTransform>
                                 <TransformGroup>
                                     <ScaleTransform />
-                                    <SkewTransform AngleX="-6.34" />
+                                    <SkewTransform />
                                     <RotateTransform />
                                     <TranslateTransform X="0.889" />
                                 </TransformGroup>
                             </CheckBox.RenderTransform>
                         </CheckBox>
                         <CheckBox x:Name="checkBox_gost28147" Content="gost28147" HorizontalAlignment="Left" Margin="519,63,0,0" VerticalAlignment="Top" />
-                        <CheckBox x:Name="checkBox_hmac_sha2" Content="hmac-sha2" HorizontalAlignment="Left" Margin="519,89,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label49" Content="hmac-sha1" HorizontalAlignment="Left" Margin="519,107,0,0" VerticalAlignment="Top" />
+                        <CheckBox x:Name="checkBox_hmac_sha2" Content="hmac-sha2" HorizontalAlignment="Left" Margin="519,112,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label49" Content="hmac-sha1" HorizontalAlignment="Left" Margin="527,81,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label8_Copy" Content="Diffie-Hellman" HorizontalAlignment="Left" Margin="661,32,0,0" VerticalAlignment="Top" FontWeight="Bold" />
                         <Label x:Name="label9_Copy" Content="Digitalni potpis" HorizontalAlignment="Left" Margin="856,32,0,0" VerticalAlignment="Top" FontWeight="Bold" />
                         <Label x:Name="label10_Copy" Content="Enkripcija" HorizontalAlignment="Left" Margin="1035,32,0,0" VerticalAlignment="Top" FontWeight="Bold" />
                         <Label x:Name="label11_Copy" Content="MAC" HorizontalAlignment="Left" Margin="1170,32,0,0" VerticalAlignment="Top" FontWeight="Bold" />
                         <Label x:Name="label46_Copy" Content="diffie-hellman-group14-sha1" HorizontalAlignment="Left" Margin="661,107,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label45_Copy" Content="diffie-hellman-group1-sha1" HorizontalAlignment="Left" Margin="661,81,0,0" VerticalAlignment="Top" />
-                        <CheckBox x:Name="checkBox_server_ec_dh" Content="EC-DH" HorizontalAlignment="Left" Margin="670,63,0,0" VerticalAlignment="Top" ClickMode="Press" />
+                        <CheckBox x:Name="checkBox_server_ec_dh" Content="ecdh-sha2-nistp521" HorizontalAlignment="Left" Margin="670,63,0,0" VerticalAlignment="Top" ClickMode="Press" />
                         <CheckBox x:Name="checkBox_server_ssh_rsa" Content="ssh-rsa" HorizontalAlignment="Left" Margin="865,63,0,0" VerticalAlignment="Top" IsChecked="True" IsEnabled="False" />
                         <Label x:Name="label47_Copy" Content="ssh-dss" HorizontalAlignment="Left" Margin="865,81,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label48_Copy" Content="3des-cbc" HorizontalAlignment="Left" Margin="1054,110,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label48_Copy" Content="3des-cbc" HorizontalAlignment="Left" Margin="1057,81,0,0" VerticalAlignment="Top" />
                         <CheckBox x:Name="checkBox_server_aes256_cbc" Content="aes256-cbc" HorizontalAlignment="Left" Margin="1035,63,0,0" VerticalAlignment="Top" />
-                        <CheckBox x:Name="checkBox_server_blowfish_ctr" Content="blowfish-ctr" HorizontalAlignment="Left" Margin="1035,89,0,0" VerticalAlignment="Top" />
+                        <CheckBox x:Name="checkBox_server_blowfish_ctr" Content="blowfish-ctr" HorizontalAlignment="Left" Margin="1035,112,0,0" VerticalAlignment="Top" />
                         <CheckBox x:Name="checkBox_server_gost28147" Content="gost28147" HorizontalAlignment="Left" Margin="1170,63,0,0" VerticalAlignment="Top" />
-                        <CheckBox x:Name="checkBox_server_hmac_sha2" Content="hmac-sha2" HorizontalAlignment="Left" Margin="1170,89,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label49_Copy" Content="hmac-sha1" HorizontalAlignment="Left" Margin="1170,107,0,0" VerticalAlignment="Top" />
+                        <CheckBox x:Name="checkBox_server_hmac_sha2" Content="hmac-sha2" HorizontalAlignment="Left" Margin="1168,112,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label49_Copy" Content="hmac-sha1" HorizontalAlignment="Left" Margin="1170,83,0,0" VerticalAlignment="Top" />
                     </Grid>
                 </TabItem>
                 <TabItem x:Name="tab_dh" Header="Diffie-Hellman">
@@ -73,20 +73,20 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <Label x:Name="label12" Content="Modul, p" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label13" Content="Generator, g" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label14" Content="Eksponent, x" HorizontalAlignment="Left" Margin="10,62,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label15" Content="e = g^x mod p" HorizontalAlignment="Left" Margin="10,88,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label16" Content="Tajni ključ K = f^x mod p" HorizontalAlignment="Left" Margin="10,114,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label_krivulja" Content="Modul, p" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label_G" Content="Generator, g" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label_privatni_kljuc_DH" Content="Eksponent, x" HorizontalAlignment="Left" Margin="10,62,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label_javni_kljuc" Content="e = g^x mod p" HorizontalAlignment="Left" Margin="10,88,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label_privatni_kljuc" Content="Tajni ključ K = f^x mod p" HorizontalAlignment="Left" Margin="10,114,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label17" Content="Hash razmjene, H" HorizontalAlignment="Left" Margin="10,140,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label18" Content="Javni ključ servera" HorizontalAlignment="Left" Margin="10,165,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label19" Content="Digitalni potpis servera" HorizontalAlignment="Left" Margin="10,191,0,0" VerticalAlignment="Top" />
                         <GridSplitter x:Name="gridSplitter_Copy" HorizontalAlignment="Left" Height="281" Margin="625,0,0,0" VerticalAlignment="Top" Width="6" />
-                        <Label x:Name="label20" Content="Modul, p" HorizontalAlignment="Left" Margin="636,10,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label21" Content="Generator, g" HorizontalAlignment="Left" Margin="636,36,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label22" Content="Eksponent, y" HorizontalAlignment="Left" Margin="636,62,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label23" Content="f = g^y mod p" HorizontalAlignment="Left" Margin="636,88,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label24" Content="Tajni ključ K = e^y mod p" HorizontalAlignment="Left" Margin="636,114,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label_ser_krivulja" Content="Modul, p" HorizontalAlignment="Left" Margin="636,10,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label_ser_G" Content="Generator, g" HorizontalAlignment="Left" Margin="636,36,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label_ser_privatni_kljuc_DH" Content="Eksponent, y" HorizontalAlignment="Left" Margin="636,62,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label_ser_javni_kljuc" Content="f = g^y mod p" HorizontalAlignment="Left" Margin="636,88,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label_ser_privatni_kljuc" Content="Tajni ključ K = e^y mod p" HorizontalAlignment="Left" Margin="636,114,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label26" Content="Digitalni potpis od H" HorizontalAlignment="Left" Margin="636,165,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label25" Content="Hash razmjene, H" HorizontalAlignment="Left" Margin="636,140,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label28" Content="DSA ključ" HorizontalAlignment="Left" Margin="636,217,0,0" VerticalAlignment="Top" Visibility="Hidden" />
@@ -177,6 +177,9 @@
                 </TabItem>
                 <TabItem x:Name="tab_protokol" Header="Protokol" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="65" Margin="-2,-2,-6,0">
                     <Grid Background="#FFE5E5E5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
                         <Label x:Name="label41" Content="udaljeni identifikator kanala" HorizontalAlignment="Left" Margin="212,10,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label42" Content="veličina prozora (Byte)" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label40" Content="lokalni identifikator kanala" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" />

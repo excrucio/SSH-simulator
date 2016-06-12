@@ -336,26 +336,47 @@ namespace SSH_simulator
                 // TODO ostali dh klijent
                 switch (algorithmsToUse.DH_algorithm)
                 {
+                    case "ecdh-sha2-nistp521":
+                        {
+                            Calculate_ecdh_sha2_nistp521();
+
+                            var senderPrivate = ((ECPrivateKeyParameters)DH_KeyPair.Private).D.ToByteArrayUnsigned();
+                            var senderPublic = ((ECPublicKeyParameters)DH_KeyPair.Public).Q.GetEncoded();
+                            mainWindow.textBox_x.Text = BitConverter.ToString(senderPrivate).Replace("-", "").ToLower();
+                            mainWindow.textBox_e.Text = BitConverter.ToString(senderPublic).Replace("-", "").ToLower();
+
+                            mainWindow.label_privatni_kljuc_DH.Content = "DH privatni ključ";
+                            mainWindow.label_javni_kljuc.Content = "DH javni ključ";
+                            break;
+                        }
                     case "diffie-hellman-group1-sha1":
                         {
                             CalculateDH_g1();
+
+                            var privateKey = DH_KeyPair.Private as DHPrivateKeyParameters;
+                            var publicKey = DH_KeyPair.Public as DHPublicKeyParameters;
+
+                            ex_params.e = publicKey.Y;
+
+                            mainWindow.textBox_x.Text = privateKey.X.ToString();
+                            mainWindow.textBox_e.Text = publicKey.Y.ToString();
                             break;
                         }
 
                     case "diffie-hellman-group14-sha1":
                         {
                             CalculateDH_g14();
+
+                            var privateKey = DH_KeyPair.Private as DHPrivateKeyParameters;
+                            var publicKey = DH_KeyPair.Public as DHPublicKeyParameters;
+
+                            ex_params.e = publicKey.Y;
+
+                            mainWindow.textBox_x.Text = privateKey.X.ToString();
+                            mainWindow.textBox_e.Text = publicKey.Y.ToString();
                             break;
                         }
                 }
-
-                var privateKey = DH_KeyPair.Private as DHPrivateKeyParameters;
-                var publicKey = DH_KeyPair.Public as DHPublicKeyParameters;
-
-                ex_params.e = publicKey.Y;
-
-                mainWindow.textBox_x.Text = privateKey.X.ToString();
-                mainWindow.textBox_e.Text = publicKey.Y.ToString();
             }
             catch
             {
@@ -365,6 +386,15 @@ namespace SSH_simulator
             }
 
             mainWindow.boolRetResult = true;
+        }
+
+        private void Calculate_ecdh_sha2_nistp521()
+        {
+            AsymmetricCipherKeyPair keyPair = ecdh_sha2_nistp521.getKeyPair();
+            var senderPrivate = ((ECPrivateKeyParameters)keyPair.Private).D.ToString();
+            var senderPublic = ((ECPublicKeyParameters)keyPair.Public).Q.ToString();
+
+            DH_KeyPair = keyPair;
         }
 
         private void CalculateDH_g1()
@@ -412,6 +442,12 @@ namespace SSH_simulator
         {
             // koji dh paket?? "obični" ili ECDH?
             bool ecdhPacket = algorithmsToUse.DH_algorithm.StartsWith("ecdh");
+
+            if (ecdhPacket)
+            {
+                SendECDHPacket();
+                return;
+            }
 
             try
             {
@@ -465,6 +501,11 @@ namespace SSH_simulator
             }
         }
 
+        private void SendECDHPacket()
+        {
+            // TODO !! prvo ovo
+        }
+
         private byte[] GetKEXDHPublicKeyBytes()
         {
             bool ecdhPacket = algorithmsToUse.DH_algorithm.StartsWith("ecdh");
@@ -499,6 +540,12 @@ namespace SSH_simulator
 
                 // koji dh paket?? "obični" ili ECDH?
                 bool ecdhPacket = algorithmsToUse.DH_algorithm.StartsWith("ecdh");
+
+                if (ecdhPacket)
+                {
+                    ReadECDHPacket();
+                    return;
+                }
 
                 byte[] size = new byte[4];
                 stream.Read(size, 0, size.Length);
@@ -541,38 +588,6 @@ namespace SSH_simulator
                 paket = paket.Skip(6 + 4 + K_S_size).ToArray();
 
                 mainWindow.textBox_ser_pub_key.Text = BitConverter.ToString(Convert.FromBase64String(K_S_param)).Replace("-", "").ToLower();
-
-                /*
-                // provjeri da je K_S valjan
-                // učitaj javni ključ i usporedi
-                string serverCertPubKey = null;
-                if (algorithmsToUse.SIGNATURE_algorithm == "ssh-rsa")
-                {
-                    // javni ključ
-                    using (StreamReader txtStream = File.OpenText(@"ServerCert\public_server_keys"))
-                    {
-                        // prva je dss
-                        string content = txtStream.ReadLine();
-                        //druga je rsa
-                        content = txtStream.ReadLine();
-                        string rsaPub = content.Split(' ')[1];
-
-                        serverCertPubKey = rsaPub;
-                    }
-                }
-                else
-                {
-                    // inače je ssh-dss
-                    // TODO server ssh-dss
-                }
-
-                if (Encoding.ASCII.GetString(K_S_array) != serverCertPubKey)
-                {
-                    mainWindow.boolRetResult = false;
-                    mainWindow.retResult = "Krivi javni ključ servera!";
-                    return;
-                }
-                */
 
                 // pokupi f
                 // 4 size
@@ -654,6 +669,11 @@ namespace SSH_simulator
                 mainWindow.retResult = "Neuspješan primitak paketa!";
                 return;
             }
+        }
+
+        private void ReadECDHPacket()
+        {
+            // TODO pročitaj ECDH paket
         }
 
         public void SendNEWKEYSPacket()
