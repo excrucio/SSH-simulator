@@ -34,6 +34,9 @@ namespace SSH_simulator
         private string _serverIdent;
         private byte[] _clientKEXINIT;
         private byte[] _serverKEXINIT;
+        private int _windowSize;
+        private int _remoteChannel;
+        private int _localChannel;
 
         private AsymmetricCipherKeyPair DH_KeyPair;
         private ExchangeParameters ex_params = new ExchangeParameters();
@@ -513,10 +516,10 @@ namespace SSH_simulator
 
                 string output = SSHHelper.ispis(paket);
 
-                mainWindow.textBox_server.AppendText("\n\n\n" + output);
+                mainWindow.textBox_client.AppendText("\n\n\n" + output);
 
                 string outputDecoded = SSHHelper.ispis(paket.Skip(5).ToArray());
-                mainWindow.textBox_server_decoded.AppendText("\n\n\nVrsta paketa: " + packetType + " (" + tip + ")\n" + outputDecoded);
+                mainWindow.textBox_client_decoded.AppendText("\n\n\nVrsta paketa: " + packetType + " (" + tip + ")\n" + outputDecoded);
 
                 // pokupi javni ključ poslužitelja
                 // paket - cijeli paket i sve
@@ -732,7 +735,7 @@ namespace SSH_simulator
         {
             try
             {
-                mainWindow.textBox_info.AppendText("Klijent računa računa ključeve za enkripciju\n\n");
+                mainWindow.textBox_info.AppendText("Klijent računa ključeve za enkripciju\n\n");
 
                 mainWindow.label_cli_cry.Content = algorithmsToUse.ENCRYPTION_algorithm;
                 mainWindow.label_cli_mac.Content = algorithmsToUse.MAC_algorithm;
@@ -1082,11 +1085,28 @@ namespace SSH_simulator
                 payload.AddRange(req_array);
 
                 int channel_num = 1;
+                _localChannel = channel_num;
                 var channel_num_array = BitConverter.GetBytes(channel_num);
                 // reverse zbog toga da ide iz little u big endian - ("normalni")
                 Array.Reverse(channel_num_array);
 
                 payload.AddRange(channel_num_array);
+
+                mainWindow.textBox_klijent_lokalni_kanal.Text = channel_num.ToString();
+
+                int window_size;
+                if (!int.TryParse(mainWindow.textBox_velicina_prozora.Text, out window_size))
+                {
+                    window_size = 240;
+                }
+
+                _windowSize = window_size;
+
+                var window_size_array = BitConverter.GetBytes(window_size);
+                // reverse zbog toga da ide iz little u big endian - ("normalni")
+                Array.Reverse(window_size_array);
+
+                payload.AddRange(window_size_array);
 
                 byte[] all = payload.ToArray();
 
@@ -1118,6 +1138,101 @@ namespace SSH_simulator
 
         public void ReadChannelOpenResponse()
         {
+            // čitaj i provjeri MAC
+            try
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+
+                byte[] paket = new byte[stream.Length - keys.MAClength];
+
+                stream.Read(paket, 0, (int)stream.Length - keys.MAClength);
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                byte[] paket_decoded;
+                paket_decoded = (byte[])encryptionAlgorithms.encryption.Invoke(null, new object[] { paket, keys.crySC, keys.vectorSC, false });
+
+                byte[] size = new byte[4];
+                size = paket_decoded.Take(size.Length).ToArray();
+                Array.Reverse(size);
+                int packetSize = BitConverter.ToInt32(size, 0);
+
+                int tip = Convert.ToInt32(paket_decoded[5]);
+                string packetType = "undefined";
+                if (Enum.IsDefined(typeof(identifiers), tip))
+                {
+                    packetType = Enum.GetName(typeof(identifiers), tip);
+                }
+
+                string output = SSHHelper.ispis(paket_decoded);
+
+                mainWindow.textBox_client.AppendText("\n\n\n" + output);
+
+                // MAC dio
+                byte[] mac = (byte[])encryptionAlgorithms.MAC.Invoke(null, new object[] { paket_decoded, keys.MACKeySC });
+
+                byte[] macReceived = new byte[keys.MAClength];
+                stream.Seek(paket.Length, SeekOrigin.Begin);
+
+                stream.Read(macReceived, 0, macReceived.Length);
+                string mC = BitConverter.ToString(mac);
+                string mR = BitConverter.ToString(macReceived);
+                if (mC != mR)
+                {
+                    //problem
+                    mainWindow.boolRetResult = false;
+                    mainWindow.retResult = ("Krivi MAC kod!");
+                    return;
+                }
+
+                string macHex = SSHHelper.ispis(macReceived);
+                mainWindow.textBox_client.AppendText("MAC:\n" + macHex);
+
+                string outputDecoded = SSHHelper.ispis(paket_decoded.Skip(5).ToArray());
+
+                mainWindow.textBox_client_decoded.AppendText("\n\n\nVrsta paketa: " + packetType + " (" + tip + ")\n" + outputDecoded);
+
+                // pokupi vlastiti kanala i provjeri ga
+                // 6 = zbog 4 veličine, 1 veličina dopune, 1 vrsta paketa + 4 veličina stringa
+                byte[] destination_channel_array = new byte[4];
+                destination_channel_array = paket_decoded.Skip(6).Take(destination_channel_array.Length).ToArray();
+                Array.Reverse(destination_channel_array);
+                int destinationChannel = BitConverter.ToInt32(destination_channel_array, 0);
+
+                paket_decoded = paket_decoded.Skip(6 + destination_channel_array.Length).ToArray();
+
+                // pokupi broj udaljenog kanala
+                byte[] remoteChannel_array = new byte[4];
+                remoteChannel_array = paket_decoded.Take(4).ToArray();
+                Array.Reverse(remoteChannel_array);
+                _remoteChannel = BitConverter.ToInt32(remoteChannel_array, 0);
+
+                paket_decoded = paket_decoded.Skip(4).ToArray();
+
+                mainWindow.textBox_klijent_udaljeni_kanal.Text = _remoteChannel.ToString();
+
+                // pokupi veličinu prozora
+                byte[] windowSize_array = new byte[4];
+                windowSize_array = paket_decoded.Take(4).ToArray();
+                Array.Reverse(windowSize_array);
+                _windowSize = BitConverter.ToInt32(windowSize_array, 0);
+
+                if (destinationChannel != _localChannel)
+                {
+                    //problem
+                    mainWindow.retResult = "Krivi broj odredišnog kanala!";
+                    mainWindow.boolRetResult = false;
+                    return;
+                }
+            }
+            catch
+            {
+                mainWindow.boolRetResult = false;
+                mainWindow.retResult = "Neuspješan primitak paketa!";
+                return;
+            }
+
+            mainWindow.boolRetResult = true;
         }
     }
 }

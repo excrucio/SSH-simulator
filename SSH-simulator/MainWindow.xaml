@@ -178,7 +178,7 @@
                 <TabItem x:Name="tab_protokol" Header="Protokol" HorizontalAlignment="Left" Height="20" VerticalAlignment="Top" Width="65" Margin="-2,-2,-6,0">
                     <Grid Background="#FFE5E5E5">
                         <Label x:Name="label41" Content="udaljeni identifikator kanala" HorizontalAlignment="Left" Margin="321,10,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label42" Content="veličina prozora" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label42" Content="veličina prozora (Byte)" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label40" Content="lokalni identifikator kanala" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label41_Copy" Content="udaljeni identifikator kanala" HorizontalAlignment="Left" Margin="778,46,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label40_Copy" Content="lokalni identifikator kanala" HorizontalAlignment="Left" Margin="778,15,0,0" VerticalAlignment="Top" />
@@ -189,7 +189,7 @@
                         <TextBox x:Name="textBox_server_udaljeni_kanal" HorizontalAlignment="Left" Height="23" Margin="951,46,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" VerticalScrollBarVisibility="Disabled" IsReadOnly="True" />
                         <TextBox x:Name="textBox_klijent_udaljeni_kanal" HorizontalAlignment="Left" Height="23" Margin="509,15,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" VerticalScrollBarVisibility="Disabled" IsReadOnly="True" />
                         <TextBox x:Name="textBox_klijent_lokalni_kanal" HorizontalAlignment="Left" Height="23" Margin="159,13,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="138" VerticalScrollBarVisibility="Disabled" IsReadOnly="True" />
-                        <TextBox x:Name="textBox_velicina_prozora" HorizontalAlignment="Left" Height="23" Margin="159,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="138" VerticalScrollBarVisibility="Disabled" />
+                        <TextBox x:Name="textBox_velicina_prozora" HorizontalAlignment="Left" Height="23" Margin="159,41,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="138" VerticalScrollBarVisibility="Disabled" Text="240" />
                         <TextBox x:Name="textBox_server_lokalni_kanal" HorizontalAlignment="Left" Height="23" Margin="951,15,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" VerticalScrollBarVisibility="Disabled" IsReadOnly="True" />
                         <GridSplitter x:Name="gridSplitter_Copy3" HorizontalAlignment="Left" Height="288" Margin="768,0,0,0" VerticalAlignment="Top" Width="6" RenderTransformOrigin="0.5,0.5">
                             <GridSplitter.RenderTransform>
