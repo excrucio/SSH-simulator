@@ -146,6 +146,45 @@ namespace SSH_simulator
             //23
             steps.Add(() => server.SendChannelOpenResponse());
             steps.Add(() => client.ReadChannelOpenResponse());
+
+            //24
+            steps.Add(() => client.SendChannelRequestPacket());
+            steps.Add(() => server.ReadChannelRequestPacket());
+
+            //25
+            steps.Add(() =>
+            {
+                server.SendChannelRespondPacket();
+                client.ReadChannelResponsePacket();
+            });
+            steps.Add(() => ServerCommandExecutingAndSendingData());
+        }
+
+        private void ServerCommandExecutingAndSendingData()
+        {
+            try
+            {
+                string data = server.ExecuteCommand();
+                bool more = false;
+                do
+                {
+                    more = server.SendChannelDataPackets(data);
+                    if (more)
+                    {
+                        client.ReadChannelDataPacket();
+                    }
+                } while (more);
+
+                client.ShowDataReceived();
+            }
+            catch
+            {
+                retResult = "Paket nije moguće prenijeti!";
+                step -= 3;
+                return;
+            }
+
+            boolRetResult = true;
         }
 
         private void ShowAlgorithms()

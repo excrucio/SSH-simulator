@@ -40,6 +40,9 @@ namespace SSH_simulator
         private int _remoteChannel;
         private int _localChannel;
 
+        private bool replyNeeded;
+        private string commandToExec;
+
         private string _clientIdent;
         private string _serverIdent;
         private byte[] _clientKEXINIT;
@@ -1207,6 +1210,9 @@ namespace SSH_simulator
 
                 payload.AddRange(window_size_array);
 
+                // maksimalna veličina paketa je ista
+                payload.AddRange(window_size_array);
+
                 byte[] all = payload.ToArray();
 
                 // stvori paket
@@ -1233,6 +1239,210 @@ namespace SSH_simulator
             }
 
             mainWindow.boolRetResult = true;
+        }
+
+        public void ReadChannelRequestPacket()
+        {
+            /*
+            byte      SSH_MSG_CHANNEL_REQUEST
+            uint32    recipient channel
+            string    "exec"
+            boolean   want reply
+            string    command
+            */
+
+            // čitaj i provjeri MAC
+            try
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+
+                byte[] paket = new byte[stream.Length - keys.MAClength];
+
+                stream.Read(paket, 0, (int)stream.Length - keys.MAClength);
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                byte[] paket_decoded;
+                paket_decoded = (byte[])encryptionAlgorithms.encryption.Invoke(null, new object[] { paket, keys.cryCS, keys.vectorCS, false });
+
+                byte[] size = new byte[4];
+                size = paket_decoded.Take(size.Length).ToArray();
+                Array.Reverse(size);
+                int packetSize = BitConverter.ToInt32(size, 0);
+
+                int tip = Convert.ToInt32(paket_decoded[5]);
+                string packetType = "undefined";
+                if (Enum.IsDefined(typeof(identifiers), tip))
+                {
+                    packetType = Enum.GetName(typeof(identifiers), tip);
+                }
+
+                string output = SSHHelper.ispis(paket_decoded);
+
+                mainWindow.textBox_server.AppendText("\n\n\n" + output);
+
+                // MAC dio
+                byte[] mac = (byte[])encryptionAlgorithms.MAC.Invoke(null, new object[] { paket_decoded, keys.MACKeyCS });
+
+                byte[] macReceived = new byte[keys.MAClength];
+                stream.Seek(paket.Length, SeekOrigin.Begin);
+
+                stream.Read(macReceived, 0, macReceived.Length);
+                string mC = BitConverter.ToString(mac);
+                string mR = BitConverter.ToString(macReceived);
+                if (mC != mR)
+                {
+                    //problem
+                    SendServiceDisconnectPacket();
+                }
+
+                string macHex = SSHHelper.ispis(macReceived);
+                mainWindow.textBox_server.AppendText("MAC:\n" + macHex);
+
+                string outputDecoded = SSHHelper.ispis(paket_decoded.Skip(5).ToArray());
+
+                mainWindow.textBox_server_decoded.AppendText("\n\n\nVrsta paketa: " + packetType + " (" + tip + ")\n" + outputDecoded);
+
+                // pokupi kanal
+                // 6 = zbog 4 veličine, 1 veličina dopune, 1 vrsta paketa
+                byte[] channel_array = new byte[4];
+                channel_array = paket_decoded.Skip(6).Take(channel_array.Length).ToArray();
+                Array.Reverse(channel_array);
+                int destinationChannel = BitConverter.ToInt32(channel_array, 0);
+
+                if (destinationChannel != _localChannel)
+                {
+                    //problem
+                    mainWindow.retResult = "Krivi broj odredišnog kanala!";
+                    mainWindow.boolRetResult = false;
+                    return;
+                }
+
+                paket_decoded = paket_decoded.Skip(6 + channel_array.Length).ToArray();
+
+                // pokupi "exec" - znam da je to pa preskačem
+                byte[] infoSize_array = new byte[4];
+                infoSize_array = paket_decoded.Take(infoSize_array.Length).ToArray();
+                Array.Reverse(infoSize_array);
+                int infoSize = BitConverter.ToInt32(infoSize_array, 0);
+
+                paket_decoded = paket_decoded.Skip(infoSize + infoSize_array.Length).ToArray();
+
+                // pokupi treba li reply
+                byte[] reply_array;
+                reply_array = paket_decoded.Take(1).ToArray();
+                bool reply = BitConverter.ToBoolean(reply_array, 0);
+
+                this.replyNeeded = reply;
+
+                paket_decoded = paket_decoded.Skip(1).ToArray();
+
+                // pokupi naredbu
+                byte[] command_array = new byte[4];
+                command_array = paket_decoded.Take(command_array.Length).ToArray();
+                Array.Reverse(command_array);
+                int commandSize = BitConverter.ToInt32(command_array, 0);
+
+                string command = Encoding.ASCII.GetString(paket_decoded.Take(commandSize).ToArray());
+
+                this.commandToExec = command;
+            }
+            catch
+            {
+                mainWindow.boolRetResult = false;
+                mainWindow.retResult = "Neuspješan primitak paketa!";
+                return;
+            }
+
+            mainWindow.boolRetResult = true;
+        }
+
+        public void SendChannelRespondPacket()
+        {
+            // napravi paket
+            try
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+
+                List<byte> payload = new List<byte>();
+
+                // identifikator paketa
+                byte[] ident;
+
+                mainWindow.textBox_info.AppendText("Server šalje CHANNEL_SUCCESS paket\n\n");
+
+                ident = BitConverter.GetBytes((int)identifiers.SSH_MSG_CHANNEL_SUCCESS);
+                payload.Add(ident[0]);
+
+                var remote_channel_array = BitConverter.GetBytes(_remoteChannel);
+                // reverse zbog toga da ide iz little u big endian - ("normalni")
+                Array.Reverse(remote_channel_array);
+
+                payload.AddRange(remote_channel_array);
+
+                byte[] all = payload.ToArray();
+
+                // stvori paket
+                byte[] paket = SSHHelper.CreatePacket(all);
+
+                byte[] mac = (byte[])encryptionAlgorithms.MAC.Invoke(null, new object[] { paket, keys.MACKeySC });
+
+                byte[] paket_crypt = (byte[])encryptionAlgorithms.encryption.Invoke(null, new object[] { paket, keys.crySC, keys.vectorSC, true });
+
+                List<byte> wholePacket = new List<byte>();
+
+                wholePacket.AddRange(paket_crypt);
+                wholePacket.AddRange(mac);
+
+                stream.SetLength(wholePacket.Count);
+
+                stream.Write(wholePacket.ToArray(), 0, wholePacket.Count);
+            }
+            catch
+            {
+                mainWindow.retResult = "Paket nije moguće poslati!";
+                mainWindow.boolRetResult = false;
+                return;
+            }
+
+            mainWindow.boolRetResult = true;
+        }
+
+        public string ExecuteCommand()
+        {
+            System.Diagnostics.Process process = new System.Diagnostics.Process();
+            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+            startInfo.CreateNoWindow = true;
+            startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+            startInfo.FileName = "cmd.exe";
+            startInfo.Arguments = "/C " + commandToExec;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.UseShellExecute = false;
+
+            process.StartInfo = startInfo;
+            process.Start();
+            string output = process.StandardOutput.ReadToEnd();
+
+            return output;
+        }
+
+        public bool SendChannelDataPackets(string data)
+        {
+            if (!replyNeeded)
+            {
+                return false;
+            }
+
+            // inače šalji pakete dok ih ima
+
+            while (data != "")
+            {
+                //pošalji dio pa onda smanji "data"
+
+                return true;
+            }
+
+            return false;
         }
     }
 }
