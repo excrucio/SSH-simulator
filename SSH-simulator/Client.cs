@@ -746,6 +746,7 @@ namespace SSH_simulator
 
                             string xmlImport = File.ReadAllText(@"ServerCert\ECDSAPublicKey.xml");
 
+                            /*
                             // provjeri je li javni ključ kako treba
                             if (K_S_param != xmlImport)
                             {
@@ -753,12 +754,17 @@ namespace SSH_simulator
                                 mainWindow.boolRetResult = false;
                                 return;
                             }
-
+                            */
                             mainWindow.textBox_sig_ser.Text = BitConverter.ToString(s_param).Replace("-", "").ToLower();
-
+                            /*
                             ECDsaCng eccImporter = new ECDsaCng();
                             eccImporter.FromXmlString(xmlImport, ECKeyXmlFormat.Rfc4050);
+                            */
+                            string pubHex = K_S_param;
+                            var bytesKey = Enumerable.Range(0, pubHex.Length).Where(x => x % 2 == 0).Select(x => Convert.ToByte(pubHex.Substring(x, 2), 16)).ToArray();
 
+                            CngKey key = CngKey.Import(bytesKey, CngKeyBlobFormat.EccPublicBlob);
+                            ECDsaCng eccImporter = new ECDsaCng(key);
                             var sig = Encoding.ASCII.GetString(s_param);
 
                             var dec = Convert.FromBase64String(sig);

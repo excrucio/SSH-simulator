@@ -691,7 +691,9 @@ namespace SSH_simulator
                             string privHex = File.ReadAllLines(@"ServerCert\ECDSAPrivate.key")[0];
 
                             // javni ključ
-                            string pubHex = File.ReadAllText(@"ServerCert\ECDSAPublicKey.xml");
+                            //string pubHex = File.ReadAllText(@"ServerCert\ECDSAPublicKey.xml");
+                            // todo rovjera
+                            string pubHex = File.ReadAllLines(@"ServerCert\ECDSA.Public")[0];
 
                             serverCertPubKey = pubHex;
 
