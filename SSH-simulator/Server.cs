@@ -194,9 +194,9 @@ namespace SSH_simulator
                     SIGNATURE_ALGORITHMS.Insert(0, "ssh-rsa");
                 }
 
-                if ((bool)mainWindow.checkBox_server_ecdsa_ssh2_nistp384.IsChecked)
+                if ((bool)mainWindow.checkBox_server_ecdsa_sha2_nistp384.IsChecked)
                 {
-                    SIGNATURE_ALGORITHMS.Insert(0, "ecdsa-ssh2-nistp384");
+                    SIGNATURE_ALGORITHMS.Insert(0, "ecdsa-sha2-nistp384");
                 }
 
                 if ((bool)mainWindow.checkBox_server_blowfish_ctr.IsChecked)
@@ -668,7 +668,7 @@ namespace SSH_simulator
 
                             // izračunati hash
 
-                            hash = SSHHelper.ComputeSHA1Hash(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, serverCertPubKey, ex_params.e, ex_params.f, ex_params.K);
+                            hash = SSHHelper.ComputeSHA1Hash_DH(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, serverCertPubKey, ex_params.e, ex_params.f, ex_params.K);
 
                             // potpisati hash i dodati potpis
                             var encryptEngine = new Pkcs1Encoding(new RsaEngine());
@@ -684,15 +684,12 @@ namespace SSH_simulator
                             break;
                         }
 
-                    case ("ecdsa-ssh2-nistp384"):
+                    case ("ecdsa-sha2-nistp384"):
                         {
-                            // radi ecdsa
                             // privatni ključ
                             string privHex = File.ReadAllLines(@"ServerCert\ECDSAPrivate.key")[0];
 
                             // javni ključ
-                            //string pubHex = File.ReadAllText(@"ServerCert\ECDSAPublicKey.xml");
-                            // todo rovjera
                             string pubHex = File.ReadAllLines(@"ServerCert\ECDSA.Public")[0];
 
                             serverCertPubKey = pubHex;
@@ -844,7 +841,7 @@ namespace SSH_simulator
                             payload.AddRange(pubKeys);
 
                             // izračunati hash
-                            hash = SSHHelper.ComputeSHA2Hash_ecdh(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, serverCertPubKey, ex_params.x_c, ex_params.y_c, ex_params.x, ex_params.y, ex_params.K);
+                            hash = SSHHelper.ComputeSHA1Hash_ECDH(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, serverCertPubKey, ex_params.x_c, ex_params.y_c, ex_params.x, ex_params.y, ex_params.K);
 
                             string hashBase64 = Convert.ToBase64String(hash);
 
@@ -867,14 +864,14 @@ namespace SSH_simulator
                             break;
                         }
 
-                    case ("ecdsa-ssh2-nistp384"):
+                    case ("ecdsa-sha2-nistp384"):
                         {
                             // radi ecdsa
                             // privatni ključ
                             string privHex = File.ReadAllLines(@"ServerCert\ECDSAPrivate.key")[0];
 
                             // javni ključ
-                            string pubHex = File.ReadAllText(@"ServerCert\ECDSAPublicKey.xml");
+                            string pubHex = File.ReadAllText(@"ServerCert\ECDSA.public");
 
                             serverCertPubKey = pubHex;
 
@@ -891,7 +888,7 @@ namespace SSH_simulator
                             payload.AddRange(pubKeys);
 
                             // izračunati hash
-                            hash = SSHHelper.ComputeSHA2Hash_ecdh(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, serverCertPubKey, ex_params.x_c, ex_params.y_c, ex_params.x, ex_params.y, ex_params.K);
+                            hash = SSHHelper.ComputeSHA2Hash_ECDH(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, serverCertPubKey, ex_params.x_c, ex_params.y_c, ex_params.x, ex_params.y, ex_params.K);
 
                             string hashBase64 = Convert.ToBase64String(hash);
 

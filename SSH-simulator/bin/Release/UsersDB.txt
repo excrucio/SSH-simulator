@@ -1,4 +1,0 @@
-﻿root;toor
-josip;ovojesifra
-admin;admin
-predrag;neznam

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SSH_simulator"
         mc:Ignorable="d"
-        Title="SSH simulator" WindowStartupLocation="CenterScreen" Width="940" Height="650">
+        Title="SSH simulator" WindowStartupLocation="CenterScreen" Width="940" Height="650" WindowState="Maximized">
     <Viewbox Stretch="Fill">
 
         <Grid Width="1288">
@@ -37,7 +37,7 @@
                         <CheckBox x:Name="checkBox_ssh_rsa" Content="ssh-rsa" HorizontalAlignment="Left" Margin="206,81,0,0" VerticalAlignment="Top" IsChecked="True" IsEnabled="False" />
                         <Label x:Name="label47" Content="ssh-dss" HorizontalAlignment="Left" Margin="214,101,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label48" Content="3des-cbc" HorizontalAlignment="Left" Margin="391,81,0,0" VerticalAlignment="Top" />
-                        <CheckBox x:Name="checkBox_aes256_cbc" Content="aes256-cbc" HorizontalAlignment="Left" Margin="384,63,0,0" VerticalAlignment="Top" />
+                        <CheckBox x:Name="checkBox_aes256_cbc" Content="aes256-cbc" HorizontalAlignment="Left" Margin="384,63,0,0" VerticalAlignment="Top" IsEnabled="False" />
                         <CheckBox x:Name="checkBox_blowfish_ctr" Content="blowfish-ctr" HorizontalAlignment="Left" Margin="384,112,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
                             <CheckBox.RenderTransform>
                                 <TransformGroup>
@@ -61,13 +61,13 @@
                         <CheckBox x:Name="checkBox_server_ssh_rsa" Content="ssh-rsa" HorizontalAlignment="Left" Margin="866,84,0,0" VerticalAlignment="Top" IsChecked="True" IsEnabled="False" />
                         <Label x:Name="label47_Copy" Content="ssh-dss" HorizontalAlignment="Left" Margin="866,102,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label48_Copy" Content="3des-cbc" HorizontalAlignment="Left" Margin="1057,81,0,0" VerticalAlignment="Top" />
-                        <CheckBox x:Name="checkBox_server_aes256_cbc" Content="aes256-cbc" HorizontalAlignment="Left" Margin="1035,63,0,0" VerticalAlignment="Top" />
+                        <CheckBox x:Name="checkBox_server_aes256_cbc" Content="aes256-cbc" HorizontalAlignment="Left" Margin="1035,63,0,0" VerticalAlignment="Top" IsEnabled="False" />
                         <CheckBox x:Name="checkBox_server_blowfish_ctr" Content="blowfish-ctr" HorizontalAlignment="Left" Margin="1035,112,0,0" VerticalAlignment="Top" />
                         <CheckBox x:Name="checkBox_server_gost28147" Content="gost28147" HorizontalAlignment="Left" Margin="1168,112,0,0" VerticalAlignment="Top" />
                         <CheckBox x:Name="checkBox_server_hmac_sha2" Content="hmac-sha2" HorizontalAlignment="Left" Margin="1166,92,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label49_Copy" Content="hmac-sha1" HorizontalAlignment="Left" Margin="1170,64,0,0" VerticalAlignment="Top" />
-                        <CheckBox x:Name="checkBox_ecdsa_ssh2_nistp384" Content="ecdsa-ssh2-nistp384" HorizontalAlignment="Left" Margin="206,58,0,0" VerticalAlignment="Top" />
-                        <CheckBox x:Name="checkBox_server_ecdsa_ssh2_nistp384" Content="ecdsa-ssh2-nistp384" HorizontalAlignment="Left" Margin="866,61,0,0" VerticalAlignment="Top" />
+                        <CheckBox x:Name="checkBox_ecdsa_sha2_nistp384" Content="ecdsa-ssh2-nistp384" HorizontalAlignment="Left" Margin="206,58,0,0" VerticalAlignment="Top" />
+                        <CheckBox x:Name="checkBox_server_ecdsa_sha2_nistp384" Content="ecdsa-ssh2-nistp384" HorizontalAlignment="Left" Margin="866,61,0,0" VerticalAlignment="Top" />
                     </Grid>
                 </TabItem>
                 <TabItem x:Name="tab_dh" Header="Diffie-Hellman">

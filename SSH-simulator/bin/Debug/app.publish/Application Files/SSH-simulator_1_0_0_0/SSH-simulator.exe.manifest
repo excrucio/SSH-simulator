@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
+  <asmv1:assemblyIdentity name="SSH-simulator.exe" version="1.0.0.0" publicKeyToken="ee78d52407b14222" language="neutral" processorArchitecture="msil" type="win32" />
+  <description asmv2:iconFile="Icon.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
+  <application />
+  <entryPoint>
+    <assemblyIdentity name="SSH-simulator" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+    <commandLine file="SSH-simulator.exe" parameters="" />
+  </entryPoint>
+  <trustInfo>
+    <security>
+      <applicationRequestMinimum>
+        <PermissionSet version="1" class="System.Security.NamedPermissionSet" Name="LocalIntranet" Description="Default rights given to applications on the local intranet" Unrestricted="true" ID="Custom" SameSite="site" />
+        <defaultAssemblyRequest permissionSetReference="Custom" />
+      </applicationRequestMinimum>
+      <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+        <!-- UAC Manifest Options
+             If you want to change the Windows User Account Control level replace the 
+             requestedExecutionLevel node with one of the following.
+
+        <requestedExecutionLevel  level="asInvoker" uiAccess="false" />
+        <requestedExecutionLevel  level="requireAdministrator" uiAccess="false" />
+        <requestedExecutionLevel  level="highestAvailable" uiAccess="false" />
+
+            Specifying requestedExecutionLevel element will disable file and registry virtualization. 
+            Remove this element if your application requires this virtualization for backwards
+            compatibility.
+        -->
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+  <dependency>
+    <dependentOS>
+      <osVersionInfo>
+        <os majorVersion="5" minorVersion="1" buildNumber="2600" servicePackMajor="0" />
+      </osVersionInfo>
+    </dependentOS>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="preRequisite" allowDelayedBinding="true">
+      <assemblyIdentity name="Microsoft.Windows.CommonLanguageRuntime" version="4.0.30319.0" />
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="BouncyCastle.Crypto.dll" size="2236416">
+      <assemblyIdentity name="BouncyCastle.Crypto" version="1.8.1.0" publicKeyToken="0E99375E54769942" language="neutral" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>GYW4W7RL5sbq814C7xHiOokOgJuOwuUyEKStWoWybHA=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Renci.SshNet.dll" size="420864">
+      <assemblyIdentity name="Renci.SshNet" version="2013.4.7.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>8pmxmGS/+ofdijLtUAsoxBv8eOnGsIDPhs1FMwK2yMs=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="SSH-simulator.exe" size="852896">
+      <assemblyIdentity name="SSH-simulator" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>GPszUv4oWvft514BkdrFOOSoTAeuBXF4D3e8Alauy44=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <file name="Icon.ico" size="370070">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>HapM/2fceXaV0ss8p97c4O9Itbwfrhm3oythL6IJs30=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="SSH-simulator.exe.config" size="184">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>FqWy0dfMmRS85zkU1NlW07p6LsNOPUHodvLiZcFdgJY=</dsig:DigestValue>
+    </hash>
+  </file>
+  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+    <application>
+      <!-- A list of the Windows versions that this application has been tested on and is
+           is designed to work with. Uncomment the appropriate elements and Windows will 
+           automatically selected the most compatible environment. -->
+      <!-- Windows Vista -->
+      <!--<supportedOS Id="{e2011457-1546-43c5-a5fe-008deee3d3f0}" />-->
+      <!-- Windows 7 -->
+      <!--<supportedOS Id="{35138b9a-5d96-4fbd-8e2d-a2440225f93a}" />-->
+      <!-- Windows 8 -->
+      <!--<supportedOS Id="{4a2f28e3-53b9-4441-ba9c-d69d4a4a6e38}" />-->
+      <!-- Windows 8.1 -->
+      <!--<supportedOS Id="{1f676c76-80e1-4239-95bb-83d0f6d0da78}" />-->
+      <!-- Windows 10 -->
+      <!--<supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}" />-->
+    </application>
+  </compatibility>
+<publisherIdentity name="CN=7-PC\Josip" issuerKeyHash="7a1d0605b55e595f38fd996670a0d119a2b6990f" /><Signature Id="StrongNameSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha256" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" /><DigestValue>Ijll3+Voce8ONnDqG5Eji9AshrwPFNxwDA12XV3ekv4=</DigestValue></Reference></SignedInfo><SignatureValue>dUuE+S1ByUgl5V6SX2spu0CLce6vxx3GVkcfFGY7VMsWly5djkVWXO3iQipDwWlx46h1DJ8M5nwhujSyMdMHqiX7KGTftM295rxSRdgX5sALLPgrDP3+DKizBSP55dFnwosWv9k3gIWLPMoB7V34dqFNe+7duiJw7I3JbK+cQa0=</SignatureValue><KeyInfo Id="StrongNameKeyInfo"><KeyValue><RSAKeyValue><Modulus>tANXC1M4aMViVseBs6Mptp5ox0cM6en6kCEYsPpbZIzCbtmkiC6L9m71CKDBJWj3BQfjG1SC23cSEtJ9hFKt2KkO+hUzMzpNpY/47kcJP/rY5wDEBh1mczUT6Ytxn3kLe9GwoB8KSdkrj9LSDs+FUib9of9fLmXMlTSkTAiOnE0=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><msrel:RelData xmlns:msrel="http://schemas.microsoft.com/windows/rel/2005/reldata"><r:license xmlns:r="urn:mpeg:mpeg21:2003:01-REL-R-NS" xmlns:as="http://schemas.microsoft.com/windows/pki/2005/Authenticode"><r:grant><as:ManifestInformation Hash="fe92de5d5d760d0c70dc140fbc862cd08b23911bea70360eef7168e5df653922" Description="" Url=""><as:assemblyIdentity name="SSH-simulator.exe" version="1.0.0.0" publicKeyToken="ee78d52407b14222" language="neutral" processorArchitecture="msil" type="win32" /></as:ManifestInformation><as:SignedBy /><as:AuthenticodePublisher><as:X509SubjectName>CN=7-PC\Josip</as:X509SubjectName></as:AuthenticodePublisher></r:grant><r:issuer><Signature Id="AuthenticodeSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha256" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" /><DigestValue>Cq+WuupewRNzU5ISV8f32epORVgxx1zGmrQxgjo9lAs=</DigestValue></Reference></SignedInfo><SignatureValue>RX4HbBty/kFeUJdgIOJurCAAqoGb0fARdpPgvzm5cMXV5S5Pw4G00u29vs0Ydaiz/4xce2Jhbs8nfCN7AWXr17GVrX5u0zES71FBwxk4HTcwh+0vtJn2YUizPvJyuSIlDnQY3crjRRNr4q9ZJqE9PH6bVTiotzJBeBF2hwsWn+A=</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>tANXC1M4aMViVseBs6Mptp5ox0cM6en6kCEYsPpbZIzCbtmkiC6L9m71CKDBJWj3BQfjG1SC23cSEtJ9hFKt2KkO+hUzMzpNpY/47kcJP/rY5wDEBh1mczUT6Ytxn3kLe9GwoB8KSdkrj9LSDs+FUib9of9fLmXMlTSkTAiOnE0=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIBwTCCASqgAwIBAgIQEQBfNsD2bLVInpWlkBnUTDANBgkqhkiG9w0BAQsFADAfMR0wGwYDVQQDHhQANwAtAFAAQwBcAEoAbwBzAGkAcDAeFw0xNjA2MTMyMDQ3MzNaFw0xNzA2MTQwMjQ3MzNaMB8xHTAbBgNVBAMeFAA3AC0AUABDAFwASgBvAHMAaQBwMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC0A1cLUzhoxWJWx4Gzoym2nmjHRwzp6fqQIRiw+ltkjMJu2aSILov2bvUIoMElaPcFB+MbVILbdxIS0n2EUq3YqQ76FTMzOk2lj/juRwk/+tjnAMQGHWZzNRPpi3GfeQt70bCgHwpJ2SuP0tIOz4VSJv2h/18uZcyVNKRMCI6cTQIDAQABMA0GCSqGSIb3DQEBCwUAA4GBAGZOTTgkJs7gveX36d8PsHeh36kqZooZYh1nC257szapGcKLKggYW42ZN/tj30BCaZK+A5VK2hDY61y9Yvp3B460cpKNWtRG2wwK8coJQ98NzmPaB5fq9RfvwVR1WlJ1ed+k6siNpackW8ZivcnJ+h4/U2FqLYB7NdRg1kUe/1KA</X509Certificate></X509Data></KeyInfo></Signature></r:issuer></r:license></msrel:RelData></KeyInfo></Signature></asmv1:assembly>

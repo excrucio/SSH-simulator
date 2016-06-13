@@ -246,7 +246,7 @@ namespace SSH_simulator
             return new AlgorithmsUsed { DH_algorithm = dh, ENCRYPTION_algorithm = cry, MAC_algorithm = mac, SIGNATURE_algorithm = sig };
         }
 
-        public static byte[] ComputeSHA1Hash(string clientIdent, string serverIdent, byte[] ClientKEXINIT, byte[] ServerKEXINIT, string ServerCertPubKey,
+        public static byte[] ComputeSHA1Hash_DH(string clientIdent, string serverIdent, byte[] ClientKEXINIT, byte[] ServerKEXINIT, string ServerCertPubKey,
                                             BigInteger e, BigInteger f, BigInteger K)
         {
             Debug.WriteLine("ci=" + clientIdent);
@@ -660,15 +660,15 @@ namespace SSH_simulator
             return output;
         }
 
-        internal static byte[] ComputeSHA2Hash_ecdh(string clientIdent, string serverIdent, byte[] ClientKEXINIT, byte[] ServerKEXINIT, string ServerCertPubKey, BigInteger x_r, BigInteger y_r, BigInteger x, BigInteger y, BigInteger K)
+        internal static byte[] ComputeSHA2Hash_ECDH(string clientIdent, string serverIdent, byte[] ClientKEXINIT, byte[] ServerKEXINIT, string ServerCertPubKey, BigInteger x_c, BigInteger y_c, BigInteger x, BigInteger y, BigInteger K)
         {
             Debug.WriteLine("ci=" + clientIdent);
             Debug.WriteLine("si=" + serverIdent);
             Debug.WriteLine("CK=" + Convert.ToBase64String(ClientKEXINIT));
             Debug.WriteLine("SK=" + Convert.ToBase64String(ServerKEXINIT));
             Debug.WriteLine("sPub=" + ServerCertPubKey);
-            Debug.WriteLine("x_r=" + x_r.ToString());
-            Debug.WriteLine("y_r=" + y_r.ToString());
+            Debug.WriteLine("x_r=" + x_c.ToString());
+            Debug.WriteLine("y_r=" + y_c.ToString());
             Debug.WriteLine("x=" + x.ToString());
             Debug.WriteLine("y=" + y.ToString());
             Debug.WriteLine("K=" + K.ToString());
@@ -676,8 +676,8 @@ namespace SSH_simulator
             var cIdn = Encoding.ASCII.GetBytes(clientIdent);
             var sIdn = Encoding.ASCII.GetBytes(serverIdent);
             var key = Encoding.ASCII.GetBytes(ServerCertPubKey);
-            var x_r_array = x_r.ToByteArrayUnsigned();
-            var y_r_array = y_r.ToByteArrayUnsigned();
+            var x_r_array = x_c.ToByteArrayUnsigned();
+            var y_r_array = y_c.ToByteArrayUnsigned();
             var x_array = x.ToByteArrayUnsigned();
             var y_array = y.ToByteArrayUnsigned();
             var K_array = K.ToByteArrayUnsigned();
@@ -739,6 +739,40 @@ namespace SSH_simulator
             using (SHA256Managed sha256 = new SHA256Managed())
             {
                 hash = sha256.ComputeHash(arrayToHash.ToArray());
+            }
+
+            return hash;
+        }
+
+        internal static byte[] ComputeSHA1Hash_ECDH(string clientIdent, string serverIdent, byte[] ClientKEXINIT, byte[] ServerKEXINIT, string ServerCertPubKey, BigInteger x_c, BigInteger y_c, BigInteger x, BigInteger y, BigInteger K)
+        {
+            var cIdn = Encoding.ASCII.GetBytes(clientIdent);
+            var sIdn = Encoding.ASCII.GetBytes(serverIdent);
+            var key = Encoding.ASCII.GetBytes(ServerCertPubKey);
+            var x_r_array = x_c.ToByteArrayUnsigned();
+            var y_r_array = y_c.ToByteArrayUnsigned();
+            var x_array = x.ToByteArrayUnsigned();
+            var y_array = y.ToByteArrayUnsigned();
+            var K_array = K.ToByteArrayUnsigned();
+
+            List<byte> arrayToHash = new List<byte>();
+
+            arrayToHash.AddRange(cIdn);
+            arrayToHash.AddRange(sIdn);
+            arrayToHash.AddRange(ClientKEXINIT);
+            arrayToHash.AddRange(ServerKEXINIT);
+            arrayToHash.AddRange(key);
+            arrayToHash.AddRange(x_r_array);
+            arrayToHash.AddRange(y_r_array);
+            arrayToHash.AddRange(x_array);
+            arrayToHash.AddRange(y_array);
+            arrayToHash.AddRange(K_array);
+
+            byte[] hash;
+
+            using (SHA1Managed sha1 = new SHA1Managed())
+            {
+                hash = sha1.ComputeHash(arrayToHash.ToArray());
             }
 
             return hash;
