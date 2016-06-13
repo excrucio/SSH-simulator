@@ -738,54 +738,55 @@ namespace SSH_simulator
                             var K_S_param = Encoding.ASCII.GetString(K_S_array);
 
                             // izračunati hash
-                            byte[] hash = null;
+                            byte[] computed_hash = null;
 
-                            hash = SSHHelper.ComputeSHA2Hash_DH(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, K_S_param, ex_params.e, ex_params.f, ex_params.K);
+                            computed_hash = SSHHelper.ComputeSHA2Hash_DH(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, K_S_param, ex_params.e, ex_params.f, ex_params.K);
 
-                            var decryptEngine = new Pkcs1Encoding(new RsaEngine());
+                            string hexPubFromFile = File.ReadAllLines(@"ServerCert\ECDSA.public")[0];
 
-                            string xmlImport = File.ReadAllText(@"ServerCert\ECDSAPublicKey.xml");
-
-                            /*
                             // provjeri je li javni ključ kako treba
-                            if (K_S_param != xmlImport)
+                            if (K_S_param != hexPubFromFile)
                             {
                                 mainWindow.retResult = "Javni ključ servera neispravan!";
                                 mainWindow.boolRetResult = false;
                                 return;
                             }
-                            */
+
                             mainWindow.textBox_sig_ser.Text = BitConverter.ToString(s_param).Replace("-", "").ToLower();
-                            /*
-                            ECDsaCng eccImporter = new ECDsaCng();
-                            eccImporter.FromXmlString(xmlImport, ECKeyXmlFormat.Rfc4050);
-                            */
-                            string pubHex = K_S_param;
+
+                            string pubHex = hexPubFromFile;
                             var bytesKey = Enumerable.Range(0, pubHex.Length).Where(x => x % 2 == 0).Select(x => Convert.ToByte(pubHex.Substring(x, 2), 16)).ToArray();
 
                             CngKey key = CngKey.Import(bytesKey, CngKeyBlobFormat.EccPublicBlob);
-                            ECDsaCng eccImporter = new ECDsaCng(key);
-                            var sig = Encoding.ASCII.GetString(s_param);
+                            ECDsaCng dsa = new ECDsaCng(key);
 
-                            var dec = Convert.FromBase64String(sig);
+                            /*
+                            var sig_base64 = Encoding.ASCII.GetString(s_param);
+
+                            var signature_array = Convert.FromBase64String(sig_base64);
+                            */
+
+                            var signature_array = s_param;
 
                             // TODO !! zašto ne prolazi???
 
-                            if (eccImporter.VerifyData(hash, dec))
+                            bool isti = mainWindow.sig.SequenceEqual(signature_array);
+                            bool hist = mainWindow.hash.SequenceEqual(computed_hash);
+                            if (dsa.VerifyData(computed_hash, signature_array))
                             {
                                 mainWindow.boolRetResult = false;
                                 mainWindow.retResult = "Hash paketa se razlikuje!";
                                 return;
                             }
 
-                            var hashBase64 = Convert.ToBase64String(hash);
+                            var hashBase64 = Convert.ToBase64String(computed_hash);
 
                             ex_params.H = hashBase64;
 
-                            byte[] pub_key = eccImporter.Key.Export(CngKeyBlobFormat.EccPublicBlob);
+                            byte[] pub_key = dsa.Key.Export(CngKeyBlobFormat.EccPublicBlob);
 
                             mainWindow.textBox_ser_pub_key.Text = BitConverter.ToString(pub_key).Replace("-", "").ToLower();
-                            mainWindow.textBox_cli_H.Text = BitConverter.ToString(hash).Replace("-", "").ToLower();
+                            mainWindow.textBox_cli_H.Text = BitConverter.ToString(computed_hash).Replace("-", "").ToLower();
 
                             break;
                         }

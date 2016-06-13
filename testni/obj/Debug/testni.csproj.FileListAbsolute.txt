@@ -1,10 +1,3 @@
-D:\Projekti\GIT\SSH-simulator\testni\bin\Debug\testni.exe.config
-D:\Projekti\GIT\SSH-simulator\testni\bin\Debug\testni.exe
-D:\Projekti\GIT\SSH-simulator\testni\bin\Debug\testni.pdb
-D:\Projekti\GIT\SSH-simulator\testni\obj\Debug\testni.csprojResolveAssemblyReference.cache
-D:\Projekti\GIT\SSH-simulator\testni\obj\Debug\testni.exe
-D:\Projekti\GIT\SSH-simulator\testni\obj\Debug\testni.pdb
-D:\Projekti\GIT\SSH-simulator\testni\bin\Debug\BouncyCastle.Crypto.dll
 C:\GIT\PRIVATE\SSH-simulator\testni\bin\Debug\ServerCert\public_server_keys
 C:\GIT\PRIVATE\SSH-simulator\testni\bin\Debug\ServerCert\server_dsa.pem
 C:\GIT\PRIVATE\SSH-simulator\testni\bin\Debug\ServerCert\server_rsa.pem
@@ -15,3 +8,16 @@ C:\GIT\PRIVATE\SSH-simulator\testni\bin\Debug\BouncyCastle.Crypto.dll
 C:\GIT\PRIVATE\SSH-simulator\testni\obj\Debug\testni.exe
 C:\GIT\PRIVATE\SSH-simulator\testni\obj\Debug\testni.pdb
 C:\GIT\PRIVATE\SSH-simulator\testni\obj\Debug\testni.csprojResolveAssemblyReference.cache
+D:\Projekti\GIT\SSH-simulator\testni\bin\Debug\ServerCert\ECDSA.public
+D:\Projekti\GIT\SSH-simulator\testni\bin\Debug\ServerCert\ECDSAPrivate.key
+D:\Projekti\GIT\SSH-simulator\testni\bin\Debug\ServerCert\public_server_keys
+D:\Projekti\GIT\SSH-simulator\testni\bin\Debug\ServerCert\server_dsa.pem
+D:\Projekti\GIT\SSH-simulator\testni\bin\Debug\ServerCert\server_rsa.pem
+D:\Projekti\GIT\SSH-simulator\testni\bin\Debug\ServerCert\ECDSAPublicKey.xml
+D:\Projekti\GIT\SSH-simulator\testni\bin\Debug\testni.exe.config
+D:\Projekti\GIT\SSH-simulator\testni\bin\Debug\testni.exe
+D:\Projekti\GIT\SSH-simulator\testni\bin\Debug\testni.pdb
+D:\Projekti\GIT\SSH-simulator\testni\bin\Debug\BouncyCastle.Crypto.dll
+D:\Projekti\GIT\SSH-simulator\testni\obj\Debug\testni.csprojResolveAssemblyReference.cache
+D:\Projekti\GIT\SSH-simulator\testni\obj\Debug\testni.exe
+D:\Projekti\GIT\SSH-simulator\testni\obj\Debug\testni.pdb

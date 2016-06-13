@@ -1,5 +1,4 @@
 D:\Projekti\GIT\SSH-simulator\SSH-simulator\bin\Debug\ServerCert\public_server_keys
-D:\Projekti\GIT\SSH-simulator\SSH-simulator\bin\Debug\ServerCert\rsa_server.pub
 D:\Projekti\GIT\SSH-simulator\SSH-simulator\bin\Debug\ServerCert\server_dsa.pem
 D:\Projekti\GIT\SSH-simulator\SSH-simulator\bin\Debug\ServerCert\server_rsa.pem
 D:\Projekti\GIT\SSH-simulator\SSH-simulator\bin\Debug\SSH-simulator.exe.config
@@ -41,3 +40,7 @@ C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\obj\Debug\SSH-simulator.csproj.Genera
 C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\obj\Debug\SSH-simulator.exe
 C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\obj\Debug\SSH-simulator.pdb
 C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\obj\Debug\SSH-simulator.csprojResolveAssemblyReference.cache
+D:\Projekti\GIT\SSH-simulator\SSH-simulator\bin\Debug\ServerCert\ECDSA.public
+D:\Projekti\GIT\SSH-simulator\SSH-simulator\bin\Debug\ServerCert\ECDSAPrivate.key
+D:\Projekti\GIT\SSH-simulator\SSH-simulator\bin\Debug\ServerCert\ECDSAPublicKey.xml
+D:\Projekti\GIT\SSH-simulator\SSH-simulator\obj\Debug\SSH-simulator.csprojResolveAssemblyReference.cache

@@ -33,6 +33,9 @@ namespace SSH_simulator
         private List<Action> steps = new List<Action>();
         internal int step = 0;
 
+        public byte[] sig { get; internal set; }
+        public byte[] hash { get; internal set; }
+
         public MainWindow()
         {
             InitializeComponent();

@@ -691,9 +691,7 @@ namespace SSH_simulator
                             string privHex = File.ReadAllLines(@"ServerCert\ECDSAPrivate.key")[0];
 
                             // javni ključ
-                            //string pubHex = File.ReadAllText(@"ServerCert\ECDSAPublicKey.xml");
-                            // todo rovjera
-                            string pubHex = File.ReadAllLines(@"ServerCert\ECDSA.Public")[0];
+                            string pubHex = File.ReadAllLines(@"ServerCert\ECDSA.public")[0];
 
                             serverCertPubKey = pubHex;
 
@@ -732,12 +730,26 @@ namespace SSH_simulator
                             ECDsaCng dsa = new ECDsaCng(key);
 
                             byte[] crypt = dsa.SignData(hash);
+                            /*
+                            var bytesKey2 = Enumerable.Range(0, pubHex.Length).Where(x => x % 2 == 0).Select(x => Convert.ToByte(pubHex.Substring(x, 2), 16)).ToArray();
 
-                            var encrypted = Convert.ToBase64String(crypt);
+                            CngKey key2 = CngKey.Import(bytesKey2, CngKeyBlobFormat.EccPublicBlob);
 
-                            mainWindow.textBox_sig_H.Text = BitConverter.ToString(crypt).Replace("-", "").ToLower();
+                            ECDsaCng eccImporter = new ECDsaCng(key2);
 
-                            signature = Encoding.ASCII.GetBytes(encrypted);
+                            //eccImporter.FromXmlString(xmlExport, ECKeyXmlFormat.Rfc4050);
+
+                            if (eccImporter.VerifyData(hash, crypt))
+                            {
+                                Console.WriteLine("Verified using .NET");
+                            }
+                            */
+
+                            signature = crypt;
+                            mainWindow.sig = signature;
+                            mainWindow.hash = hash;
+
+                            mainWindow.textBox_sig_H.Text = BitConverter.ToString(signature).Replace("-", "").ToLower();
 
                             break;
                         }

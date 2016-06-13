@@ -53,22 +53,27 @@ namespace testni
 
         private static void Main(string[] args)
         {
-            string hexPublic = "4543533330000000FF174279E0F08C576D5EB2156F7804E7D310E4065FC90F8314A0AF693ADE25F22EF3B871AA91C7798046BDE03855D89582CE347DA8B35A4BC98007FECF076D569570225409D84749C107174F76884ABE3E1F6DC8F728BE8703D699D7A3CFF0E7";
-            string hexPrivate = "";
+            string hexPublic = "45435333300000007617E192615E8C24D353E8BD11DE21E9C54DC2D9D64C21AEC35A372B0EB3C205597BA20C0944FA6AFE871D23076F1D9711B5AAE0817BEAA6B953E9DF186B6BE1048050759005396B0A2856CF464C2E927916B0958CACEF8132A79C62456C8421";
+            string hexPrivate = "45435334300000007617E192615E8C24D353E8BD11DE21E9C54DC2D9D64C21AEC35A372B0EB3C205597BA20C0944FA6AFE871D23076F1D9711B5AAE0817BEAA6B953E9DF186B6BE1048050759005396B0A2856CF464C2E927916B0958CACEF8132A79C62456C842115772EBB4C4A3078DE768FCE8A8156380A6047E160BCFCAD24FB70416CFCCE0E693961D7C0F1198BA8B25CC2A6EF4C6D";
+
+            hexPublic = File.ReadAllLines(@"ServerCert\ECDSA.public")[0];
+            hexPrivate = File.ReadAllLines(@"ServerCert\ECDSAPrivate.key")[0];
+
             string msg0 = "poruka";
             byte[] data = Encoding.ASCII.GetBytes(msg0);
 
             var bytesKey = Enumerable.Range(0, hexPrivate.Length).Where(x => x % 2 == 0).Select(x => Convert.ToByte(hexPrivate.Substring(x, 2), 16)).ToArray();
 
-            //CngKey key = CngKey.Import(bytesKey, CngKeyBlobFormat.EccPublicBlob);
-            CngKey key = CngKey.Create(CngAlgorithm.ECDsaP521, null, new CngKeyCreationParameters { ExportPolicy = CngExportPolicies.AllowPlaintextArchiving });
+            CngKey key = CngKey.Import(bytesKey, CngKeyBlobFormat.EccPrivateBlob);
+            /*
+            CngKey key = CngKey.Create(CngAlgorithm.ECDsaP384, null, new CngKeyCreationParameters { ExportPolicy = CngExportPolicies.AllowPlaintextExport });
 
             var pubK = key.Export(CngKeyBlobFormat.EccPublicBlob);
             var privK = key.Export(CngKeyBlobFormat.EccPrivateBlob);
 
             var hexpub = BitConverter.ToString(pubK).Replace("-", "");
             var hexpriv = BitConverter.ToString(privK).Replace("-", "");
-
+            */
             ECDsaCng dsa = new ECDsaCng(key);
 
             String xmlExport = dsa.ToXmlString(ECKeyXmlFormat.Rfc4050);
