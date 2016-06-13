@@ -196,7 +196,7 @@ namespace SSH_simulator
 
                 if ((bool)mainWindow.checkBox_server_blowfish_ctr.IsChecked)
                 {
-                    ENCRYPTION_ALGORITHMS.Insert(0, "blowfish-ctr");
+                    ENCRYPTION_ALGORITHMS.Add("blowfish-ctr");
                 }
 
                 if ((bool)mainWindow.checkBox_server_aes256_cbc.IsChecked)
@@ -206,12 +206,12 @@ namespace SSH_simulator
 
                 if ((bool)mainWindow.checkBox_server_hmac_sha2.IsChecked)
                 {
-                    MAC_ALGORITHMS.Insert(0, "hmac-sha2");
+                    MAC_ALGORITHMS.Add("hmac-sha2");
                 }
 
                 if ((bool)mainWindow.checkBox_server_gost28147.IsChecked)
                 {
-                    MAC_ALGORITHMS.Insert(0, "gost28147");
+                    MAC_ALGORITHMS.Add("gost28147");
                 }
 
                 byte[] dh = Encoding.ASCII.GetBytes(string.Join(",", DH_ALGORITHMS));
@@ -868,6 +868,43 @@ namespace SSH_simulator
             return rezultat.ToArray();
         }
 
+        public void GenerateEncryptionKeys()
+        {
+            try
+            {
+                mainWindow.label_ser_cry.Content = algorithmsToUse.ENCRYPTION_algorithm;
+                mainWindow.label_ser_mac.Content = algorithmsToUse.MAC_algorithm;
+
+                mainWindow.textBox_ser_K1.Text = ex_params.K.ToString();
+                mainWindow.textBox_ser_H1.Text = BitConverter.ToString(Convert.FromBase64String(ex_params.H)).Replace("-", "").ToLower();
+
+                mainWindow.textBox_info.AppendText("Server računa ključeve za enkripciju\n\n");
+
+                switch (algorithmsToUse.ENCRYPTION_algorithm)
+                {
+                    case "3des-cbc":
+                        {
+                            keys = SSHHelper.GenerateEncryptionKeysFor3DES_CBC(algorithmsToUse.ENCRYPTION_algorithm, algorithmsToUse.MAC_algorithm, ref encryptionAlgorithms, ex_params.K, ex_params.H, ex_params.H);
+                            break;
+                        }
+                }
+
+                mainWindow.textBox_ser_c_s.Text = BitConverter.ToString(keys.vectorCS).Replace("-", "").ToLower();
+                mainWindow.textBox_ser_s_c.Text = BitConverter.ToString(keys.vectorSC).Replace("-", "").ToLower();
+                mainWindow.textBox_ser_cry_c_s.Text = BitConverter.ToString(keys.cryCS).Replace("-", "").ToLower();
+                mainWindow.textBox_ser_cry_s_c.Text = BitConverter.ToString(keys.crySC).Replace("-", "").ToLower();
+                mainWindow.textBox_ser_MAC_c_s.Text = BitConverter.ToString(keys.MACKeyCS).Replace("-", "").ToLower();
+                mainWindow.textBox_ser_MAC_s_c.Text = BitConverter.ToString(keys.MACKeySC).Replace("-", "").ToLower();
+            }
+            catch
+            {
+                mainWindow.boolRetResult = false;
+                mainWindow.retResult = "Server nije uspio izgenerirati ključeve!";
+            }
+
+            mainWindow.boolRetResult = true;
+        }
+
         public void ReadNEWKEYSPacket()
         {
             try
@@ -937,43 +974,6 @@ namespace SSH_simulator
                 mainWindow.boolRetResult = false;
                 return;
             }
-        }
-
-        public void GenerateEncryptionKeys()
-        {
-            try
-            {
-                mainWindow.label_ser_cry.Content = algorithmsToUse.ENCRYPTION_algorithm;
-                mainWindow.label_ser_mac.Content = algorithmsToUse.MAC_algorithm;
-
-                mainWindow.textBox_ser_K1.Text = ex_params.K.ToString();
-                mainWindow.textBox_ser_H1.Text = BitConverter.ToString(Convert.FromBase64String(ex_params.H)).Replace("-", "").ToLower();
-
-                mainWindow.textBox_info.AppendText("Server računa ključeve za enkripciju\n\n");
-
-                switch (algorithmsToUse.ENCRYPTION_algorithm)
-                {
-                    case "3des-cbc":
-                        {
-                            keys = SSHHelper.GenerateEncryptionKeysFor3DES_CBC(algorithmsToUse.ENCRYPTION_algorithm, algorithmsToUse.MAC_algorithm, ref encryptionAlgorithms, ex_params.K, ex_params.H, ex_params.H);
-                            break;
-                        }
-                }
-
-                mainWindow.textBox_ser_c_s.Text = BitConverter.ToString(keys.vectorCS).Replace("-", "").ToLower();
-                mainWindow.textBox_ser_s_c.Text = BitConverter.ToString(keys.vectorSC).Replace("-", "").ToLower();
-                mainWindow.textBox_ser_cry_c_s.Text = BitConverter.ToString(keys.cryCS).Replace("-", "").ToLower();
-                mainWindow.textBox_ser_cry_s_c.Text = BitConverter.ToString(keys.crySC).Replace("-", "").ToLower();
-                mainWindow.textBox_ser_MAC_c_s.Text = BitConverter.ToString(keys.MACKeyCS).Replace("-", "").ToLower();
-                mainWindow.textBox_ser_MAC_s_c.Text = BitConverter.ToString(keys.MACKeySC).Replace("-", "").ToLower();
-            }
-            catch
-            {
-                mainWindow.boolRetResult = false;
-                mainWindow.retResult = "Server nije uspio izgenerirati ključeve!";
-            }
-
-            mainWindow.boolRetResult = true;
         }
 
         public void ReadServiceRequestPacket()

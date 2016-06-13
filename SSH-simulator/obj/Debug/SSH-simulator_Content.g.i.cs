@@ -8,6 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("usersdb.txt")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("servercert/ecdsapublickey.xml")]
 
 

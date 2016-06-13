@@ -18,9 +18,12 @@ D:\Projekti\GIT\SSH-simulator\SSH-simulator\obj\Debug\SSH_simulator.Properties.R
 D:\Projekti\GIT\SSH-simulator\SSH-simulator\obj\Debug\SSH-simulator.csproj.GenerateResource.Cache
 D:\Projekti\GIT\SSH-simulator\SSH-simulator\obj\Debug\SSH-simulator.exe
 D:\Projekti\GIT\SSH-simulator\SSH-simulator\obj\Debug\SSH-simulator.pdb
+C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\bin\Debug\ServerCert\ECDSA.public
+C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\bin\Debug\ServerCert\ECDSAPrivate.key
 C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\bin\Debug\ServerCert\public_server_keys
 C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\bin\Debug\ServerCert\server_dsa.pem
 C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\bin\Debug\ServerCert\server_rsa.pem
+C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\bin\Debug\ServerCert\ECDSAPublicKey.xml
 C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\bin\Debug\SSH-simulator.exe.config
 C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\bin\Debug\SSH-simulator.exe
 C:\GIT\PRIVATE\SSH-simulator\SSH-simulator\bin\Debug\SSH-simulator.pdb

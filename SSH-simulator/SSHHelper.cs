@@ -1,5 +1,7 @@
-﻿using Org.BouncyCastle.Crypto;
+﻿using Org.BouncyCastle.Asn1.CryptoPro;
+using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Macs;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Paddings;
 using Org.BouncyCastle.Crypto.Parameters;
@@ -416,9 +418,35 @@ namespace SSH_simulator
                         encryptionAlgorithms.MAC = typeof(SSHHelper).GetMethod("Compute_hmac_sha1");
                         break;
                     }
+                case "gost28147":
+                    {
+                        EncryptionKeys encryKeys = GenerateGOST28147Keys(K, H, sessionIdentifier);
+                        keys.MACKeyCS = encryKeys.MACKeyCS;
+                        keys.MACKeySC = encryKeys.MACKeySC;
+                        keys.MAClength = encryKeys.MAClength;
+                        encryptionAlgorithms.MAC = typeof(SSHHelper).GetMethod("Compute_gost28147");
+                        break;
+                    }
             }
 
             return keys;
+        }
+
+        private static EncryptionKeys GenerateGOST28147Keys(BigInteger K, string H, string sessionIdentifier)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static byte[] Compute_gost28147(byte[] paket, byte[] key)
+        {
+            Gost28147Mac gost = new Gost28147Mac();
+            KeyParameter param = new KeyParameter(key);
+            gost.Init(param);
+
+            byte[] output = new byte[gost.GetMacSize()];
+            gost.DoFinal(output, 0);
+
+            return output;
         }
 
         public static byte[] Compute_hmac_sha1(byte[] paket, byte[] key)

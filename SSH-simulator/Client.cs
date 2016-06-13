@@ -155,7 +155,7 @@ namespace SSH_simulator
 
                 if ((bool)mainWindow.checkBox_blowfish_ctr.IsChecked)
                 {
-                    ENCRYPTION_ALGORITHMS.Insert(0, "blowfish-ctr");
+                    ENCRYPTION_ALGORITHMS.Add("blowfish-ctr");
                 }
 
                 if ((bool)mainWindow.checkBox_aes256_cbc.IsChecked)
@@ -165,12 +165,12 @@ namespace SSH_simulator
 
                 if ((bool)mainWindow.checkBox_hmac_sha2.IsChecked)
                 {
-                    MAC_ALGORITHMS.Insert(0, "hmac-sha2");
+                    MAC_ALGORITHMS.Add("hmac-sha2");
                 }
 
                 if ((bool)mainWindow.checkBox_gost28147.IsChecked)
                 {
-                    MAC_ALGORITHMS.Insert(0, "gost28147");
+                    MAC_ALGORITHMS.Add("gost28147");
                 }
 
                 byte[] dh = Encoding.ASCII.GetBytes(string.Join(",", DH_ALGORITHMS));

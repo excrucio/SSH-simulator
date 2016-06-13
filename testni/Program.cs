@@ -7,10 +7,13 @@ using Org.BouncyCastle.Crypto.Agreement;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Generators;
+using Org.BouncyCastle.Crypto.Macs;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Paddings;
 using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Crypto.Tls;
 using Org.BouncyCastle.Math;
+
 using Org.BouncyCastle.Math.EC;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Utilities.IO.Pem;
@@ -50,6 +53,59 @@ namespace testni
 
         private static void Main(string[] args)
         {
+            // begin
+            string hexPublic = "4543533330000000FF174279E0F08C576D5EB2156F7804E7D310E4065FC90F8314A0AF693ADE25F22EF3B871AA91C7798046BDE03855D89582CE347DA8B35A4BC98007FECF076D569570225409D84749C107174F76884ABE3E1F6DC8F728BE8703D699D7A3CFF0E7";
+            string hexPrivate = "";
+            string msg0 = "poruka";
+            byte[] data = Encoding.ASCII.GetBytes(msg0);
+
+            var bytesKey = Enumerable.Range(0, hexPrivate.Length).Where(x => x % 2 == 0).Select(x => Convert.ToByte(hexPrivate.Substring(x, 2), 16)).ToArray();
+
+            //CngKey key = CngKey.Import(bytesKey, CngKeyBlobFormat.EccPublicBlob);
+            CngKey key = CngKey.Create(CngAlgorithm.ECDsaP521, null, new CngKeyCreationParameters { ExportPolicy = CngExportPolicies.AllowPlaintextArchiving });
+
+            var pubK = key.Export(CngKeyBlobFormat.EccPublicBlob);
+            var privK = key.Export(CngKeyBlobFormat.EccPrivateBlob);
+
+            var hexpub = BitConverter.ToString(pubK).Replace("-", "");
+            var hexpriv = BitConverter.ToString(privK).Replace("-", "");
+
+            ECDsaCng dsa = new ECDsaCng(key);
+
+            String xmlExport = dsa.ToXmlString(ECKeyXmlFormat.Rfc4050);
+
+            byte[] signature = dsa.SignData(data);
+
+            /******************************/
+
+            var bytesKey2 = Enumerable.Range(0, hexPublic.Length).Where(x => x % 2 == 0).Select(x => Convert.ToByte(hexPublic.Substring(x, 2), 16)).ToArray();
+
+            CngKey key2 = CngKey.Import(bytesKey2, CngKeyBlobFormat.EccPublicBlob);
+
+            ECDsaCng eccImporter = new ECDsaCng(key2);
+
+            //eccImporter.FromXmlString(xmlExport, ECKeyXmlFormat.Rfc4050);
+
+            if (eccImporter.VerifyData(data, signature))
+            {
+                Console.WriteLine("Verified using .NET");
+            }
+
+            // end
+            /* IZAĐI IZ OVOG SVEGA XDDDD*/
+            return;
+
+            #region early testing
+
+            string msg = "The quick brown fox jumps over the lazy dog";
+            string msg2 = "1vo je test";
+            var a = Encoding.ASCII.GetBytes(msg);
+            var b = Encoding.ASCII.GetBytes(msg2);
+            var keey = makeGostKey();
+
+            var e1 = Compute_gost28147(a, keey);
+            var e2 = Compute_gost28147(b, keey);
+
             AsymmetricCipherKeyPair keyPair = ecdh_sha2_nistp521.getKeyPair();
             var o = keyPair.Public as ECPublicKeyParameters;
             var ui = o.PublicKeyParamSet;
@@ -67,10 +123,6 @@ namespace testni
             TestBouncy(par);
             //TestMethod();
 
-            return;
-
-            test();
-
             Console.WriteLine("Server start call!");
             StartServer();
 
@@ -78,7 +130,70 @@ namespace testni
             Console.WriteLine("Klijent start call!");
             StartKlijent("pa kako je, ša ima?");
 
+            #endregion early testing
+
             Console.ReadKey();
+        }
+
+        /// <summary>
+        /// IMPLEMENTACIJA JE TAKVA DA VRATI 4 bajta
+        /// </summary>
+        /// <param name="paket"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static byte[] Compute_gost28147(byte[] paket, byte[] key)
+        {
+            Gost28147Mac gost = new Gost28147Mac();
+            KeyParameter param = new KeyParameter(key, 0, key.Length);
+            gost.Init(param);
+
+            gost.BlockUpdate(key, 0, key.Length);
+
+            var macS = gost.GetMacSize();
+
+            byte[] output = new byte[macS];
+            int b = gost.DoFinal(output, 0);
+
+            return output;
+        }
+
+        private static byte[] makeGostKey()
+        {
+            var KH_array = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x01, 0x02, 0x03, 0x04, 0x05, 0x01, 0x02, 0x03, 0x04, 0x05, 0x32 };
+            var K_array = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x01, 0x02, 0x03 };
+            var H_array = new byte[] { 0x04, 0x05, 0x01, 0x02, 0x03, 0x04, 0x05, 0x32 };
+
+            var D = Convert.ToByte('D');
+            var sessionIdent_array = Encoding.ASCII.GetBytes("SSH-2.0-klijent-v1.0");
+
+            var forHash = new List<byte>();
+
+            forHash.AddRange(KH_array);
+
+            forHash.Add(D);
+
+            forHash.AddRange(sessionIdent_array);
+
+            using (SHA1Managed sha1 = new SHA1Managed())
+            {
+                var key_list = sha1.ComputeHash(forHash.ToArray()).ToList();
+                /*
+                If the key length needed is longer than the output of the HASH, the
+                key is extended by computing HASH of the concatenation of K and H and
+                the entire key so far, and appending the resulting bytes (as many as
+                HASH generates) to the key
+                 */
+                while (key_list.Count < 32)
+                {
+                    var temp = new List<byte>();
+                    temp.AddRange(K_array);
+                    temp.AddRange(H_array);
+                    temp.AddRange(key_list);
+                    key_list.AddRange(sha1.ComputeHash(temp.ToArray()));
+                }
+
+                return key_list.Take(32).ToArray();
+            }
         }
 
         public static DHParameters GenerateParameters()

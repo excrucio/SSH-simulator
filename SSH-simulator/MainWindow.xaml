@@ -48,9 +48,9 @@
                                 </TransformGroup>
                             </CheckBox.RenderTransform>
                         </CheckBox>
-                        <CheckBox x:Name="checkBox_gost28147" Content="gost28147" HorizontalAlignment="Left" Margin="519,63,0,0" VerticalAlignment="Top" />
-                        <CheckBox x:Name="checkBox_hmac_sha2" Content="hmac-sha2" HorizontalAlignment="Left" Margin="519,112,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label49" Content="hmac-sha1" HorizontalAlignment="Left" Margin="527,81,0,0" VerticalAlignment="Top" />
+                        <CheckBox x:Name="checkBox_gost28147" Content="gost28147" HorizontalAlignment="Left" Margin="519,113,0,0" VerticalAlignment="Top" />
+                        <CheckBox x:Name="checkBox_hmac_sha2" Content="hmac-sha2" HorizontalAlignment="Left" Margin="519,92,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label49" Content="hmac-sha1" HorizontalAlignment="Left" Margin="529,64,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label8_Copy" Content="Diffie-Hellman" HorizontalAlignment="Left" Margin="661,32,0,0" VerticalAlignment="Top" FontWeight="Bold" />
                         <Label x:Name="label9_Copy" Content="Digitalni potpis" HorizontalAlignment="Left" Margin="856,32,0,0" VerticalAlignment="Top" FontWeight="Bold" />
                         <Label x:Name="label10_Copy" Content="Enkripcija" HorizontalAlignment="Left" Margin="1035,32,0,0" VerticalAlignment="Top" FontWeight="Bold" />
@@ -63,9 +63,9 @@
                         <Label x:Name="label48_Copy" Content="3des-cbc" HorizontalAlignment="Left" Margin="1057,81,0,0" VerticalAlignment="Top" />
                         <CheckBox x:Name="checkBox_server_aes256_cbc" Content="aes256-cbc" HorizontalAlignment="Left" Margin="1035,63,0,0" VerticalAlignment="Top" />
                         <CheckBox x:Name="checkBox_server_blowfish_ctr" Content="blowfish-ctr" HorizontalAlignment="Left" Margin="1035,112,0,0" VerticalAlignment="Top" />
-                        <CheckBox x:Name="checkBox_server_gost28147" Content="gost28147" HorizontalAlignment="Left" Margin="1170,63,0,0" VerticalAlignment="Top" />
-                        <CheckBox x:Name="checkBox_server_hmac_sha2" Content="hmac-sha2" HorizontalAlignment="Left" Margin="1168,112,0,0" VerticalAlignment="Top" />
-                        <Label x:Name="label49_Copy" Content="hmac-sha1" HorizontalAlignment="Left" Margin="1170,83,0,0" VerticalAlignment="Top" />
+                        <CheckBox x:Name="checkBox_server_gost28147" Content="gost28147" HorizontalAlignment="Left" Margin="1168,112,0,0" VerticalAlignment="Top" />
+                        <CheckBox x:Name="checkBox_server_hmac_sha2" Content="hmac-sha2" HorizontalAlignment="Left" Margin="1166,92,0,0" VerticalAlignment="Top" />
+                        <Label x:Name="label49_Copy" Content="hmac-sha1" HorizontalAlignment="Left" Margin="1170,64,0,0" VerticalAlignment="Top" />
                     </Grid>
                 </TabItem>
                 <TabItem x:Name="tab_dh" Header="Diffie-Hellman">
