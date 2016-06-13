@@ -67,14 +67,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="SSH-simulator.exe" size="852896">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="SSH-simulator.exe" size="856480">
       <assemblyIdentity name="SSH-simulator" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>GPszUv4oWvft514BkdrFOOSoTAeuBXF4D3e8Alauy44=</dsig:DigestValue>
+        <dsig:DigestValue>bb8B6ob5mvkhjN6Vcq9kP1l5dHaZQGDsfJLYhHhCGD4=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

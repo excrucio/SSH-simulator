@@ -1,0 +1,12 @@
+D:\Projekti\GIT\SSH-simulator\testni\bin\Release\ServerCert\ECDSA.public
+D:\Projekti\GIT\SSH-simulator\testni\bin\Release\ServerCert\ECDSAPrivate.key
+D:\Projekti\GIT\SSH-simulator\testni\bin\Release\ServerCert\public_server_keys
+D:\Projekti\GIT\SSH-simulator\testni\bin\Release\ServerCert\server_dsa.pem
+D:\Projekti\GIT\SSH-simulator\testni\bin\Release\ServerCert\server_rsa.pem
+D:\Projekti\GIT\SSH-simulator\testni\bin\Release\ServerCert\ECDSAPublicKey.xml
+D:\Projekti\GIT\SSH-simulator\testni\bin\Release\testni.exe.config
+D:\Projekti\GIT\SSH-simulator\testni\bin\Release\testni.exe
+D:\Projekti\GIT\SSH-simulator\testni\bin\Release\testni.pdb
+D:\Projekti\GIT\SSH-simulator\testni\bin\Release\BouncyCastle.Crypto.dll
+D:\Projekti\GIT\SSH-simulator\testni\obj\Release\testni.exe
+D:\Projekti\GIT\SSH-simulator\testni\obj\Release\testni.pdb

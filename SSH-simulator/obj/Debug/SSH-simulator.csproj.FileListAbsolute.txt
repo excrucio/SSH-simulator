@@ -3,6 +3,7 @@ D:\Projekti\GIT\SSH-simulator\SSH-simulator\bin\Debug\ServerCert\ECDSAPrivate.ke
 D:\Projekti\GIT\SSH-simulator\SSH-simulator\bin\Debug\ServerCert\public_server_keys
 D:\Projekti\GIT\SSH-simulator\SSH-simulator\bin\Debug\ServerCert\server_dsa.pem
 D:\Projekti\GIT\SSH-simulator\SSH-simulator\bin\Debug\ServerCert\server_rsa.pem
+D:\Projekti\GIT\SSH-simulator\SSH-simulator\bin\Debug\UsersDB.txt
 D:\Projekti\GIT\SSH-simulator\SSH-simulator\bin\Debug\ServerCert\ECDSAPublicKey.xml
 D:\Projekti\GIT\SSH-simulator\SSH-simulator\bin\Debug\SSH-simulator.exe.config
 D:\Projekti\GIT\SSH-simulator\SSH-simulator\bin\Debug\SSH-simulator.exe.manifest
