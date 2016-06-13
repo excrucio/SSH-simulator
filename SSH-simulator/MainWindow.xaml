@@ -34,8 +34,8 @@
                         <Label x:Name="label46" Content="diffie-hellman-group14-sha1" HorizontalAlignment="Left" Margin="10,107,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label45" Content="diffie-hellman-group1-sha1" HorizontalAlignment="Left" Margin="10,81,0,0" VerticalAlignment="Top" />
                         <CheckBox x:Name="checkBox_ecdh_sha2_nistp521" Content="ecdh-sha2-nistp521" HorizontalAlignment="Left" Margin="18,61,0,0" VerticalAlignment="Top" ClickMode="Press" />
-                        <CheckBox x:Name="checkBox_ssh_rsa" Content="ssh-rsa" HorizontalAlignment="Left" Margin="214,63,0,0" VerticalAlignment="Top" IsChecked="True" IsEnabled="False" />
-                        <Label x:Name="label47" Content="ssh-dss" HorizontalAlignment="Left" Margin="214,81,0,0" VerticalAlignment="Top" />
+                        <CheckBox x:Name="checkBox_ssh_rsa" Content="ssh-rsa" HorizontalAlignment="Left" Margin="206,81,0,0" VerticalAlignment="Top" IsChecked="True" IsEnabled="False" />
+                        <Label x:Name="label47" Content="ssh-dss" HorizontalAlignment="Left" Margin="214,101,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label48" Content="3des-cbc" HorizontalAlignment="Left" Margin="391,81,0,0" VerticalAlignment="Top" />
                         <CheckBox x:Name="checkBox_aes256_cbc" Content="aes256-cbc" HorizontalAlignment="Left" Margin="384,63,0,0" VerticalAlignment="Top" />
                         <CheckBox x:Name="checkBox_blowfish_ctr" Content="blowfish-ctr" HorizontalAlignment="Left" Margin="384,112,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
@@ -52,20 +52,22 @@
                         <CheckBox x:Name="checkBox_hmac_sha2" Content="hmac-sha2" HorizontalAlignment="Left" Margin="519,92,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label49" Content="hmac-sha1" HorizontalAlignment="Left" Margin="529,64,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label8_Copy" Content="Diffie-Hellman" HorizontalAlignment="Left" Margin="661,32,0,0" VerticalAlignment="Top" FontWeight="Bold" />
-                        <Label x:Name="label9_Copy" Content="Digitalni potpis" HorizontalAlignment="Left" Margin="856,32,0,0" VerticalAlignment="Top" FontWeight="Bold" />
+                        <Label x:Name="label9_Copy" Content="Digitalni potpis" HorizontalAlignment="Left" Margin="866,32,0,0" VerticalAlignment="Top" FontWeight="Bold" />
                         <Label x:Name="label10_Copy" Content="Enkripcija" HorizontalAlignment="Left" Margin="1035,32,0,0" VerticalAlignment="Top" FontWeight="Bold" />
                         <Label x:Name="label11_Copy" Content="MAC" HorizontalAlignment="Left" Margin="1170,32,0,0" VerticalAlignment="Top" FontWeight="Bold" />
                         <Label x:Name="label46_Copy" Content="diffie-hellman-group14-sha1" HorizontalAlignment="Left" Margin="661,107,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label45_Copy" Content="diffie-hellman-group1-sha1" HorizontalAlignment="Left" Margin="661,81,0,0" VerticalAlignment="Top" />
                         <CheckBox x:Name="checkBox_server_ecdh_sha2_nistp521" Content="ecdh-sha2-nistp521" HorizontalAlignment="Left" Margin="670,63,0,0" VerticalAlignment="Top" ClickMode="Press" />
-                        <CheckBox x:Name="checkBox_server_ssh_rsa" Content="ssh-rsa" HorizontalAlignment="Left" Margin="865,63,0,0" VerticalAlignment="Top" IsChecked="True" IsEnabled="False" />
-                        <Label x:Name="label47_Copy" Content="ssh-dss" HorizontalAlignment="Left" Margin="865,81,0,0" VerticalAlignment="Top" />
+                        <CheckBox x:Name="checkBox_server_ssh_rsa" Content="ssh-rsa" HorizontalAlignment="Left" Margin="866,84,0,0" VerticalAlignment="Top" IsChecked="True" IsEnabled="False" />
+                        <Label x:Name="label47_Copy" Content="ssh-dss" HorizontalAlignment="Left" Margin="866,102,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label48_Copy" Content="3des-cbc" HorizontalAlignment="Left" Margin="1057,81,0,0" VerticalAlignment="Top" />
                         <CheckBox x:Name="checkBox_server_aes256_cbc" Content="aes256-cbc" HorizontalAlignment="Left" Margin="1035,63,0,0" VerticalAlignment="Top" />
                         <CheckBox x:Name="checkBox_server_blowfish_ctr" Content="blowfish-ctr" HorizontalAlignment="Left" Margin="1035,112,0,0" VerticalAlignment="Top" />
                         <CheckBox x:Name="checkBox_server_gost28147" Content="gost28147" HorizontalAlignment="Left" Margin="1168,112,0,0" VerticalAlignment="Top" />
                         <CheckBox x:Name="checkBox_server_hmac_sha2" Content="hmac-sha2" HorizontalAlignment="Left" Margin="1166,92,0,0" VerticalAlignment="Top" />
                         <Label x:Name="label49_Copy" Content="hmac-sha1" HorizontalAlignment="Left" Margin="1170,64,0,0" VerticalAlignment="Top" />
+                        <CheckBox x:Name="checkBox_ecdsa_ssh2_nistp384" Content="ecdsa-ssh2-nistp384" HorizontalAlignment="Left" Margin="206,58,0,0" VerticalAlignment="Top" />
+                        <CheckBox x:Name="checkBox_server_ecdsa_ssh2_nistp384" Content="ecdsa-ssh2-nistp384" HorizontalAlignment="Left" Margin="866,61,0,0" VerticalAlignment="Top" />
                     </Grid>
                 </TabItem>
                 <TabItem x:Name="tab_dh" Header="Diffie-Hellman">

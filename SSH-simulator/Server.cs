@@ -194,6 +194,11 @@ namespace SSH_simulator
                     SIGNATURE_ALGORITHMS.Insert(0, "ssh-rsa");
                 }
 
+                if ((bool)mainWindow.checkBox_server_ecdsa_ssh2_nistp384.IsChecked)
+                {
+                    SIGNATURE_ALGORITHMS.Insert(0, "ecdsa-ssh2-nistp384");
+                }
+
                 if ((bool)mainWindow.checkBox_server_blowfish_ctr.IsChecked)
                 {
                     ENCRYPTION_ALGORITHMS.Add("blowfish-ctr");
@@ -613,85 +618,139 @@ namespace SSH_simulator
 
                 payload.Add(ident[0]);
 
-                // pokupi privatni ključ i javni certifikata
                 string serverCertPubKey = null;
                 AsymmetricCipherKeyPair rsaKeys = null;
-                if (algorithmsToUse.SIGNATURE_algorithm == "ssh-rsa")
-                {
-                    // privatni ključ
-                    using (StreamReader txtStream = File.OpenText(@"ServerCert\server_rsa.pem"))
-                    {
-                        PemReader reader = new PemReader(txtStream);
-                        rsaKeys = (AsymmetricCipherKeyPair)reader.ReadObject();
-                    }
-
-                    // javni ključ
-                    using (StreamReader txtStream = File.OpenText(@"ServerCert\public_server_keys"))
-                    {
-                        // prva je dss
-                        string content = txtStream.ReadLine();
-                        //druga je rsa
-                        content = txtStream.ReadLine();
-                        string rsaPub = content.Split(' ')[1];
-
-                        serverCertPubKey = rsaPub;
-                    }
-                }
-                else
-                {
-                    // inače je ssh-dss
-                    // TODO server ssh-dss
-                }
-
-                // izračunati i dodati stvari u paket
-
-                // dodati javi ključ servera (javni ključ certifikata)
-                var size_certKey = BitConverter.GetBytes(serverCertPubKey.Length);
-                // reverse zbog toga da ide iz little u big endian - ("normalni")
-                Array.Reverse(size_certKey);
-                payload.AddRange(size_certKey);
-                payload.AddRange(Encoding.ASCII.GetBytes(serverCertPubKey));
-
-                // dodati javi ključ od DH (f parametar)
-                var pub = DH_KeyPair.Public as DHPublicKeyParameters;
-                var publicKey = pub.Y.ToByteArray();
-                var size_pubKey = BitConverter.GetBytes(publicKey.Length);
-                // reverse zbog toga da ide iz little u big endian - ("normalni")
-                Array.Reverse(size_pubKey);
-                payload.AddRange(size_pubKey);
-                payload.AddRange(publicKey);
-
-                // izračunati hash
                 byte[] hash = null;
+                byte[] signature = null;
+                switch (algorithmsToUse.SIGNATURE_algorithm)
+                {
+                    case ("ssh-rsa"):
+                        {
+                            // radi rsa
+                            // pokupi privatni ključ i javni certifikata
 
-                hash = SSHHelper.ComputeSHA1Hash(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, serverCertPubKey, ex_params.e, ex_params.f, ex_params.K);
+                            // privatni ključ
+                            using (StreamReader txtStream = File.OpenText(@"ServerCert\server_rsa.pem"))
+                            {
+                                PemReader reader = new PemReader(txtStream);
+                                rsaKeys = (AsymmetricCipherKeyPair)reader.ReadObject();
+                            }
+
+                            // javni ključ
+                            using (StreamReader txtStream = File.OpenText(@"ServerCert\public_server_keys"))
+                            {
+                                // prva je dss
+                                string content = txtStream.ReadLine();
+                                //druga je rsa
+                                content = txtStream.ReadLine();
+                                string rsaPub = content.Split(' ')[1];
+
+                                serverCertPubKey = rsaPub;
+                            }
+
+                            // izračunati i dodati stvari u paket
+
+                            // dodati javi ključ servera (javni ključ certifikata)
+                            var size_certKey = BitConverter.GetBytes(serverCertPubKey.Length);
+                            // reverse zbog toga da ide iz little u big endian - ("normalni")
+                            Array.Reverse(size_certKey);
+                            payload.AddRange(size_certKey);
+                            payload.AddRange(Encoding.ASCII.GetBytes(serverCertPubKey));
+
+                            // dodati javi ključ od DH (f parametar)
+                            var pub = DH_KeyPair.Public as DHPublicKeyParameters;
+                            var publicKey = pub.Y.ToByteArray();
+                            var size_pubKey = BitConverter.GetBytes(publicKey.Length);
+                            // reverse zbog toga da ide iz little u big endian - ("normalni")
+                            Array.Reverse(size_pubKey);
+                            payload.AddRange(size_pubKey);
+                            payload.AddRange(publicKey);
+
+                            // izračunati hash
+
+                            hash = SSHHelper.ComputeSHA1Hash(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, serverCertPubKey, ex_params.e, ex_params.f, ex_params.K);
+
+                            // potpisati hash i dodati potpis
+                            var encryptEngine = new Pkcs1Encoding(new RsaEngine());
+
+                            encryptEngine.Init(true, rsaKeys.Private);
+                            var crypt = encryptEngine.ProcessBlock(hash, 0, hash.Length);
+                            var encrypted = Convert.ToBase64String(crypt);
+
+                            mainWindow.textBox_sig_H.Text = BitConverter.ToString(crypt).Replace("-", "").ToLower();
+
+                            signature = Encoding.ASCII.GetBytes(encrypted);
+
+                            break;
+                        }
+
+                    case ("ecdsa-ssh2-nistp384"):
+                        {
+                            // radi ecdsa
+                            // privatni ključ
+                            string privHex = File.ReadAllLines(@"ServerCert\ECDSAPrivate.key")[0];
+
+                            // javni ključ
+                            string pubHex = File.ReadAllText(@"ServerCert\ECDSAPublicKey.xml");
+
+                            serverCertPubKey = pubHex;
+
+                            // izračunati i dodati stvari u paket
+
+                            // dodati javi ključ servera (javni ključ certifikata)
+                            var size_certKey = BitConverter.GetBytes(serverCertPubKey.Length);
+                            // reverse zbog toga da ide iz little u big endian - ("normalni")
+                            Array.Reverse(size_certKey);
+                            payload.AddRange(size_certKey);
+                            var key_bytes = Encoding.ASCII.GetBytes(serverCertPubKey);
+                            payload.AddRange(key_bytes);
+
+                            // dodati javi ključ od DH (f parametar)
+                            var pub = DH_KeyPair.Public as DHPublicKeyParameters;
+                            var publicKey = pub.Y.ToByteArray();
+                            var size_pubKey = BitConverter.GetBytes(publicKey.Length);
+                            // reverse zbog toga da ide iz little u big endian - ("normalni")
+                            Array.Reverse(size_pubKey);
+                            payload.AddRange(size_pubKey);
+                            payload.AddRange(publicKey);
+
+                            // izračunati hash
+
+                            hash = SSHHelper.ComputeSHA2Hash_DH(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, serverCertPubKey, ex_params.e, ex_params.f, ex_params.K);
+
+                            // potpisati hash i dodati potpis
+                            /*
+                             *      ECDSA!!!!
+                            */
+
+                            var bytesKey = Enumerable.Range(0, privHex.Length).Where(x => x % 2 == 0).Select(x => Convert.ToByte(privHex.Substring(x, 2), 16)).ToArray();
+
+                            CngKey key = CngKey.Import(bytesKey, CngKeyBlobFormat.EccPrivateBlob);
+
+                            ECDsaCng dsa = new ECDsaCng(key);
+
+                            byte[] crypt = dsa.SignData(hash);
+
+                            var encrypted = Convert.ToBase64String(crypt);
+
+                            mainWindow.textBox_sig_H.Text = BitConverter.ToString(crypt).Replace("-", "").ToLower();
+
+                            signature = Encoding.ASCII.GetBytes(encrypted);
+
+                            break;
+                        }
+                    case ("ssh-dss"):
+                        {
+                            // TODO server ssh-dss
+                            break;
+                        }
+                }
 
                 string hashBase64 = Convert.ToBase64String(hash);
 
                 ex_params.H = hashBase64;
 
                 mainWindow.textBox_ser_H.Text = BitConverter.ToString(hash).Replace("-", "").ToLower();
-
-                // potpisati hash i dodati potpis
-                byte[] signature = null;
-                // rsa
-                if (algorithmsToUse.SIGNATURE_algorithm == "ssh-rsa")
-                {
-                    var encryptEngine = new Pkcs1Encoding(new RsaEngine());
-
-                    encryptEngine.Init(true, rsaKeys.Private);
-                    var crypt = encryptEngine.ProcessBlock(hash, 0, hash.Length);
-                    var encrypted = Convert.ToBase64String(crypt);
-
-                    mainWindow.textBox_sig_H.Text = BitConverter.ToString(crypt).Replace("-", "").ToLower();
-
-                    signature = Encoding.ASCII.GetBytes(encrypted);
-                }
-                // dss
-                else
-                {
-                    // TODO server ssh-dss
-                }
 
                 var size_sig = BitConverter.GetBytes(signature.Length);
                 // reverse zbog toga da ide iz little u big endian - ("normalni")
@@ -744,74 +803,126 @@ namespace SSH_simulator
                 // pokupi privatni ključ i javni certifikata
                 string serverCertPubKey = null;
                 AsymmetricCipherKeyPair rsaKeys = null;
-                if (algorithmsToUse.SIGNATURE_algorithm == "ssh-rsa")
-                {
-                    // privatni ključ
-                    using (StreamReader txtStream = File.OpenText(@"ServerCert\server_rsa.pem"))
-                    {
-                        PemReader reader = new PemReader(txtStream);
-                        rsaKeys = (AsymmetricCipherKeyPair)reader.ReadObject();
-                    }
-
-                    // javni ključ
-                    using (StreamReader txtStream = File.OpenText(@"ServerCert\public_server_keys"))
-                    {
-                        // prva je dss
-                        string content = txtStream.ReadLine();
-                        //druga je rsa
-                        content = txtStream.ReadLine();
-                        string rsaPub = content.Split(' ')[1];
-
-                        serverCertPubKey = rsaPub;
-                    }
-                }
-                else
-                {
-                    // inače je ssh-dss
-                }
-
-                // izračunati i dodati stvari u paket
-
-                // dodati javi ključ servera (javni ključ certifikata)
-                var size_certKey = BitConverter.GetBytes(serverCertPubKey.Length);
-                // reverse zbog toga da ide iz little u big endian - ("normalni")
-                Array.Reverse(size_certKey);
-                payload.AddRange(size_certKey);
-                payload.AddRange(Encoding.ASCII.GetBytes(serverCertPubKey));
-
-                var pubKeys = GetKEXECDHPublicKeyBytes();
-                payload.AddRange(pubKeys);
-
-                // izračunati hash
                 byte[] hash = null;
-
-                hash = SSHHelper.ComputeSHA2Hash(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, serverCertPubKey, ex_params.x_c, ex_params.y_c, ex_params.x, ex_params.y, ex_params.K);
-
-                string hashBase64 = Convert.ToBase64String(hash);
-
-                ex_params.H = hashBase64;
-
-                mainWindow.textBox_ser_H.Text = BitConverter.ToString(hash).Replace("-", "").ToLower();
-
-                // potpisati hash i dodati potpis
                 byte[] signature = null;
-                // rsa
-                if (algorithmsToUse.SIGNATURE_algorithm == "ssh-rsa")
+                switch (algorithmsToUse.SIGNATURE_algorithm)
                 {
-                    var encryptEngine = new Pkcs1Encoding(new RsaEngine());
+                    case "ssh-rsa":
+                        {
+                            // privatni ključ
+                            using (StreamReader txtStream = File.OpenText(@"ServerCert\server_rsa.pem"))
+                            {
+                                PemReader reader = new PemReader(txtStream);
+                                rsaKeys = (AsymmetricCipherKeyPair)reader.ReadObject();
+                            }
 
-                    encryptEngine.Init(true, rsaKeys.Private);
-                    var crypt = encryptEngine.ProcessBlock(hash, 0, hash.Length);
-                    var encrypted = Convert.ToBase64String(crypt);
+                            // javni ključ
+                            using (StreamReader txtStream = File.OpenText(@"ServerCert\public_server_keys"))
+                            {
+                                // prva je dss
+                                string content = txtStream.ReadLine();
+                                //druga je rsa
+                                content = txtStream.ReadLine();
+                                string rsaPub = content.Split(' ')[1];
 
-                    mainWindow.textBox_sig_H.Text = BitConverter.ToString(crypt).Replace("-", "").ToLower();
+                                serverCertPubKey = rsaPub;
+                            }
 
-                    signature = Encoding.ASCII.GetBytes(encrypted);
-                }
-                // dss
-                else
-                {
-                    // TODO server ssh-dss
+                            // izračunati i dodati stvari u paket
+
+                            // dodati javi ključ servera (javni ključ certifikata)
+                            var size_certKey = BitConverter.GetBytes(serverCertPubKey.Length);
+                            // reverse zbog toga da ide iz little u big endian - ("normalni")
+                            Array.Reverse(size_certKey);
+                            payload.AddRange(size_certKey);
+                            var key_bytes = Encoding.ASCII.GetBytes(serverCertPubKey);
+                            payload.AddRange(key_bytes);
+
+                            var pubKeys = GetKEXECDHPublicKeyBytes();
+                            payload.AddRange(pubKeys);
+
+                            // izračunati hash
+                            hash = SSHHelper.ComputeSHA2Hash_ecdh(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, serverCertPubKey, ex_params.x_c, ex_params.y_c, ex_params.x, ex_params.y, ex_params.K);
+
+                            string hashBase64 = Convert.ToBase64String(hash);
+
+                            ex_params.H = hashBase64;
+
+                            mainWindow.textBox_ser_H.Text = BitConverter.ToString(hash).Replace("-", "").ToLower();
+
+                            // potpisati hash i dodati potpis
+
+                            var encryptEngine = new Pkcs1Encoding(new RsaEngine());
+
+                            encryptEngine.Init(true, rsaKeys.Private);
+                            var crypt = encryptEngine.ProcessBlock(hash, 0, hash.Length);
+                            var encrypted = Convert.ToBase64String(crypt);
+
+                            mainWindow.textBox_sig_H.Text = BitConverter.ToString(crypt).Replace("-", "").ToLower();
+
+                            signature = Encoding.ASCII.GetBytes(encrypted);
+
+                            break;
+                        }
+
+                    case ("ecdsa-ssh2-nistp384"):
+                        {
+                            // radi ecdsa
+                            // privatni ključ
+                            string privHex = File.ReadAllLines(@"ServerCert\ECDSAPrivate.key")[0];
+
+                            // javni ključ
+                            string pubHex = File.ReadAllText(@"ServerCert\ECDSAPublicKey.xml");
+
+                            serverCertPubKey = pubHex;
+
+                            // izračunati i dodati stvari u paket
+
+                            // dodati javi ključ servera (javni ključ certifikata)
+                            var size_certKey = BitConverter.GetBytes(serverCertPubKey.Length);
+                            // reverse zbog toga da ide iz little u big endian - ("normalni")
+                            Array.Reverse(size_certKey);
+                            payload.AddRange(size_certKey);
+                            payload.AddRange(Encoding.ASCII.GetBytes(serverCertPubKey));
+
+                            var pubKeys = GetKEXECDHPublicKeyBytes();
+                            payload.AddRange(pubKeys);
+
+                            // izračunati hash
+                            hash = SSHHelper.ComputeSHA2Hash_ecdh(_clientIdent, _serverIdent, _clientKEXINIT, _serverKEXINIT, serverCertPubKey, ex_params.x_c, ex_params.y_c, ex_params.x, ex_params.y, ex_params.K);
+
+                            string hashBase64 = Convert.ToBase64String(hash);
+
+                            ex_params.H = hashBase64;
+
+                            mainWindow.textBox_ser_H.Text = BitConverter.ToString(hash).Replace("-", "").ToLower();
+
+                            // potpisati hash i dodati potpis
+                            /*
+                             *      ECDSA!!!!
+                            */
+
+                            var bytesKey = Enumerable.Range(0, privHex.Length).Where(x => x % 2 == 0).Select(x => Convert.ToByte(privHex.Substring(x, 2), 16)).ToArray();
+
+                            CngKey key = CngKey.Import(bytesKey, CngKeyBlobFormat.EccPrivateBlob);
+
+                            ECDsaCng dsa = new ECDsaCng(key);
+
+                            byte[] crypt = dsa.SignData(hash);
+
+                            var encrypted = Convert.ToBase64String(crypt);
+
+                            mainWindow.textBox_sig_H.Text = BitConverter.ToString(crypt).Replace("-", "").ToLower();
+
+                            signature = Encoding.ASCII.GetBytes(encrypted);
+
+                            break;
+                        }
+                    case ("ssh-dss"):
+                        {
+                            // TODO server ssh-dss
+                            break;
+                        }
                 }
 
                 var size_sig = BitConverter.GetBytes(signature.Length);

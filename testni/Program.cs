@@ -53,7 +53,6 @@ namespace testni
 
         private static void Main(string[] args)
         {
-            // begin
             string hexPublic = "4543533330000000FF174279E0F08C576D5EB2156F7804E7D310E4065FC90F8314A0AF693ADE25F22EF3B871AA91C7798046BDE03855D89582CE347DA8B35A4BC98007FECF076D569570225409D84749C107174F76884ABE3E1F6DC8F728BE8703D699D7A3CFF0E7";
             string hexPrivate = "";
             string msg0 = "poruka";
@@ -91,11 +90,9 @@ namespace testni
                 Console.WriteLine("Verified using .NET");
             }
 
-            // end
-            /* IZAĐI IZ OVOG SVEGA XDDDD*/
-            return;
-
             #region early testing
+
+            /*
 
             string msg = "The quick brown fox jumps over the lazy dog";
             string msg2 = "1vo je test";
@@ -129,6 +126,8 @@ namespace testni
             Thread.Sleep(1500);
             Console.WriteLine("Klijent start call!");
             StartKlijent("pa kako je, ša ima?");
+
+            */
 
             #endregion early testing
 

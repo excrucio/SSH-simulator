@@ -274,6 +274,8 @@ namespace SSH_simulator
             App.Current.MainWindow.Show();
 
             return;
+            /*
+             * OLD SOLUTION BELOW
 
             // resetiraj sve korake
             InitializeSteps();
@@ -319,7 +321,9 @@ namespace SSH_simulator
             textBox_ser_K.Text = "";
             textBox_ser_mod_p.Text = "";
 
-            // treći tab
+            // treći tab ...
+
+            */
         }
 
         private void button_baza_korisnika_Click(object sender, RoutedEventArgs e)
