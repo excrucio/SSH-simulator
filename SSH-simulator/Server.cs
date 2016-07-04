@@ -1122,7 +1122,7 @@ namespace SSH_simulator
                 int infoSize = BitConverter.ToInt32(infoSize_array, 0);
                 _authResponse = Encoding.ASCII.GetString(paket_decoded.Skip(6 + infoSize_array.Length).Take(infoSize).ToArray());
 
-                string output = SSHHelper.ispis(paket_decoded);
+                string output = SSHHelper.ispis(paket);
 
                 mainWindow.textBox_server.AppendText("\n\n\n" + output);
 
@@ -1262,7 +1262,7 @@ namespace SSH_simulator
                     packetType = Enum.GetName(typeof(identifiers), tip);
                 }
 
-                string output = SSHHelper.ispis(paket_decoded);
+                string output = SSHHelper.ispis(paket);
 
                 mainWindow.textBox_server.AppendText("\n\n\n" + output);
 
@@ -1461,7 +1461,7 @@ namespace SSH_simulator
                     packetType = Enum.GetName(typeof(identifiers), tip);
                 }
 
-                string output = SSHHelper.ispis(paket_decoded);
+                string output = SSHHelper.ispis(paket);
 
                 mainWindow.textBox_server.AppendText("\n\n\n" + output);
 
@@ -1627,7 +1627,7 @@ namespace SSH_simulator
                     packetType = Enum.GetName(typeof(identifiers), tip);
                 }
 
-                string output = SSHHelper.ispis(paket_decoded);
+                string output = SSHHelper.ispis(paket);
 
                 mainWindow.textBox_server.AppendText("\n\n\n" + output);
 
@@ -1898,7 +1898,7 @@ namespace SSH_simulator
                     packetType = Enum.GetName(typeof(identifiers), tip);
                 }
 
-                string output = SSHHelper.ispis(paket_decoded);
+                string output = SSHHelper.ispis(paket);
 
                 mainWindow.textBox_server.AppendText("\n\n\n" + output);
 
@@ -2089,7 +2089,7 @@ namespace SSH_simulator
                     packetType = Enum.GetName(typeof(identifiers), tip);
                 }
 
-                string output = SSHHelper.ispis(paket_decoded);
+                string output = SSHHelper.ispis(paket);
 
                 mainWindow.textBox_server.AppendText("\n\n\n" + output);
 

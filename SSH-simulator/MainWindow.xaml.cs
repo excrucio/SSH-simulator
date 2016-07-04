@@ -103,20 +103,20 @@ namespace SSH_simulator
             steps.Add(() => { /* ništa */ });
 
             //12
-            steps.Add(client.GenerateEncryptionKeys);
-            steps.Add(() => { /* ništa */ });
-
-            //13
-            steps.Add(server.GenerateEncryptionKeys);
-            steps.Add(() => { /* ništa */ });
-
-            //14
             steps.Add(client.SendNEWKEYSPacket);
             steps.Add(server.ReadNEWKEYSPacket);
 
-            //15
+            //13
             steps.Add(server.SendNEWKEYSPacket);
             steps.Add(client.ReadNEWKEYSPacket);
+
+            //14
+            steps.Add(client.GenerateEncryptionKeys);
+            steps.Add(() => { /* ništa */ });
+
+            //15
+            steps.Add(server.GenerateEncryptionKeys);
+            steps.Add(() => { /* ništa */ });
 
             //16
             steps.Add(() => { tab_auth.Focus(); });
@@ -238,6 +238,12 @@ namespace SSH_simulator
 
                 steps[step].Invoke();
                 step++;
+
+                if (steps.Count <= step)
+                {
+                    ShowDialogMsg("Kanal prekinut!");
+                    textBox_info.AppendText("\n-------------------\n\n");
+                }
 
                 if (boolRetResult == false)
                 {

@@ -10,3 +10,15 @@ D:\Projekti\GIT\SSH-simulator\testni\bin\Debug\testni.pdb
 D:\Projekti\GIT\SSH-simulator\testni\bin\Debug\BouncyCastle.Crypto.dll
 D:\Projekti\GIT\SSH-simulator\testni\obj\Debug\testni.exe
 D:\Projekti\GIT\SSH-simulator\testni\obj\Debug\testni.pdb
+C:\Users\Josip\Desktop\SSH-simulator\SSH-simulatorProject\testni\bin\Debug\ServerCert\ECDSA.public
+C:\Users\Josip\Desktop\SSH-simulator\SSH-simulatorProject\testni\bin\Debug\ServerCert\ECDSAPrivate.key
+C:\Users\Josip\Desktop\SSH-simulator\SSH-simulatorProject\testni\bin\Debug\ServerCert\public_server_keys
+C:\Users\Josip\Desktop\SSH-simulator\SSH-simulatorProject\testni\bin\Debug\ServerCert\server_dsa.pem
+C:\Users\Josip\Desktop\SSH-simulator\SSH-simulatorProject\testni\bin\Debug\ServerCert\server_rsa.pem
+C:\Users\Josip\Desktop\SSH-simulator\SSH-simulatorProject\testni\bin\Debug\ServerCert\ECDSAPublicKey.xml
+C:\Users\Josip\Desktop\SSH-simulator\SSH-simulatorProject\testni\bin\Debug\testni.exe.config
+C:\Users\Josip\Desktop\SSH-simulator\SSH-simulatorProject\testni\bin\Debug\testni.exe
+C:\Users\Josip\Desktop\SSH-simulator\SSH-simulatorProject\testni\bin\Debug\testni.pdb
+C:\Users\Josip\Desktop\SSH-simulator\SSH-simulatorProject\testni\bin\Debug\BouncyCastle.Crypto.dll
+C:\Users\Josip\Desktop\SSH-simulator\SSH-simulatorProject\testni\obj\Debug\testni.exe
+C:\Users\Josip\Desktop\SSH-simulator\SSH-simulatorProject\testni\obj\Debug\testni.pdb

@@ -1188,7 +1188,7 @@ namespace SSH_simulator
                 authResponse = Encoding.ASCII.GetString(paket_decoded.Skip(6 + 4).Take(infoSize).ToArray());
                 */
 
-                string output = SSHHelper.ispis(paket_decoded);
+                string output = SSHHelper.ispis(paket);
 
                 mainWindow.textBox_client.AppendText("\n\n\n" + output);
 
@@ -1346,7 +1346,7 @@ namespace SSH_simulator
                     return;
                 }
 
-                string output = SSHHelper.ispis(paket_decoded);
+                string output = SSHHelper.ispis(paket);
 
                 mainWindow.textBox_client.AppendText("\n\n\n" + output);
 
@@ -1496,7 +1496,7 @@ namespace SSH_simulator
                     packetType = Enum.GetName(typeof(identifiers), tip);
                 }
 
-                string output = SSHHelper.ispis(paket_decoded);
+                string output = SSHHelper.ispis(paket);
 
                 mainWindow.textBox_client.AppendText("\n\n\n" + output);
 
@@ -1676,7 +1676,7 @@ namespace SSH_simulator
                     packetType = Enum.GetName(typeof(identifiers), tip);
                 }
 
-                string output = SSHHelper.ispis(paket_decoded);
+                string output = SSHHelper.ispis(paket);
 
                 mainWindow.textBox_client.AppendText("\n\n\n" + output);
 
@@ -1759,7 +1759,7 @@ namespace SSH_simulator
                     packetType = Enum.GetName(typeof(identifiers), tip);
                 }
 
-                string output = SSHHelper.ispis(paket_decoded);
+                string output = SSHHelper.ispis(paket);
 
                 mainWindow.textBox_client.AppendText("\n\n\n" + output);
 
@@ -1924,7 +1924,7 @@ namespace SSH_simulator
                     packetType = Enum.GetName(typeof(identifiers), tip);
                 }
 
-                string output = SSHHelper.ispis(paket_decoded);
+                string output = SSHHelper.ispis(paket);
 
                 mainWindow.textBox_client.AppendText("\n\n\n" + output);
 
@@ -2007,7 +2007,7 @@ namespace SSH_simulator
                     packetType = Enum.GetName(typeof(identifiers), tip);
                 }
 
-                string output = SSHHelper.ispis(paket_decoded);
+                string output = SSHHelper.ispis(paket);
 
                 mainWindow.textBox_client.AppendText("\n\n\n" + output);
 
